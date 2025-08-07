@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.blockchain-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 15px 25px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(to bottom right, #ffd700, #ffaa00);
+  color: black;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s;
+  animation: pulse 2s infinite;
+}
+
+.blockchain-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  background: linear-gradient(to bottom right, #ffaa00, #ff8c00);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+  }
+}
+
+.chat-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chat-message {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  padding-bottom: 1.5rem;
+}
+
+.clearfix {
+  overflow: hidden;
+  clear: both;
+  width: 100%;
+}
+
+.message-user {
+  float: right;
+  max-width: 80%;
+  background-color: rgba(255, 215, 0, 0.8);
+  color: #000;
+  padding: 1rem;
+  border-radius: 1rem 1rem 0 1rem;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+}
+
+.message-bot {
+  float: left;
+  max-width: 80%;
+  background-color: #111;
+  color: #fff;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  padding: 1rem;
+  border-radius: 1rem 1rem 1rem 0;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  margin-top: 0.5rem;
+  opacity: 0.7;
+  text-align: right;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-black text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-primary font-bold;
+  }
+
+  .card, .accordion-item {
+    @apply bg-zinc-950 border-zinc-800;
+  }
+
+  .button-primary {
+    @apply bg-primary hover:bg-primary/90 text-black font-bold;
+  }
+
+  .logo-text {
+    @apply text-primary uppercase tracking-wider font-bold;
+  }
+
+  .section-title {
+    @apply text-primary text-xl md:text-2xl font-bold;
+  }
+
+  .badge-premium {
+    @apply bg-primary/20 text-primary border-primary/30;
+  }
+}
