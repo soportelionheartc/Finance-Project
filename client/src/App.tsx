@@ -1,4 +1,6 @@
 import { Switch, Route, useLocation } from "wouter";
+import PerfilPage from "@/pages/perfil-page";
+import ConfiguracionPage from "@/pages/configuracion-page";
 import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Coins } from "lucide-react";
@@ -27,23 +29,23 @@ function RouterContent() {
   const [location, setLocation] = useLocation();
   const [showButton, setShowButton] = useState(false);
   const { user } = useAuth();
-  
+
   useEffect(() => {
     // Solo mostrar el botón si:
     // 1. El usuario está autenticado y es uno de los usuarios especiales (juanpablo13 o jplhc)
     // 2. No estamos en la página de blockchain
-    
+
     const isBlockchainPage = location.includes('blockchain-portfolio');
     const isSpecialUser = user && (user.username === 'juanpablo13' || user.username === 'jplhc');
-    
+
     setShowButton(isSpecialUser ? !isBlockchainPage : false);
   }, [location, user]);
-  
+
   // Manejador para el botón de blockchain
   const handleBlockchainClick = () => {
     setLocation("/blockchain-portfolio");
   };
-  
+
   return (
     <>
       <Switch>
@@ -57,13 +59,15 @@ function RouterContent() {
         <ProtectedRoute path="/chat-descentralizado" component={ChatDescentralizadoPage} />
         <ProtectedRoute path="/blockchain-portfolio" component={BlockchainPortfolioPage} />
         <AdminRoute path="/admin" component={AdminPage} />
+        <ProtectedRoute path="/perfil" component={PerfilPage} />
+        <ProtectedRoute path="/configuracion" component={ConfiguracionPage} />
         <Route path="/servicios" component={ServicesPage} />
         <Route path="/noticias" component={NoticiasPage} />
         <Route path="/nosotros" component={AboutPage} />
         <Route path="/contacto" component={ContactPage} />
         <Route component={NotFound} />
       </Switch>
-      
+
       {showButton && (
         <button className="blockchain-button" onClick={handleBlockchainClick}>
           <Coins className="h-6 w-6" />
