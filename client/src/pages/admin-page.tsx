@@ -35,13 +35,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Activity, 
-  AreaChart, 
-  PieChart, 
-  Grid3X3, 
-  Filter, 
-  Download 
+import {
+  Activity,
+  AreaChart,
+  PieChart,
+  Grid3X3,
+  Filter,
+  Download
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -106,13 +106,13 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header title="Panel de Administración" />
-      
+
       <main className="flex-1 container mx-auto px-4 py-6">
-        <div className="flex flex-col space-y-2 mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
+        <div className="flex flex-col items-center justify-center space-y-2 mb-6">
+          <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Panel de Administración
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             Bienvenido, {user?.name || user?.username} - Administrador del Sistema
           </p>
         </div>
@@ -185,16 +185,15 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-3">
                   {alerts.map((alert) => (
-                    <div 
-                      key={alert.id} 
+                    <div
+                      key={alert.id}
                       className="flex items-start justify-between p-3 rounded-md bg-zinc-900"
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`mt-0.5 ${
-                          alert.type === 'error' ? 'text-red-500' :
+                        <div className={`mt-0.5 ${alert.type === 'error' ? 'text-red-500' :
                           alert.type === 'warning' ? 'text-yellow-500' :
-                          alert.type === 'success' ? 'text-green-500' : 'text-blue-500'
-                        }`}>
+                            alert.type === 'success' ? 'text-green-500' : 'text-blue-500'
+                          }`}>
                           <AlertCircle className="h-4 w-4" />
                         </div>
                         <div>
@@ -202,11 +201,11 @@ export default function AdminPage() {
                           <p className="text-xs text-muted-foreground">{alert.time}</p>
                         </div>
                       </div>
-                      <Badge 
+                      <Badge
                         variant={
                           alert.type === 'error' ? 'destructive' :
-                          alert.type === 'warning' ? 'default' :
-                          alert.type === 'success' ? 'outline' : 'secondary'
+                            alert.type === 'warning' ? 'default' :
+                              alert.type === 'success' ? 'outline' : 'secondary'
                         }
                         className="text-xs"
                       >
@@ -226,20 +225,30 @@ export default function AdminPage() {
 
           {/* Users Tab */}
           <TabsContent value="users" className="space-y-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
-                <p className="text-sm text-muted-foreground">Administra los usuarios de la plataforma</p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filtrar
-                </Button>
-                <Button size="sm">
-                  <UsersRound className="h-4 w-4 mr-2" />
-                  Nuevo Usuario
-                </Button>
+            <div className="w-full flex flex-col items-center justify-center mb-8">
+              <div className="w-full max-w-4xl flex flex-col items-center justify-center gap-4 px-6 py-4 bg-zinc-900 rounded-xl border border-yellow-600/30 shadow-[0_2px_16px_0_rgba(255,215,0,0.10)]">
+                <div className="w-full flex flex-col lg:flex-row items-center justify-between">
+                  <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
+                    <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">Gestión de Usuarios</h2>
+                    <p className="text-sm text-gray-300 mb-4">Administra los usuarios de la plataforma</p>
+                  </div>
+                  <div className="flex gap-2 mt-0 lg:mt-0">
+                    <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
+                      <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 4v16m8-8H4" /></svg></span>
+                      Nuevo Usuario
+                    </Button>
+                    <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
+                      <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M20 12H4" /></svg></span>
+                      Eliminar Usuario
+                    </Button>
+                  </div>
+                </div>
+                <div className="w-full flex justify-center mt-0">
+                  <Button variant="outline" className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-2 px-3 py-0.5 text-sm">
+                    <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M4 21h16M10 3h4M12 3v14m0 0l-4-4m4 4l4-4" /></svg></span>
+                    Filtrar
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -342,15 +351,19 @@ export default function AdminPage() {
 
           {/* System Tab */}
           <TabsContent value="system" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Estado del Sistema</h2>
-                <p className="text-sm text-muted-foreground">Monitoreo y configuración de la plataforma</p>
+            <div className="w-full flex flex-col items-center justify-center mb-8">
+              <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
+                  <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">Gestión del Sistema</h2>
+                  <p className="text-sm text-gray-300 mb-0">Administra la configuración y el estado del sistema</p>
+                </div>
+                <div className="flex mt-0 lg:mt-0">
+                  <Button variant="outline" className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-1 px-3 py-0.5 text-sm">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configuración
+                  </Button>
+                </div>
               </div>
-              <Button variant="outline">
-                <Settings className="h-4 w-4 mr-2" />
-                Configuración
-              </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -469,20 +482,22 @@ export default function AdminPage() {
 
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Reportes y Análisis</h2>
-                <p className="text-sm text-muted-foreground">Informes y métricas de la plataforma</p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline">
-                  <Grid3X3 className="h-4 w-4 mr-2" />
-                  Todos los reportes
-                </Button>
-                <Button>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Generar Reporte
-                </Button>
+            <div className="w-full flex flex-col items-center justify-center mb-8">
+              <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
+                <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
+                  <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">Reportes y Análisis</h2>
+                  <p className="text-sm text-gray-300 mb-0">Informes y métricas de la plataforma</p>
+                </div>
+                <div className="flex gap-2 mt-0 lg:mt-0">
+                  <Button variant="outline" className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-1 px-3 py-0.5 text-sm">
+                    <span className="mr-1"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M4 21h16M10 3h4M12 3v14m0 0l-4-4m4 4l4-4" /></svg></span>
+                    Todos los reportes
+                  </Button>
+                  <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-1 px-3 py-0.5 text-sm">
+                    <span className="mr-1"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 4v16m8-8H4" /></svg></span>
+                    Generar Reporte
+                  </Button>
+                </div>
               </div>
             </div>
 
