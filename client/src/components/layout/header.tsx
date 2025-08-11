@@ -38,10 +38,14 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-black/60">
+    <header className="border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
       <div className="container flex h-14 items-center">
         <Link href="/" className="flex items-center space-x-2">
-          <LionLogo size="sm" withText />
+          <LionLogo className="h-10 w-10" />
+          <div>
+              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+              <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
+          </div>
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user && (
