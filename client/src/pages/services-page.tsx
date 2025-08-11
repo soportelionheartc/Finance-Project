@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DollarSign, Calendar, ShieldAlert, Building, FileText, ClipboardList, Search, Coins, Brain, ChevronRight, ArrowLeft, TrendingUp, Share2, BarChart3, Globe, Star, ChevronDown, MessageCircle, Linkedin, Instagram, Facebook, ShoppingCart } from "lucide-react";
 import { Link } from "wouter";
-import { LionLogo } from "@/assets/lion-logo";
+import { LionLogo } from "@/components/ui/lion-logo";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
 
 export default function ServicesPage() {
@@ -13,8 +13,8 @@ export default function ServicesPage() {
           <Link href="/">
             <div className="flex items-center gap-3 cursor-pointer">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full blur-sm opacity-70"></div>
-                <LionLogo className="h-10 w-10 relative z-10" />
+                <div className="flex items-center gap-3"></div>
+                <LionLogo className="h-10 w-10" />
               </div>
               <div>
                 <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">LION HEART CAPITAL</h1>
