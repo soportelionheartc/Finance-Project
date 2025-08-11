@@ -15,13 +15,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      
+
       <main className="flex-1 container mx-auto px-4 py-6">
-        <div className="flex flex-col space-y-2 mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
+        <div className="flex flex-col items-center justify-center space-y-2 mb-6">
+          <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Hola, {user?.name || user?.username || 'Inversionista'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-center">
             Bienvenido a tu dashboard financiero con IA de Lion Heart Capital
           </p>
         </div>
@@ -57,12 +57,12 @@ export default function HomePage() {
               </p>
               <button className="mt-2 px-4 py-2 bg-yellow-500 text-black text-xs font-medium rounded">Iniciar Sesión para Acceder</button>
             </div>
-            
+
             <div className="flex flex-col items-center md:items-end">
               <h3 className="font-medium text-primary mb-3">Síguenos</h3>
               <div className="flex flex-wrap gap-3 mb-3">
-                <a 
-                  href="https://wa.me/+573000000000" 
+                <a
+                  href="https://wa.me/+573000000000"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -70,8 +70,8 @@ export default function HomePage() {
                 >
                   <MessageCircle className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://linkedin.com/company/lionheartcapital" 
+                <a
+                  href="https://linkedin.com/company/lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -79,8 +79,8 @@ export default function HomePage() {
                 >
                   <Linkedin className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://kick.com/lionheartcapital" 
+                <a
+                  href="https://kick.com/lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -88,8 +88,8 @@ export default function HomePage() {
                 >
                   <SiKickstarter className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://tiktok.com/@lionheartcapital" 
+                <a
+                  href="https://tiktok.com/@lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -97,8 +97,8 @@ export default function HomePage() {
                 >
                   <SiTiktok className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://twitch.tv/lionheartcapital" 
+                <a
+                  href="https://twitch.tv/lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -106,8 +106,8 @@ export default function HomePage() {
                 >
                   <SiTwitch className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://instagram.com/lionheartcapital" 
+                <a
+                  href="https://instagram.com/lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -115,8 +115,8 @@ export default function HomePage() {
                 >
                   <Instagram className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://facebook.com/lionheartcapital" 
+                <a
+                  href="https://facebook.com/lionheartcapital"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
@@ -124,8 +124,8 @@ export default function HomePage() {
                 >
                   <Facebook className="h-4 w-4" />
                 </a>
-                <a 
-                  href="https://lionheartcapital.com" 
+                <a
+                  href="https://lionheartcapital.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
