@@ -106,6 +106,16 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-black">
+      {/* Header fuera del container para ocupar todo el ancho */}
+      <div className="w-full">
+        <div className="flex items-center gap-3 border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
+          <LionLogo className="h-10 w-10" />
+          <div>
+            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+            <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
+          </div>
+        </div>
+      </div>
       <div className="container mx-auto p-4 flex flex-col items-center">
         <div className="w-full max-w-md">
           <div className="mb-6">
@@ -117,14 +127,7 @@ export default function AuthPage() {
                 </Button>
               </Link>
             </div>
-            <div className="flex justify-center">
-              <LionLogo withText size="lg" />
-            </div>
           </div>
-
-          <h2 className="text-2xl font-bold tracking-tight text-white text-center mb-6">
-            Iniciar sesión
-          </h2>
 
           <div className="max-w-2xl mx-auto text-center mb-8">
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
@@ -172,44 +175,43 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <Card className="bg-black border-zinc-800">
                   <CardContent className="pt-6">
+                    {loginMutation.error && (
+                      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
+                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
+                          <h4 className="text-lg font-bold text-yellow-500 mb-2">Acceso denegado</h4>
+                          <p className="text-gray-300 mb-4">
+                            Credenciales incorrectas. Por favor verifica tu usuario y contraseña
+                            <br />
+                            Si no tienes cuenta, regístrate.
+                          </p>
+                          <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => loginMutation.reset()}>
+                            Cerrar
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                     <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                      {loginMutation.error && (
-                        <Alert variant="destructive">
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            {loginMutation.error.message || "Error al iniciar sesión"}
-                          </AlertDescription>
-                        </Alert>
-                      )}
-
                       <div className="space-y-2">
                         <Label htmlFor="username" className="text-gray-300">Nombre de usuario</Label>
                         <Input
                           id="username"
-                          placeholder="usuario"
+                          placeholder="Usuario"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("username")}
                         />
-                        {loginForm.formState.errors.username && (
-                          <p className="text-sm font-medium text-destructive">
-                            {loginForm.formState.errors.username.message}
-                          </p>
-                        )}
+                        
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="password" className="text-gray-300">Contraseña</Label>
                         <Input
                           id="password"
+                          placeholder="**********"
                           type="password"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("password")}
                         />
-                        {loginForm.formState.errors.password && (
-                          <p className="text-sm font-medium text-destructive">
-                            {loginForm.formState.errors.password.message}
-                          </p>
-                        )}
+                        
                       </div>
 
                       <Button
@@ -233,13 +235,19 @@ export default function AuthPage() {
                 <Card className="bg-black border-zinc-800">
                   <CardContent className="pt-6">
                     <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                      {/* Modal personalizado para error de registro */}
                       {registerMutation.error && (
-                        <Alert variant="destructive">
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            {registerMutation.error.message || "Error al registrarse"}
-                          </AlertDescription>
-                        </Alert>
+                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
+                          <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
+                            <h4 className="text-lg font-bold text-yellow-500 mb-2">Registro fallido</h4>
+                            <p className="text-gray-300 mb-4">
+                              {registerMutation.error.message || "Error al registrarse. Por favor verifica los datos e intenta de nuevo."}
+                            </p>
+                            <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => registerMutation.reset()}>
+                              Cerrar
+                            </Button>
+                          </div>
+                        </div>
                       )}
 
                       <div className="space-y-2">
@@ -336,7 +344,7 @@ export default function AuthPage() {
               </TabsContent>
             </Tabs>
           </div>
-          
+
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>© 2025 Lion Heart Capital S.A.S. Todos los derechos reservados.</p>
           </div>
