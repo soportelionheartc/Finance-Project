@@ -12,7 +12,8 @@ import { MarketOverview } from "@/components/finance/market-overview";
 export default function LandingPage() {
   const isMobile = useIsMobile();
   const [chatMessage, setChatMessage] = useState("");
-  
+  const [showChatAlert, setShowChatAlert] = useState(false);
+
   // Datos de mercados globales
   const usaMarketData = [
     { name: 'S&P 500', value: '4.779,05', change: '+0.71%', isPositive: true },
@@ -20,21 +21,21 @@ export default function LandingPage() {
     { name: 'Nasdaq', value: '16.201,83', change: '+0.93%', isPositive: true },
     { name: 'Russell 2000', value: '2.051,14', change: '+0.61%', isPositive: true },
   ];
-  
+
   const bvcMarketData = [
     { name: 'COLCAP', value: '1.095,43', change: '+0.62%', isPositive: true },
     { name: 'Ecopetrol', value: '2.845,00', change: '+1.2%', isPositive: true },
     { name: 'Bancolombia', value: '34.200,00', change: '+0.85%', isPositive: true },
     { name: 'Grupo Aval', value: '671,00', change: '-0.3%', isPositive: false },
   ];
-  
+
   const cryptoMarketData = [
     { name: 'BTC/USD', value: '42.406,66', change: '+2.08%', isPositive: true },
     { name: 'ETH/USD', value: '2.591,31', change: '+1.40%', isPositive: true },
     { name: 'SOL/USD', value: '163,85', change: '+3.27%', isPositive: true },
     { name: 'XRP/USD', value: '0,5081', change: '-0.92%', isPositive: false },
   ];
-  
+
   const forexData = [
     { name: 'EUR/USD', value: '1,0916', change: '-0.36%', isPositive: false },
     { name: 'USD/COP', value: '3.876,42', change: '-0.52%', isPositive: false },
@@ -45,18 +46,18 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-foreground flex flex-col">
       {/* Header */}
-      <header className="border-b border-zinc-800 p-4">
+      <header className="border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <LionLogo className="h-10 w-10" />
             <div>
-              <h1 className="font-bold text-lg text-primary">LION HEART CAPITAL</h1>
-              <p className="text-xs text-gray-400">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
+              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+              <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            className="border-primary text-primary" 
+          <Button
+            variant="outline"
+            className="border-primary text-primary"
             size="sm"
             onClick={() => window.location.href = "/auth"}
           >
@@ -68,7 +69,7 @@ export default function LandingPage() {
       <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center py-6">
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center text-center bg-gradient-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
             <h2 className="text-4xl font-bold text-primary">LION HEART CAPITAL</h2>
             <h3 className="text-xl text-white mb-2">FINANZAS E INVERSIONES DE ALTO IMPACTO</h3>
             <p className="text-gray-300 text-lg mb-6">
@@ -81,9 +82,6 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </div>
-          </div>
-          <div className="rounded-lg">
-            {/* Logo eliminado */}
           </div>
         </section>
 
@@ -106,8 +104,8 @@ export default function LandingPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-xl text-primary uppercase">Servicios Financieros Premium</h3>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="text-primary border-primary"
               onClick={() => window.location.href = "/auth"}
             >
@@ -124,8 +122,8 @@ export default function LandingPage() {
                 <p className="text-sm text-gray-400">
                   Analiza el rendimiento de tus inversiones y recibe recomendaciones personalizadas basadas en IA.
                 </p>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="mt-2 text-primary p-0 h-auto"
                   onClick={() => window.location.href = "/auth"}
                 >
@@ -133,7 +131,7 @@ export default function LandingPage() {
                 </Button>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-zinc-900 border border-zinc-700">
               <CardContent className="p-4 space-y-3">
                 <div className="bg-primary/30 p-2 rounded-full w-fit">
@@ -143,8 +141,8 @@ export default function LandingPage() {
                 <p className="text-sm text-gray-400">
                   Aprovecha estrategias algorítmicas basadas en medias móviles y la potencia de la IA.
                 </p>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="mt-2 text-primary p-0 h-auto"
                   onClick={() => window.location.href = "/auth"}
                 >
@@ -152,7 +150,7 @@ export default function LandingPage() {
                 </Button>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-zinc-900 border border-zinc-700">
               <CardContent className="p-4 space-y-3">
                 <div className="bg-primary/30 p-2 rounded-full w-fit">
@@ -162,8 +160,8 @@ export default function LandingPage() {
                 <p className="text-sm text-gray-400">
                   Conecta tu wallet de Ethereum, Solana, Bitcoin para gestionar tus activos digitales y criptomonedas.
                 </p>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="mt-2 text-primary p-0 h-auto"
                   onClick={() => window.location.href = "/auth"}
                 >
@@ -190,16 +188,27 @@ export default function LandingPage() {
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                 />
-                <Button 
-                  size="icon" 
+                <Button
+                  size="icon"
                   className="absolute right-1 top-1 bottom-1 bg-black border border-primary text-primary"
                   onClick={() => {
-                    alert("Para disfrutar de la experiencia completa del Chat IA, por favor inicia sesión.");
+                    setShowChatAlert(true);
                     setChatMessage("");
                   }}
                 >
                   <Send className="h-4 w-4" />
                 </Button>
+                {showChatAlert && (
+                  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
+                    <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
+                      <h4 className="text-lg font-bold text-yellow-500 mb-2">Acceso requerido</h4>
+                      <p className="text-gray-300 mb-4">Para disfrutar de la experiencia completa del Chat IA, por favor inicia sesión.</p>
+                      <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => window.location.href = "/auth"}>
+                        Ir a iniciar sesión
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -213,12 +222,12 @@ export default function LandingPage() {
             <p className="font-medium text-primary">Lion Heart Capital S.A.S.</p>
             <p className="mt-2">Contacto: lionheartcapital1303@gmail.com</p>
           </div>
-          
+
           <div className="mt-8">
             <p>¡Próximamente en App Store y Google Play!</p>
             <p className="text-xs mt-1">Descarga nuestra aplicación móvil para acceder a todas las funcionalidades desde tu dispositivo.</p>
           </div>
-          
+
           <div className="mt-4">
             © {new Date().getFullYear()} Lion Heart Capital. Todos los derechos reservados.
           </div>
