@@ -38,46 +38,35 @@ export const PortfolioSummary = () => {
   const isPositiveChange = monthlyChange >= 0;
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <Card className="bg-[#1a1400] text-[#ffd700] rounded-xl shadow-lg max-w-md mx-auto p-6">
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div className="space-y-1">
-          <CardTitle>Resumen de Portafolios</CardTitle>
-          <CardDescription>Visión general de tus inversiones</CardDescription>
+          <CardTitle className="text-center w-full mb-4">Resumen de Portafolios</CardTitle>
+          <CardDescription className="text-center w-full">Visión general de tus inversiones</CardDescription>
         </div>
-        <Button size="sm" className="bg-[#FFC107] hover:bg-[#FFD54F] text-black">
+        <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow">
           <PlusCircle className="h-4 w-4 mr-2" />
           Nuevo
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
-          ${totalPortfolioValue.toLocaleString('es-CO')}
+        <div className="flex items-end gap-3 mb-4">
+          <span className="text-3xl font-extrabold">${totalPortfolioValue.toLocaleString('es-CO')}</span>
+          <span className={`flex items-center text-base font-semibold ${isPositiveChange ? 'text-green-400' : 'text-red-400'}`}>
+            {isPositiveChange ? <TrendingUp className="h-5 w-5 mr-1" /> : <TrendingDown className="h-5 w-5 mr-1" />}
+            {isPositiveChange ? '+' : ''}{monthlyChange}% este mes
+          </span>
         </div>
-        
-        <div className="flex items-center mt-1 mb-3">
-          <div className={`flex items-center ${isPositiveChange ? 'text-green-500' : 'text-red-500'}`}>
-            {isPositiveChange ? 
-              <TrendingUp className="h-4 w-4 mr-1" /> : 
-              <TrendingDown className="h-4 w-4 mr-1" />
-            }
-            <span className="text-sm font-medium">
-              {isPositiveChange ? '+' : ''}{monthlyChange}% este mes
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-4">
+        <div className="flex flex-col gap-6">
           {portfolios.map((portfolio) => (
-            <div key={portfolio.id} className="space-y-1">
+            <div key={portfolio.id} className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-medium">{portfolio.name}</div>
-                <div className="text-sm font-medium">
-                  ${portfolio.totalValue.toLocaleString('es-CO')}
-                </div>
+                <span className="text-base font-medium">{portfolio.name}</span>
+                <span className="text-base font-bold">${portfolio.totalValue.toLocaleString('es-CO')}</span>
               </div>
-              <Progress 
-                value={(portfolio.totalValue / totalPortfolioValue) * 100} 
-                className="h-2"
+              <Progress
+                value={(portfolio.totalValue / totalPortfolioValue) * 100}
+                className="h-3 rounded-full bg-[#333] [&>div]:bg-[#ffd700] transition-all duration-500"
               />
             </div>
           ))}
