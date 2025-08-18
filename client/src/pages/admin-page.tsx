@@ -24,6 +24,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import {
   Table,
@@ -35,6 +36,46 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
+
 import {
   Activity,
   AreaChart,
@@ -48,6 +89,17 @@ export default function AdminPage() {
   const { user, isAdmin } = useAuth();
   const [selectedTab, setSelectedTab] = useState("dashboard");
 
+  // Filtros de usuarios
+  const [filters, setFilters] = useState<{
+    query: string;
+    role: "all" | "admin" | "user";
+    status: "all" | "active" | "inactive";
+  }>({
+    query: "",
+    role: "all",
+    status: "all",
+  });
+
   // Datos para el tablero administrativo
   const stats = [
     { id: 1, title: "Usuarios Totales", value: "124", icon: <Users className="h-5 w-5 text-primary" />, change: "+12% este mes" },
@@ -56,14 +108,107 @@ export default function AdminPage() {
     { id: 4, title: "Premium", value: "16", icon: <Shield className="h-5 w-5 text-primary" />, change: "+3 nuevos" },
   ];
 
-  // Usuarios para la tabla
-  const users = [
+  // Usuarios (estado)
+  const [users, setUsers] = useState<Array<{
+    id: number;
+    username: string;
+    name: string;
+    role: "user" | "admin";
+    status: "active" | "inactive";
+    lastLogin: string;
+    email: string;
+  }>>([
     { id: 1, username: "carlos_rodriguez", name: "Carlos Rodríguez", role: "user", status: "active", lastLogin: "Hace 2 horas", email: "carlos@ejemplo.com" },
     { id: 2, username: "maria_gomez", name: "María Gómez", role: "user", status: "active", lastLogin: "Hace 1 día", email: "maria@ejemplo.com" },
     { id: 3, username: "jplhc", name: "Juan Pablo López", role: "admin", status: "active", lastLogin: "Ahora", email: "admin@lionheartcapital.com" },
     { id: 4, username: "luis_perez", name: "Luis Pérez", role: "user", status: "inactive", lastLogin: "Hace 10 días", email: "luis@ejemplo.com" },
     { id: 5, username: "ana_martinez", name: "Ana Martínez", role: "user", status: "active", lastLogin: "Hace 5 horas", email: "ana@ejemplo.com" },
-  ];
+  ]);
+
+
+  // Formulario nuevo usuario
+  const [isCreating, setIsCreating] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    username: "",
+    email: "",
+    role: "user" as "user" | "admin",
+    status: "active" as "active" | "inactive",
+  });
+  const [creationSuccess, setCreationSuccess] = useState(false);
+
+  // Selección de usuarios (local, no persistente)
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
+
+  const toggleUserSelection = (id: number) => {
+    setSelectedUserIds(prev => {
+      const copy = new Set(prev);
+      if (copy.has(id)) copy.delete(id); else copy.add(id);
+      return copy;
+    });
+  };
+
+  const toggleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const ids = filteredUsers.map(u => u.id);
+      setSelectedUserIds(new Set(ids));
+    } else {
+      setSelectedUserIds(new Set());
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedUserIds.size === 0) return;
+    setUsers(prev => prev.filter(u => !selectedUserIds.has(u.id)));
+    setSelectedUserIds(new Set());
+  };
+
+  const canSubmitNewUser = newUser.name && newUser.username && newUser.email;
+
+  const handleCreateUser = () => {
+    if (!canSubmitNewUser) return;
+    const id = Date.now();
+    setUsers(prev => [
+      ...prev,
+      {
+        id,
+        name: newUser.name.trim(),
+        username: newUser.username.trim(),
+        email: newUser.email.trim(),
+        role: newUser.role,
+        status: newUser.status,
+        lastLogin: "Ahora",
+      }
+    ]);
+    setCreationSuccess(true);
+  };
+
+  const handleAutoUsername = () => {
+    if (!newUser.name) return;
+    const suggestion = newUser.name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[^a-z\s]/g, '')
+      .trim()
+      .replace(/\s+/g, '_');
+    setNewUser(u => ({ ...u, username: suggestion }));
+  };
+
+  const filteredUsers = users.filter((u) => {
+    if (filters.role !== "all" && u.role !== filters.role) return false;
+    if (filters.status !== "all" && u.status !== filters.status) return false;
+    const q = filters.query.trim().toLowerCase();
+    if (
+      q &&
+      !(
+        u.name.toLowerCase().includes(q) ||
+        u.username.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q)
+      )
+    )
+      return false;
+    return true;
+  });
 
   // Alertas del sistema
   const alerts = [
@@ -233,21 +378,175 @@ export default function AdminPage() {
                     <p className="text-sm text-gray-300 mb-4">Administra los usuarios de la plataforma</p>
                   </div>
                   <div className="flex gap-2 mt-0 lg:mt-0">
-                    <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
-                      <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 4v16m8-8H4" /></svg></span>
-                      Nuevo Usuario
-                    </Button>
-                    <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
-                      <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M20 12H4" /></svg></span>
-                      Eliminar Usuario
-                    </Button>
+                    <Dialog open={isCreating} onOpenChange={(open) => {
+                      setIsCreating(open);
+                      if (!open) {
+                        // Reset al cerrar
+                        setCreationSuccess(false);
+                        setNewUser({ name: "", username: "", email: "", role: "user", status: "active" });
+                      }
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
+                          <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M12 4v16m8-8H4" /></svg></span>
+                          Nuevo Usuario
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        {!creationSuccess && (
+                          <>
+                            <DialogHeader>
+                              <DialogTitle>Nuevo Usuario</DialogTitle>
+                              <DialogDescription>Crea un nuevo usuario en la plataforma.</DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4 py-2">
+                              <div className="space-y-2">
+                                <Label htmlFor="nombre">Nombre</Label>
+                                <Input id="nombre" value={newUser.name} onChange={e => setNewUser(u => ({ ...u, name: e.target.value }))} onBlur={handleAutoUsername} placeholder="Nombre completo" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="username">Usuario</Label>
+                                <Input id="username" value={newUser.username} onChange={e => setNewUser(u => ({ ...u, username: e.target.value }))} placeholder="usuario_unico" />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" type="email" value={newUser.email} onChange={e => setNewUser(u => ({ ...u, email: e.target.value }))} placeholder="correo@ejemplo.com" />
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label>Rol</Label>
+                                  <Select value={newUser.role} onValueChange={(val: any) => setNewUser(u => ({ ...u, role: val }))}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="Rol" /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="user">Usuario</SelectItem>
+                                      <SelectItem value="admin">Administrador</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2">
+                                  <Label>Estado</Label>
+                                  <Select value={newUser.status} onValueChange={(val: any) => setNewUser(u => ({ ...u, status: val }))}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="Estado" /></SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="active">Activo</SelectItem>
+                                      <SelectItem value="inactive">Inactivo</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>Cancelar</Button>
+                              <Button type="button" disabled={!canSubmitNewUser} onClick={handleCreateUser}>Crear</Button>
+                            </DialogFooter>
+                          </>
+                        )}
+                        {creationSuccess && (
+                          <div className="py-6 flex flex-col items-center text-center gap-4">
+                            <CheckCircle2 className="h-12 w-12 text-green-500" />
+                            <div>
+                              <h3 className="text-lg font-semibold mb-1">Usuario creado correctamente</h3>
+                              <p className="text-sm text-muted-foreground">El usuario se añadió a la lista (datos no persistentes aún).</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="outline" onClick={() => {
+                                // Preparar otro
+                                setCreationSuccess(false);
+                                setNewUser({ name: "", username: "", email: "", role: "user", status: "active" });
+                              }}>Crear otro</Button>
+                              <Button onClick={() => {
+                                setIsCreating(false);
+                                setCreationSuccess(false);
+                                setNewUser({ name: "", username: "", email: "", role: "user", status: "active" });
+                              }}>Cerrar</Button>
+                            </div>
+                          </div>
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          disabled={selectedUserIds.size === 0}
+                          className="bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold flex items-center gap-2 px-3 py-0.5 text-sm"
+                        >
+                          <span className="mr-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M9 6V4h6v2m2 0v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                          Eliminar {selectedUserIds.size > 0 ? `${selectedUserIds.size}` : ''} {selectedUserIds.size > 1 ? 'Usuarios' : 'Usuario'}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Se eliminarán {selectedUserIds.size} usuario{selectedUserIds.size > 1 ? 's' : ''}. Esto sólo afecta la vista actual (no persiste tras recargar).
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>No</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeleteSelected}>Sí</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
                 <div className="w-full flex justify-center mt-0">
-                  <Button variant="outline" className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-2 px-3 py-0.5 text-sm">
-                    <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M4 21h16M10 3h4M12 3v14m0 0l-4-4m4 4l4-4" /></svg></span>
-                    Filtrar
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-2 px-3 py-0.5 text-sm">
+                        <span className="mr-1"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" d="M4 21h16M10 3h4M12 3v14m0 0l-4-4m4 4l4-4" /></svg></span>
+                        Filtrar
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-72 p-2">
+                      <div className="px-2 py-1.5">
+                        <p className="text-xs text-muted-foreground mb-1">Búsqueda</p>
+                        <Input
+                          placeholder="Nombre, usuario o correo"
+                          value={filters.query}
+                          onChange={(e) => setFilters((f) => ({ ...f, query: e.target.value }))}
+                          className="h-8"
+                        />
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Rol</DropdownMenuLabel>
+                      <DropdownMenuRadioGroup
+                        value={filters.role}
+                        onValueChange={(val) =>
+                          setFilters((f) => ({ ...f, role: val as "all" | "admin" | "user" }))
+                        }
+                      >
+                        <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="admin">Administrador</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="user">Usuario</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel>Estado</DropdownMenuLabel>
+                      <DropdownMenuRadioGroup
+                        value={filters.status}
+                        onValueChange={(val) =>
+                          setFilters((f) => ({ ...f, status: val as "all" | "active" | "inactive" }))
+                        }
+                      >
+                        <DropdownMenuRadioItem value="all">Todos</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="active">Activo</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="inactive">Inactivo</DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+
+                      <DropdownMenuSeparator />
+                      <div className="flex items-center justify-between px-2 py-1.5">
+                        <span className="text-xs text-muted-foreground">Resultados: {filteredUsers.length}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2"
+                          onClick={() => setFilters({ query: "", role: "all", status: "all" })}
+                        >
+                          Limpiar
+                        </Button>
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>
@@ -256,6 +555,13 @@ export default function AdminPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox
+                        checked={filteredUsers.length > 0 && selectedUserIds.size === filteredUsers.length}
+                        onCheckedChange={(c) => toggleSelectAll(Boolean(c))}
+                        aria-label="Seleccionar todos"
+                      />
+                    </TableHead>
                     <TableHead>Usuario</TableHead>
                     <TableHead>Correo</TableHead>
                     <TableHead>Rol</TableHead>
@@ -265,8 +571,15 @@ export default function AdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
+                  {filteredUsers.map((user) => (
                     <TableRow key={user.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedUserIds.has(user.id)}
+                          onCheckedChange={() => toggleUserSelection(user.id)}
+                          aria-label={`Seleccionar ${user.username}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
                           <span>{user.name}</span>
