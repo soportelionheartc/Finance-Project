@@ -109,13 +109,11 @@ http://localhost:5173
 ~~    - Soluciones financieras inteligentes impulsadas por IA para optimizar tus inversiones y estrategias de trading.~~
 ~~    - Explorar Servicios~~
 
-- Links de las noticias en la landing page que redirijan a donde es.
-
 ~~- En la landing page, si el usuario intenta usar la funcionalidad de IA sin haber iniciado sesión, mejorar la alerta para que sea más clara y amigable, sugiriendo iniciar sesión o registrarse e incluso redirigir a la pagina de inicio de sesión.~~
 
 ~~- Corregir logo inicio de sesion y registro.~~
 
-[~] En el inicio de sesión, si las credenciales son incorrectas o el usuario no existe, mostrar un mensaje de error más claro y amigable, sugiriendo verificar las credenciales o registrarse si no tiene cuenta. [~]
+~~- En el inicio de sesión, si las credenciales son incorrectas o el usuario no existe, mostrar un mensaje de error más claro y amigable, sugiriendo verificar las credenciales o registrarse si no tiene cuenta.~~
 
 ~~- En la seccion de autenticacion sobra el h2 de "Inicio de Sesion" Ya que abajo esta para escoger si Iniciar sesión o Registrarse entonces seria mejor eliminarlo.~~
 
@@ -129,15 +127,9 @@ http://localhost:5173
 
 ~~- Implementar boton de eliminar usuario y organizarlo en el div.~~
 
-- En el panel de administración, en la seccion de Usuarios implementar los filtros adecuados, y funcionalidad de insertar y eliminar usuarios.
-
-- En el panel de administracion, en la seccion de sistema, funcionalidad de configuracion de la app.
-
-- En el panel de administracion, en la seccion de Reportes, funcionalidad de Mostrar todos los reportes, Generar Reporte.
+~~- En el panel de administración, en la seccion de Usuarios implementar los filtros adecuados, y funcionalidad de insertar y eliminar usuarios.~~
 
 ~~- En el panel admin, crear las paginas de perfil y configuracion.~~
-
-- Ver que se quiere poner en las paginas de perfil y configuración.
 
 ~~-  En el panel de usuario de google o usuario comun, al tope de todo que haya un margen al lado izquierdo para que no se vea tan pegado al borde de la pantalla.~~
 
@@ -145,10 +137,24 @@ http://localhost:5173
 
 ~~- En panel de usuario de googel o usuario comun, revisar las opciones de Perfil y Configuracion.~~
 
-- Ver que se quiere poner en las paginas de perfil y configuración en los usuarios normales y de google.
-
-- En panel de usuario de googel o usuario comun, implementar funcionalidades de Nuevos Portafolios, Revisar funcionamiento de las graficas, y organizar el display de a partir de la seccion Asistente Financiero, que se vea mejor la distribucion de los elementos ya que estan una encima de otras y no se ve bien.
-
-- Todo lo anterior relacionado con el panel de usuario de google o usuario comun se debe tambien hacer para el usuario de apple.
-
 ~~- En la base de datos estaba el usuario admin con rol de User, lo cual es incorrecto, se deberia cambiar a Admin. ~~
+
+~~- Que la applicacion sea muy amigable, gamificada y eduativa metiante mensajes a la hora de iniciar sesion como tips financieros o datos curiosos.~~
+
+~~- Organizacion de la distribucion de los elementos al iniciar sesion, Resumen de portafolios.~~
+
+~~- Funcionalidad de distribucion de Activos, POrtafolios.~~
+
+~~- Implementar boton "Ver mas" que despliegue mas graficas de distintos tipos (modelos)~~
+
+- Implementar tipos de graficas.
+
+~~- Eliminar seccion de IA de la parte de los usuarios e implementarla como una seccion del menu desplegable del icono arriba a la derecha, que diga "Asistente Financiero" y al hacer click se despliegue un modal con la funcionalidad de IA.~~
+
+~~- Arreglar footer con estilos mejores para los usuarios~~
+
+- Revisar la implementacion de Crypto (Foto)(Jupiter)
+
+~~- Funcionalidad de montar archivos en los usuarios en la seccion de graficas.~~
+
+~~- Correccion footer de integracion con blockchein~~
