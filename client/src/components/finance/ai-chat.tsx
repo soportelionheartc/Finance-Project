@@ -146,7 +146,7 @@ export const AiChat = () => {
   };
 
   return (
-    <Card className="flex flex-col h-[520px] border-gray-800 bg-black">
+    <Card className="flex flex-col border-gray-800 bg-black">
       <CardHeader className="pb-3 border-b border-gray-800">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

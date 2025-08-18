@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Coins } from "lucide-react";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
+import FinancialAssistantPage from "@/pages/financial-assistant-page";
 import AuthPage from "@/pages/auth-page";
 import ServicesPage from "@/pages/services-page";
 import PortfolioPage from "@/pages/portafolio-page";
@@ -52,6 +53,7 @@ function RouterContent() {
         <Route path="/" component={LandingPage} />
         <Route path="/auth" component={AuthPage} />
         <ProtectedRoute path="/dashboard" component={HomePage} />
+        <ProtectedRoute path="/asistente-financiero" component={FinancialAssistantPage} />
         <ProtectedRoute path="/finanzas-personales" component={FinanzasPersonalesPage} />
         <ProtectedRoute path="/portafolio" component={PortfolioPage} />
         <ProtectedRoute path="/trading-bot" component={TradingBotPage} />
