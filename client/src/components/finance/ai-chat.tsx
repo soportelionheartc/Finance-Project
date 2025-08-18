@@ -44,9 +44,9 @@ export const AiChat = () => {
       const isAvailable = await checkSecret("OPENAI_API_KEY");
       setOpenAiAvailable(isAvailable);
     };
-    
+
     checkOpenAiKey();
-    
+
     // Cargar mensajes de historial (ejemplo para ahora)
     setMessages([
       {
@@ -88,7 +88,7 @@ export const AiChat = () => {
     if (inputValue.trim() === "" || isLoading) return;
 
     setIsLoading(true);
-    
+
     const newMessage: ChatMessage = {
       id: messages.length + 1,
       userId: user?.id || 1,
@@ -116,21 +116,21 @@ export const AiChat = () => {
     try {
       // Si OpenAI está disponible, usamos la API
       const aiResponse = await getFinancialAdvice(inputValue);
-      
+
       const updatedMessages = [...messages, {
         ...newMessage,
         response: aiResponse
       }];
-      
+
       setMessages(updatedMessages);
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      
+
       const updatedMessages = [...messages, {
         ...newMessage,
         response: "Lo siento, ha ocurrido un error al procesar tu pregunta. Por favor, intenta nuevamente más tarde."
       }];
-      
+
       setMessages(updatedMessages);
     } finally {
       setIsLoading(false);
@@ -169,23 +169,23 @@ export const AiChat = () => {
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+        <ScrollArea className="flex-1 p-4 min-h-[300px] max-h-[600px] overflow-auto" ref={scrollRef}>
           <div className="space-y-4">
             <div className="chat-container">
               {messages.map((msg) => (
                 <div key={msg.id} className="chat-message">
                   <div className="clearfix">
                     <div className="message-user">
-                      {msg.message}
+                      <span className="whitespace-pre-line break-words">{msg.message}</span>
                       <div className="message-time">
                         {formatDate(msg.timestamp)}
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="clearfix mt-8">
                     <div className="message-bot">
-                      <div className="whitespace-pre-line">{msg.response}</div>
+                      <div className="whitespace-pre-line break-words">{msg.response}</div>
                       <div className="message-time">
                         {formatDate(new Date(new Date(msg.timestamp).getTime() + 1000).toISOString())}
                       </div>
@@ -194,7 +194,7 @@ export const AiChat = () => {
                 </div>
               ))}
             </div>
-            
+
             {isLoading && (
               <div className="flex items-center justify-center py-4">
                 <div className="flex items-center space-x-2">
@@ -206,7 +206,7 @@ export const AiChat = () => {
             )}
           </div>
         </ScrollArea>
-        
+
         <div className="p-4 border-t">
           <div className="flex items-center space-x-2">
             <Textarea
@@ -216,8 +216,8 @@ export const AiChat = () => {
               onKeyDown={handleKeyDown}
               className="flex-1 resize-none"
             />
-            <Button 
-              size="icon" 
+            <Button
+              size="icon"
               className="flex-shrink-0 bg-yellow-500 hover:bg-yellow-600"
               onClick={handleSendMessage}
               disabled={isLoading || inputValue.trim() === ""}
@@ -226,11 +226,11 @@ export const AiChat = () => {
             </Button>
           </div>
           {!openAiAvailable && (
-            <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
-              <span>Nota: La funcionalidad completa de IA no está activa.</span>
-              <Button 
-                variant="outline" 
-                size="sm" 
+            <div className="flex flex-col text-center sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-yellow-400 mt-2 w-full">
+              <span className="block sm:w-auto">Nota: La funcionalidad completa de IA no está activa.</span>
+              <Button
+                variant="outline"
+                size="sm"
                 className="text-xs h-7"
                 onClick={() => window.open("https://platform.openai.com/api-keys", "_blank")}
               >
