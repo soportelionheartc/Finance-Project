@@ -8,13 +8,69 @@ import { AssetList } from "@/components/finance/asset-list";
 import { useAuth } from "@/hooks/use-auth";
 import { MessageCircle, Linkedin, Instagram, Facebook, Globe } from "lucide-react";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
+import { useState } from "react";
+
+const consejosFinancieros = [
+  "Diversifica tus inversiones para reducir riesgos.",
+  "Establece un fondo de emergencia antes de invertir.",
+  "No inviertas dinero que puedas necesitar a corto plazo.",
+  "Revisa y ajusta tu portafolio periódicamente.",
+  "Evita tomar decisiones impulsivas por emociones.",
+  "Infórmate sobre los productos financieros antes de invertir.",
+  "Aprovecha el interés compuesto invirtiendo a largo plazo.",
+  "No pongas todos tus recursos en un solo activo.",
+  "Consulta fuentes confiables y asesores certificados.",
+  "Ten claros tus objetivos financieros y plazos."
+];
+
+function CarruselConsejos() {
+  const [index, setIndex] = useState(0);
+  return (
+    <div className="relative w-full mx-auto p-4 my-6 flex items-center justify-center min-h-[100px] overflow-hidden">
+      <button
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow hover:bg-yellow-400 z-10"
+        onClick={() => setIndex((prev) => (prev - 1 + consejosFinancieros.length) % consejosFinancieros.length)}
+        aria-label="Anterior"
+      >
+        &larr;
+      </button>
+      <span className="text-yellow-50 text-center px-8 block max-w-[80%] break-words mx-auto">
+        {consejosFinancieros[index]}
+      </span>
+      <button
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow hover:bg-yellow-400 z-10"
+        onClick={() => setIndex((prev) => (prev + 1) % consejosFinancieros.length)}
+        aria-label="Siguiente"
+      >
+        &rarr;
+      </button>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { user } = useAuth();
+  const [showModal, setShowModal] = useState(true);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/5 backdrop-blur-xs">
+          <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in relative">
+            <button
+              className="absolute top-2 right-2 text-yellow-500 bg-transparent text-xl font-bold hover:text-yellow-400 mr-3"
+              onClick={() => setShowModal(false)}
+              aria-label="Cerrar"
+            >
+              ×
+            </button>
+            <h4 className="text-lg font-bold text-yellow-500 mb-2">Hola, {user?.name}</h4>
+            <p className="text-gray-300 mb-4">Antes de disfrutar de las funcionalidades de la app te queremos dejar algunos consejos financieros</p>
+            <CarruselConsejos />
+          </div>
+        </div>
+      )}
 
       <main className="flex-1 container mx-auto px-4 py-6">
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
@@ -25,6 +81,7 @@ export default function HomePage() {
             Bienvenido a tu dashboard financiero con IA de Lion Heart Capital
           </p>
         </div>
+        <CarruselConsejos />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Primera columna */}
@@ -38,24 +95,18 @@ export default function HomePage() {
             <MarketOverview />
             <NewsFeed />
           </div>
-
-          {/* Tercera columna */}
-          <div className="space-y-6">
-            <AiChat />
-            <AssetList />
-          </div>
         </div>
       </main>
 
       <footer className="border-t py-6 text-sm text-muted-foreground">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-4">
-            <div>
-              <p className="font-medium text-primary mb-2">Integración Blockchain</p>
-              <p className="text-xs max-w-md">
+            <div className="w-full md:w-1/2 flex flex-col items-center p-6 rounded-lg shadow-sm">
+              <p className="font-semibold text-primary mb-2 text-center">Integración Blockchain</p>
+              <p className="text-xs max-w-md text-center text-muted-foreground mb-3">
                 Conecta tu wallet de Ethereum para gestionar tus activos digitales y criptomonedas.
               </p>
-              <button className="mt-2 px-4 py-2 bg-yellow-500 text-black text-xs font-medium rounded">Iniciar Sesión para Acceder</button>
+              <button className="mt-2 px-6 w-[150px] py-2 bg-yellow-500 break-words hover:bg-yellow-400 text-black text-sm font-semibold rounded-lg shadow transition-all">Iniciar Sesión con Blockchain</button>
             </div>
 
             <div className="flex flex-col items-center md:items-end">
