@@ -44,17 +44,17 @@ export default function AuthPage() {
 
   // Función para cerrar sesión manualmente
   const handleLogout = () => {
-    fetch('/api/logout', { 
+    fetch('/api/logout', {
       method: 'POST',
       credentials: 'include'
     })
-    .then(() => {
-      // Recargar la página después de cerrar sesión
-      window.location.reload();
-    })
-    .catch(err => {
-      console.error('Error al cerrar sesión:', err);
-    });
+      .then(() => {
+        // Recargar la página después de cerrar sesión
+        window.location.reload();
+      })
+      .catch(err => {
+        console.error('Error al cerrar sesión:', err);
+      });
   };
 
   // Funciones de envío de formularios
@@ -76,7 +76,7 @@ export default function AuthPage() {
       <div className="flex min-h-screen bg-black items-center justify-center">
         <div className="w-full max-w-md p-8 rounded-lg border border-zinc-800 bg-zinc-900 shadow-lg">
           <div className="text-center mb-6">
-            <LionLogo withText size="lg" />
+            <LionLogo  withText size="lg" />
             <h2 className="mt-6 text-xl font-bold text-white">
               Ya has iniciado sesión
             </h2>
@@ -87,7 +87,7 @@ export default function AuthPage() {
           <div className="space-y-4">
             <Button
               className="w-full bg-primary hover:bg-primary/90 text-black"
-              onClick={() => window.location.href = "/"}
+              onClick={() => window.location.href = "/dashboard"}
             >
               Ir a la página de inicio
             </Button>
@@ -199,7 +199,7 @@ export default function AuthPage() {
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("username")}
                         />
-                        
+
                       </div>
 
                       <div className="space-y-2">
@@ -211,7 +211,7 @@ export default function AuthPage() {
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("password")}
                         />
-                        
+
                       </div>
 
                       <Button
@@ -234,21 +234,21 @@ export default function AuthPage() {
               <TabsContent value="register">
                 <Card className="bg-black border-zinc-800">
                   <CardContent className="pt-6">
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                      {/* Modal personalizado para error de registro */}
-                      {registerMutation.error && (
-                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
-                          <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
-                            <h4 className="text-lg font-bold text-yellow-500 mb-2">Registro fallido</h4>
-                            <p className="text-gray-300 mb-4">
-                              {registerMutation.error.message || "Error al registrarse. Por favor verifica los datos e intenta de nuevo."}
-                            </p>
-                            <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => registerMutation.reset()}>
-                              Cerrar
-                            </Button>
-                          </div>
+                    {/* Modal personalizado para error de registro */}
+                    {registerMutation.error && (
+                      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
+                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
+                          <h4 className="text-lg font-bold text-yellow-500 mb-2">Registro fallido</h4>
+                          <p className="text-gray-300 mb-4">
+                            Error al registrarse. Por favor verifica los datos e intenta de nuevo.
+                          </p>
+                          <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => registerMutation.reset()}>
+                            Cerrar
+                          </Button>
                         </div>
-                      )}
+                      </div>
+                    )}
+                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
 
                       <div className="space-y-2">
                         <Label htmlFor="register-name" className="text-gray-300">Nombre completo</Label>
@@ -301,6 +301,7 @@ export default function AuthPage() {
                         <Input
                           id="register-password"
                           type="password"
+                          placeholder="**********"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...registerForm.register("password")}
                         />
@@ -316,6 +317,7 @@ export default function AuthPage() {
                         <Input
                           id="register-confirm-password"
                           type="password"
+                          placeholder="**********"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...registerForm.register("passwordConfirm")}
                         />
