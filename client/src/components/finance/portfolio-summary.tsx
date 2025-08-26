@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { PlusCircle, TrendingUp, TrendingDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Link } from "wouter";
 
 interface Portfolio {
   id: number;
@@ -39,15 +40,18 @@ export const PortfolioSummary = () => {
 
   return (
     <Card className="bg-[#1a1400] text-[#ffd700] rounded-xl shadow-lg max-w-md mx-auto p-6">
-      <CardHeader className="flex flex-row items-center justify-between pb-4">
+      <div className="flex justify-center">
+        <Link href="/portafolio">
+          <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-yellow-900 rounded-lg px-4 py-2 font-semibold shadow">
+            Portafolio
+          </Button>
+        </Link>
+      </div>
+      <CardHeader className="flex flex-row items-center justify-center pb-4">
         <div className="space-y-1">
           <CardTitle className="text-center w-full mb-4">Resumen de Portafolios</CardTitle>
           <CardDescription className="text-center w-full">Visión general de tus inversiones</CardDescription>
         </div>
-        <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow">
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Nuevo
-        </Button>
       </CardHeader>
       <CardContent>
         <div className="flex items-end gap-3 mb-4">
