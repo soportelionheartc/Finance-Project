@@ -82,13 +82,17 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
                   <User className="mr-2 h-4 w-4" />
                   <span>Perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setLocation('/configuracion')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Configuración</span>
+                <DropdownMenuItem onSelect={() => setLocation('/portafolio')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Mi Portafolio</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setLocation('/asistente-financiero')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Asistente Financiero</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setLocation('/configuracion')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Configuración</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
