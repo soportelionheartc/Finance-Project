@@ -95,6 +95,8 @@ http://localhost:5173
 
 # Cambios para realizar a la app web
 
+## Semana 1
+
 ~~- Redireccion correcta a las paginas respectivas de Acciones Colombia, en especifico a las empresas: Ecopetrol, Bancolombia, Grupo Argos.~~
 
 ~~- Placeholder del campo Contraseña en el formulario de inicio de sesión.~~
@@ -139,6 +141,8 @@ http://localhost:5173
 
 ~~- En la base de datos estaba el usuario admin con rol de User, lo cual es incorrecto, se deberia cambiar a Admin. ~~
 
+## Semana 2
+
 ~~- Que la applicacion sea muy amigable, gamificada y eduativa metiante mensajes a la hora de iniciar sesion como tips financieros o datos curiosos.~~
 
 ~~- Organizacion de la distribucion de los elementos al iniciar sesion, Resumen de portafolios.~~
@@ -147,14 +151,45 @@ http://localhost:5173
 
 ~~- Implementar boton "Ver mas" que despliegue mas graficas de distintos tipos (modelos)~~
 
-- Implementar tipos de graficas.
-
 ~~- Eliminar seccion de IA de la parte de los usuarios e implementarla como una seccion del menu desplegable del icono arriba a la derecha, que diga "Asistente Financiero" y al hacer click se despliegue un modal con la funcionalidad de IA.~~
 
 ~~- Arreglar footer con estilos mejores para los usuarios~~
 
-- Revisar la implementacion de Crypto (Foto)(Jupiter)
-
 ~~- Funcionalidad de montar archivos en los usuarios en la seccion de graficas.~~
 
 ~~- Correccion footer de integracion con blockchein~~
+
+## Semana 3
+
+~~- Corregir estructura de la pagina de contacto~~
+
+~~- Validacion del usuario a la hora de registrarse~~
+
+~~- Funcionalidades principales del Home (Portfolio)~~
+
+~~- Organizar toda la seccion de portafolio y funcionalidades~~
+
+- Implemetnar funcinalidad de enviar correo desde la pagina de contacto (Esta a medias)
+
+~~- Seccion Foro para el usuario~~
+
+### Semana 4
+
+- Implementar distintos tipos de graficas en la seccion de graficas del usuario
+
+- Mensaje de eliminar un reply o publicacion en el foro
+
+- Consitencia entre tablas y bd.
+
+- Investigar sobre modelos de IA para la app y base de datos para la aplicacion movil.
+
+
+# Comandos Versiones viejas
+
+```bash
+git log --oneline
+git stash
+git checkout <hash_commit>
+ git checkout main
+git stash pop 
+```
