@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Header } from "@/components/layout/header";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, {
@@ -36,26 +37,31 @@ export default function ContactPage() {
     },
   });
 
-  const onSubmit = (data: ContactFormValues) => {
-    console.log(data);
-    toast({
-      title: "Mensaje enviado",
-      description: "Gracias por contactarnos. Responderemos a la brevedad.",
-    });
+  const onSubmit = async (data: ContactFormValues) => {
+  const res = await fetch("/api/contact", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (res.ok) {
+    toast({ title: "Mensaje enviado", description: "Gracias por contactarnos." });
     form.reset();
-  };
+  } else {
+    toast({ title: "Error", description: "No se pudo enviar el mensaje.", variant: "destructive" });
+  }
+};
 
   return (
-    <div className="flex flex-col min-h-screen bg-black">
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
       <div className="max-w-7xl mx-auto w-full py-4 px-4">
-        <div className="flex items-center mb-6">
+        <div className=" justify-center flex items-center mb-3">
           <Link href="/">
             <Button className="mr-2 bg-primary text-black hover:bg-primary/90">
               <ArrowLeft className="h-5 w-5 mr-1" />
               Regresar
             </Button>
           </Link>
-          <h2 className="text-xl font-semibold">Contacto</h2>
         </div>
         
         <div className="mb-8 text-center">
