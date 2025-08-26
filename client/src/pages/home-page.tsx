@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { MessageCircle, Linkedin, Instagram, Facebook, Globe } from "lucide-react";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
 import { useState } from "react";
+import BasicForum from "@/components/basic-forum";
 
 const consejosFinancieros = [
   "Diversifica tus inversiones para reducir riesgos.",
@@ -94,6 +95,10 @@ export default function HomePage() {
           <div className="space-y-6">
             <MarketOverview />
             <NewsFeed />
+          </div>
+
+          <div>
+            <BasicForum />
           </div>
         </div>
       </main>
