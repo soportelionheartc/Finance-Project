@@ -85,6 +85,8 @@ import {
   Download
 } from "lucide-react";
 
+import { useEffect } from "react";
+
 export default function AdminPage() {
   const { user, isAdmin } = useAuth();
   const [selectedTab, setSelectedTab] = useState("dashboard");
@@ -100,9 +102,23 @@ export default function AdminPage() {
     status: "all",
   });
 
-  // Datos para el tablero administrativo
+  // Stats del dashboard: solo 'Usuarios Totales' dinámico desde la BD
+  const [totalUsers, setTotalUsers] = useState<string>("-");
+  useEffect(() => {
+    async function fetchTotalUsers() {
+      try {
+        const res = await fetch("/api/admin/users", { credentials: "include" });
+        if (!res.ok) throw new Error("Error al obtener usuarios");
+        const data = await res.json();
+        setTotalUsers(data.length ? String(data.length) : "0");
+      } catch (err) {
+        setTotalUsers("-");
+      }
+    }
+    fetchTotalUsers();
+  }, []);
   const stats = [
-    { id: 1, title: "Usuarios Totales", value: "124", icon: <Users className="h-5 w-5 text-primary" />, change: "+12% este mes" },
+    { id: 1, title: "Usuarios Totales", value: totalUsers, icon: <Users className="h-5 w-5 text-primary" />, change: "" },
     { id: 2, title: "Accesos Diarios", value: "38", icon: <Activity className="h-5 w-5 text-primary" />, change: "+8% vs. ayer" },
     { id: 3, title: "Retención", value: "76%", icon: <UsersRound className="h-5 w-5 text-primary" />, change: "+2% este mes" },
     { id: 4, title: "Premium", value: "16", icon: <Shield className="h-5 w-5 text-primary" />, change: "+3 nuevos" },
@@ -117,13 +133,34 @@ export default function AdminPage() {
     status: "active" | "inactive";
     lastLogin: string;
     email: string;
-  }>>([
-    { id: 1, username: "carlos_rodriguez", name: "Carlos Rodríguez", role: "user", status: "active", lastLogin: "Hace 2 horas", email: "carlos@ejemplo.com" },
-    { id: 2, username: "maria_gomez", name: "María Gómez", role: "user", status: "active", lastLogin: "Hace 1 día", email: "maria@ejemplo.com" },
-    { id: 3, username: "jplhc", name: "Juan Pablo López", role: "admin", status: "active", lastLogin: "Ahora", email: "admin@lionheartcapital.com" },
-    { id: 4, username: "luis_perez", name: "Luis Pérez", role: "user", status: "inactive", lastLogin: "Hace 10 días", email: "luis@ejemplo.com" },
-    { id: 5, username: "ana_martinez", name: "Ana Martínez", role: "user", status: "active", lastLogin: "Hace 5 horas", email: "ana@ejemplo.com" },
-  ]);
+  }>>([]);
+
+  // Cargar usuarios desde la API al montar
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const res = await fetch("/api/admin/users", { credentials: "include" });
+        if (!res.ok) throw new Error("Error al obtener usuarios");
+        const data = await res.json();
+        // Mapear los datos para agregar status y lastLogin si no existen
+        setUsers(
+          data.map((u: any) => ({
+            id: u.id,
+            username: u.username,
+            name: u.name,
+            role: u.role || (u.username === "jplhc" ? "admin" : "user"),
+            status: "active", // Puedes ajustar según tu modelo
+            lastLogin: u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "-",
+            email: u.email,
+          }))
+        );
+      } catch (err) {
+        // Si hay error, dejar usuarios vacío
+        setUsers([]);
+      }
+    }
+    fetchUsers();
+  }, []);
 
 
   // Formulario nuevo usuario
@@ -157,30 +194,59 @@ export default function AdminPage() {
     }
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (selectedUserIds.size === 0) return;
-    setUsers(prev => prev.filter(u => !selectedUserIds.has(u.id)));
-    setSelectedUserIds(new Set());
-  };
+    // Eliminar en la base de datos
+    await Promise.all(
+      Array.from(selectedUserIds).map(async (id) => {
+        await fetch(`/api/admin/users/${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+      })
+  );
+  // Actualizar la lista local
+  setUsers(prev => prev.filter(u => !selectedUserIds.has(u.id)));
+  setSelectedUserIds(new Set());
+};
 
   const canSubmitNewUser = newUser.name && newUser.username && newUser.email;
 
   const handleCreateUser = () => {
     if (!canSubmitNewUser) return;
-    const id = Date.now();
-    setUsers(prev => [
-      ...prev,
-      {
-        id,
+    // Enviar al backend (solo frontend, no persistente aún)
+    fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
         name: newUser.name.trim(),
         username: newUser.username.trim(),
         email: newUser.email.trim(),
-        role: newUser.role,
-        status: newUser.status,
-        lastLogin: "Ahora",
-      }
-    ]);
-    setCreationSuccess(true);
+        password: "Lhcuser12345",
+      }),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Error al crear usuario");
+        const user = await res.json();
+        setUsers((prev) => [
+          ...prev,
+          {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            role: user.role || (user.username === "jplhc" ? "admin" : "user"),
+            status: "active",
+            lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "-",
+          },
+        ]);
+        setCreationSuccess(true);
+      })
+      .catch(() => {
+        setCreationSuccess(false);
+        alert("Error al crear usuario");
+      });
   };
 
   const handleAutoUsername = () => {
@@ -478,7 +544,7 @@ export default function AdminPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Se eliminarán {selectedUserIds.size} usuario{selectedUserIds.size > 1 ? 's' : ''}. Esto sólo afecta la vista actual (no persiste tras recargar).
+                            Se eliminarán {selectedUserIds.size} usuario{selectedUserIds.size > 1 ? 's' : ''}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
