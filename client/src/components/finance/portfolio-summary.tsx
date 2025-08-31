@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, TrendingUp, TrendingDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "wouter";
+import React, { useEffect, useState } from "react";
+import { use } from "passport";
 
 interface Portfolio {
   id: number;
@@ -15,34 +17,40 @@ interface Portfolio {
 
 export const PortfolioSummary = () => {
   // Datos de ejemplo para la visualización de portfolios
-  const portfolios: Portfolio[] = [
-    {
-      id: 1,
-      name: "Portafolio Principal",
-      totalValue: 45000,
-      userId: 1,
-      createdAt: "2025-01-01T00:00:00.000Z",
-      updatedAt: "2025-03-30T00:00:00.000Z"
-    },
-    {
-      id: 2,
-      name: "Inversiones a Largo Plazo",
-      totalValue: 75000,
-      userId: 1,
-      createdAt: "2025-01-15T00:00:00.000Z",
-      updatedAt: "2025-03-25T00:00:00.000Z"
-    }
-  ];
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/portfolios')
+      .then(res => {
+        if (!res.ok) throw new Error('Error fetching portfolios');
+        return res.json();
+      })
+
+      .then(data => {
+        setPortfolios(data);
+        setLoading(false);
+      })
+
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   const totalPortfolioValue = portfolios.reduce((total, p) => total + p.totalValue, 0);
   const monthlyChange = 3.45; // Ejemplo de cambio mensual en porcentaje
   const isPositiveChange = monthlyChange >= 0;
 
+  if (loading) return <div className="text-center py-8">Cargando portafolios...</div>;
+  if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+
   return (
     <Card className="bg-[#1a1400] text-[#ffd700] rounded-xl shadow-lg max-w-md mx-auto p-6">
       <div className="flex justify-center">
         <Link href="/portafolio">
-          <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-yellow-900 rounded-lg px-4 py-2 font-semibold shadow">
+          <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow">
             Portafolio
           </Button>
         </Link>
