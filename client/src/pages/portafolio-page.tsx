@@ -1,3 +1,4 @@
+// ...existing code...
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Header } from "@/components/layout/header";
@@ -11,8 +12,30 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowUp, ArrowDown, Plus, Filter, Download, ChartPie, TrendingUp, BarChart2, Wallet } from "lucide-react";
+import { useEffect } from "react";
+
+type Asset = {
+  id: number;
+  name: string;
+  symbol: string;
+  type: string;
+  quantity: number;
+  price: number;
+  value: number;
+  change24h: number;
+  allocation: number;
+  lastUpdated: string;
+};
 
 export default function PortafolioPage() {
+  // ...existing code...
+  // Portafolios del usuario
+  const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<number | null>(null);
+  // Portafolio seleccionado
+  const selectedPortfolio = portfolios.find(p => p.id === selectedPortfolioId);
+  const [portfolioError, setPortfolioError] = useState<string | null>(null);
+  const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(true);
   // Estados para los filtros de transacciones
   const [filterOperation, setFilterOperation] = useState("all");
   const [filterAsset, setFilterAsset] = useState("all");
@@ -70,103 +93,75 @@ export default function PortafolioPage() {
     fee: ''
   });
 
-  // Datos de ejemplo - Portfolio
-  const portfolio = {
-    id: 1,
-    name: "Mi Portafolio Principal",
-    totalValue: 65800000,
-    performanceDay: 1.5,
-    performanceWeek: 2.3,
-    performanceMonth: -0.8,
-    performanceYear: 12.5,
-    createdAt: "2025-01-15",
-    lastUpdated: "2025-04-01"
-  };
+  // ...existing code...
 
-  // Datos de ejemplo - Distribución de activos
-  const assetDistribution = [
-    { type: "Acciones", percentage: 45, value: 29610000 },
-    { type: "Criptomonedas", percentage: 30, value: 19740000 },
-    { type: "Fondos de Inversión", percentage: 15, value: 9870000 },
-    { type: "Renta Fija", percentage: 8, value: 5264000 },
-    { type: "Efectivo", percentage: 2, value: 1316000 }
-  ];
+  useEffect(() => {
+    async function fetchPortfolios() {
+      if (!user) return;
+      setIsLoadingPortfolio(true);
+      try {
+        const res = await fetch(`/api/portfolios?userId=${user.id}`, { credentials: "include" });
+        if (!res.ok) throw new Error("Error al obtener portafolios");
+        const data = await res.json();
+        setPortfolios(Array.isArray(data) ? data : []);
+        // Seleccionar el primero por defecto
+        if (data.length > 0) setSelectedPortfolioId(data[0].id);
+      } catch (err: any) {
+        setPortfolioError(err.message || "Error desconocido");
+      } finally {
+        setIsLoadingPortfolio(false);
+      }
+    }
+    fetchPortfolios();
+  }, [user]);
+
+  // Cargar activos cuando cambie el portafolio seleccionado
+  useEffect(() => {
+    async function fetchAssets() {
+      if (!selectedPortfolioId) {
+        setAssets([]);
+        return;
+      }
+      try {
+        const assetsRes = await fetch(`/api/portfolios/${selectedPortfolioId}/assets`, { credentials: "include" });
+        if (!assetsRes.ok) throw new Error("Error al obtener activos");
+        const assetsData = await assetsRes.json();
+        setAssets(Array.isArray(assetsData) ? assetsData : []);
+      } catch {
+        setAssets([]);
+      }
+    }
+    fetchAssets();
+  }, [selectedPortfolioId]);
+
+
 
   // Estado para activos
-  const [assets, setAssets] = useState([
-    {
-      id: 1,
-      name: "Bitcoin",
-      symbol: "BTC",
-      type: "crypto",
-      quantity: 0.45,
-      price: 66000000,
-      value: 29700000,
-      change24h: 2.1,
-      allocation: 45.15,
-      lastUpdated: "2025-04-01T10:30:00"
-    },
-    {
-      id: 2,
-      name: "Ethereum",
-      symbol: "ETH",
-      type: "crypto",
-      quantity: 5.2,
-      price: 3521000,
-      value: 18309200,
-      change24h: 3.5,
-      allocation: 27.82,
-      lastUpdated: "2025-04-01T10:30:00"
-    },
-    {
-      id: 3,
-      name: "Ecopetrol",
-      symbol: "ECO",
-      type: "stock",
-      quantity: 500,
-      price: 2510,
-      value: 1255000,
-      change24h: -1.2,
-      allocation: 1.91,
-      lastUpdated: "2025-04-01T10:30:00"
-    },
-    {
-      id: 4,
-      name: "Bancolombia",
-      symbol: "BCOL",
-      type: "stock",
-      quantity: 120,
-      price: 45200,
-      value: 5424000,
-      change24h: 0.8,
-      allocation: 8.24,
-      lastUpdated: "2025-04-01T10:30:00"
-    },
-    {
-      id: 5,
-      name: "Vanguard S&P 500 ETF",
-      symbol: "VOO",
-      type: "etf",
-      quantity: 10,
-      price: 1952000,
-      value: 19520000,
-      change24h: 0.5,
-      allocation: 29.66,
-      lastUpdated: "2025-04-01T10:30:00"
-    },
-    {
-      id: 6,
-      name: "TES Colombia 2026",
-      symbol: "TESCOL26",
-      type: "bond",
-      quantity: 1,
-      price: 5000000,
-      value: 5000000,
-      change24h: 0.1,
-      allocation: 7.59,
-      lastUpdated: "2025-04-01T10:30:00"
-    }
-  ]);
+  const [assets, setAssets] = useState<Asset[]>([]);
+
+  // Distribución de activos basada en la BD
+  const assetTypeLabels: Record<string, string> = {
+    crypto: "Criptomonedas",
+    stock: "Acciones",
+    etf: "ETF / Fondos",
+    bond: "Renta Fija",
+    cash: "Efectivo"
+  };
+
+  const assetDistribution = (() => {
+    if (!assets || assets.length === 0) return [];
+    const total = assets.reduce((sum, a) => sum + (typeof a.value === 'number' ? a.value : 0), 0);
+    const grouped: Record<string, number> = {};
+    assets.forEach(a => {
+      if (!grouped[a.type]) grouped[a.type] = 0;
+      grouped[a.type] += typeof a.value === 'number' ? a.value : 0;
+    });
+    return Object.entries(grouped).map(([type, value]) => ({
+      type: assetTypeLabels[type] || type,
+      value,
+      percentage: total > 0 ? Number((value / total * 100).toFixed(1)) : 0
+    }));
+  })();
 
   // Estado para el nuevo activo
   const [newAsset, setNewAsset] = useState({
@@ -274,7 +269,8 @@ export default function PortafolioPage() {
   };
 
   // Formato de porcentaje
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (value: number | undefined | null) => {
+    if (typeof value !== 'number' || isNaN(value)) return '-';
     return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
   };
 
@@ -309,11 +305,22 @@ export default function PortafolioPage() {
       <main className="container mx-auto px-4 py-6">
         <div className="flex flex-col space-y-2 mb-6 justify-center items-center">
           <h1 className="text-3xl font-bold text-yellow-500 mb-2">
-            Mi Portafolio
+            Mis Portafolios
           </h1>
           <p className="text-muted-foreground">
             Gestiona y analiza tus inversiones en un solo lugar
           </p>
+          {portfolios.length > 1 && (
+            <div className="sticky top-0 z-20 pb-2 overflow-x-auto w-full justify-center flex">
+              <Tabs value={selectedPortfolioId ? String(selectedPortfolioId) : undefined} onValueChange={val => setSelectedPortfolioId(Number(val))}>
+                <TabsList className="gap-2 justify-center gap-2">
+                  {[...portfolios].sort((a, b) => a.id - b.id).map((p) => (
+                    <TabsTrigger key={p.id} value={String(p.id)}>{p.name}</TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -323,53 +330,78 @@ export default function PortafolioPage() {
                 <CardTitle className="text-2xl font-medium">
                   Valor Total
                 </CardTitle>
-                <div className="text-xl font-bold text-muted-foreground ml-4">{formatCurrency(portfolio.totalValue)}</div>
+                <div className="text-xl font-bold text-muted-foreground ml-4">{selectedPortfolio ? formatCurrency(selectedPortfolio.totalValue) : '-'}</div>
                 <Wallet className="h-4 w-4 text-primary ml-4" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-center text-xs text-green-500 mt-1">
-                <span className="text-sm">{formatPercentage(portfolio.performanceDay)} hoy</span>
+                <span className="text-sm">
+                  {selectedPortfolio && selectedPortfolio.performanceDay !== undefined
+                    ? `${formatPercentage(selectedPortfolio.performanceDay)} hoy`
+                    : 'No hay datos de rendimiento diario disponibles'}
+                </span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-2xl font-medium">
-                Rendimiento
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-2 text-xs">
-                <div>
-                  <p className="text-muted-foreground text-base">Día</p>
-                  <p className={`font-medium text-sm ${getChangeColor(portfolio.performanceDay)}`}>
-                    {formatPercentage(portfolio.performanceDay)}
-                  </p>
+          {selectedPortfolio && (
+            selectedPortfolio.performanceDay !== undefined ||
+            selectedPortfolio.performanceWeek !== undefined ||
+            selectedPortfolio.performanceMonth !== undefined ||
+            selectedPortfolio.performanceYear !== undefined
+          ) ? (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-2xl font-medium">
+                  Rendimiento
+                </CardTitle>
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-2 text-xs">
+                  <div>
+                    <p className="text-muted-foreground text-base">Día</p>
+                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceDay) : ''}`}>
+                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceDay) : '-'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-base">Semana</p>
+                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceWeek) : ''}`}>
+                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceWeek) : '-'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-base">Mes</p>
+                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceMonth) : ''}`}>
+                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceMonth) : '-'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-base">Año</p>
+                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceYear) : ''}`}>
+                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceYear) : '-'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-base">Semana</p>
-                  <p className={`font-medium text-sm ${getChangeColor(portfolio.performanceWeek)}`}>
-                    {formatPercentage(portfolio.performanceWeek)}
-                  </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-2xl font-medium">
+                  Rendimiento
+                </CardTitle>
+                <TrendingUp className="h-4 w-4 text-primary" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-center text-muted-foreground py-4">
+                  No hay datos de rendimiento disponibles para este portafolio.
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-base">Mes</p>
-                  <p className={`font-medium text-sm ${getChangeColor(portfolio.performanceMonth)}`}>
-                    {formatPercentage(portfolio.performanceMonth)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-base">Año</p>
-                  <p className={`font-medium text-sm ${getChangeColor(portfolio.performanceYear)}`}>
-                    {formatPercentage(portfolio.performanceYear)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           <Card className="bg-zinc-900 border-zinc-800">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -588,7 +620,7 @@ export default function PortafolioPage() {
                             <div className="text-xs text-muted-foreground">{asset.symbol}</div>
                           </TableCell>
                           <TableCell>
-                            <div className="capitalize">{asset.type}</div>
+                            <div className="capitalize">{assetTypeLabels[asset.type] || asset.type}</div>
                           </TableCell>
                           <TableCell>{asset.quantity}</TableCell>
                           <TableCell>{formatCurrency(asset.price)}</TableCell>
@@ -603,7 +635,11 @@ export default function PortafolioPage() {
                               {formatPercentage(asset.change24h)}
                             </div>
                           </TableCell>
-                          <TableCell>{asset.allocation.toFixed(2)}%</TableCell>
+                          <TableCell>{
+                            typeof asset.allocation === 'number' && !isNaN(asset.allocation)
+                              ? asset.allocation.toFixed(2) + '%'
+                              : '-'
+                          }</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -973,18 +1009,13 @@ export default function PortafolioPage() {
             <div className="flex w-full justify-between">
               <Button
                 className="bg-primary hover:bg-primary/90 text-black w-[150px] mb-4"
-                onClick={() => {
-                  // Validar datos
+                onClick={async () => {
                   if (!newAsset.name || !newAsset.symbol || !newAsset.quantity || !newAsset.price) return;
+                  if (!selectedPortfolio || !selectedPortfolio.id) return;
                   // Calcular valor y asignación
                   const value = Number(newAsset.quantity) * Number(newAsset.price);
-                  // Asignación: porcentaje respecto al total actual + nuevo
                   const totalValue = assets.reduce((acc, a) => acc + a.value, 0) + value;
-                  // Generar nuevo id
-                  const newId = assets.length > 0 ? Math.max(...assets.map(a => a.id)) + 1 : 1;
-                  // Nuevo activo
                   const assetToAdd = {
-                    id: newId,
                     name: newAsset.name,
                     symbol: newAsset.symbol,
                     type: newAsset.type,
@@ -995,9 +1026,33 @@ export default function PortafolioPage() {
                     allocation: (value / totalValue) * 100,
                     lastUpdated: newAsset.date || new Date().toISOString()
                   };
-                  setAssets([...assets, assetToAdd]);
-                  setShowAddAssetDialog(false);
-                  setNewAsset({ type: "crypto", name: "", symbol: "", quantity: "", price: "", date: "" });
+                  try {
+                    const res = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                      credentials: "include",
+                      body: JSON.stringify(assetToAdd)
+                    });
+                    if (!res.ok) throw new Error("Error al guardar el activo");
+                    // Recargar activos desde el backend
+                    const assetsRes = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, { credentials: "include" });
+                    const assetsData = await assetsRes.json();
+                    setAssets(Array.isArray(assetsData) ? assetsData : []);
+
+                    // Recargar portafolio actualizado
+                    const portfolioRes = await fetch(`/api/portfolios/${selectedPortfolio.id}`, { credentials: "include" });
+                    if (portfolioRes.ok) {
+                      const updatedPortfolio = await portfolioRes.json();
+                      setPortfolios(prev => prev.map(p => p.id === updatedPortfolio.id ? updatedPortfolio : p));
+                    }
+
+                    setShowAddAssetDialog(false);
+                    setNewAsset({ type: "crypto", name: "", symbol: "", quantity: "", price: "", date: "" });
+                  } catch (err) {
+                    alert("Error al guardar el activo");
+                  }
                 }}
               >
                 Añadir Activo
