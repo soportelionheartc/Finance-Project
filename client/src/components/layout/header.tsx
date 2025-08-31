@@ -84,7 +84,7 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setLocation('/portafolio')}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>Mi Portafolio</span>
+                  <span>Mis Portafolios</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setLocation('/asistente-financiero')}>
                   <User className="mr-2 h-4 w-4" />
