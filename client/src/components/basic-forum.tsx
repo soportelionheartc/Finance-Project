@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/use-auth";
 
 interface Post {
@@ -15,18 +16,32 @@ interface Reply {
 }
 
 const Forum: React.FC = () => {
+    // Estados para diálogos de confirmación
+    const [showDeletePostDialog, setShowDeletePostDialog] = useState<{ open: boolean, postId: number | null }>({ open: false, postId: null });
+    const [showDeleteReplyDialog, setShowDeleteReplyDialog] = useState<{ open: boolean, postId: number | null, replyId: number | null }>({ open: false, postId: null, replyId: null });
+
     // Eliminar publicación solo si el usuario es el autor
     const eliminarPublicacion = (postId: number) => {
-        if (window.confirm("¿Seguro que quieres eliminar esta publicación?")) {
-            const updatedPosts = posts.filter(post => post.id !== postId);
+        setShowDeletePostDialog({ open: true, postId });
+    };
+
+    const confirmarEliminarPublicacion = () => {
+        if (showDeletePostDialog.postId !== null) {
+            const updatedPosts = posts.filter(post => post.id !== showDeletePostDialog.postId);
             setPosts(updatedPosts);
             localStorage.setItem("forum-posts", JSON.stringify(updatedPosts));
         }
+        setShowDeletePostDialog({ open: false, postId: null });
     };
 
     // Eliminar respuesta solo si el usuario es el autor
     const eliminarRespuesta = (postId: number, replyId: number) => {
-        if (window.confirm("¿Seguro que quieres eliminar esta respuesta?")) {
+        setShowDeleteReplyDialog({ open: true, postId, replyId });
+    };
+
+    const confirmarEliminarRespuesta = () => {
+        const { postId, replyId } = showDeleteReplyDialog;
+        if (postId !== null && replyId !== null) {
             const updatedPosts = posts.map(post =>
                 post.id === postId
                     ? {
@@ -38,6 +53,7 @@ const Forum: React.FC = () => {
             setPosts(updatedPosts);
             localStorage.setItem("forum-posts", JSON.stringify(updatedPosts));
         }
+        setShowDeleteReplyDialog({ open: false, postId: null, replyId: null });
     };
     const { user } = useAuth();
     const defaultPosts: Post[] = [
@@ -168,6 +184,38 @@ const Forum: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            {/* AlertDialog para eliminar publicación */}
+            <AlertDialog open={showDeletePostDialog.open} onOpenChange={open => setShowDeletePostDialog({ ...showDeletePostDialog, open })}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Esta acción eliminará la publicación y no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setShowDeletePostDialog({ open: false, postId: null })}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmarEliminarPublicacion}>Eliminar</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* AlertDialog para eliminar respuesta */}
+            <AlertDialog open={showDeleteReplyDialog.open} onOpenChange={open => setShowDeleteReplyDialog({ ...showDeleteReplyDialog, open })}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Esta acción eliminará la respuesta y no se puede deshacer.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setShowDeleteReplyDialog({ open: false, postId: null, replyId: null })}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmarEliminarRespuesta}>Eliminar</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };
