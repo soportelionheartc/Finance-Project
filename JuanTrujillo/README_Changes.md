@@ -169,19 +169,21 @@ http://localhost:5173
 
 ~~- Organizar toda la seccion de portafolio y funcionalidades~~
 
-- Implemetnar funcinalidad de enviar correo desde la pagina de contacto (Esta a medias)
-
 ~~- Seccion Foro para el usuario~~
 
 ### Semana 4
 
-- Implementar distintos tipos de graficas en la seccion de graficas del usuario
+~~- Implementar distintos tipos de graficas en la seccion de graficas del usuario~~
 
-- Mensaje de eliminar un reply o publicacion en el foro
+~~- Implemetnar funcinalidad de enviar correo desde la pagina de contacto.~~
 
-- Consitencia entre tablas y bd.
+~~- Mensaje de eliminar un reply o publicacion en el foro~~
+
+~~- Consitencia entre tablas y bd.~~
 
 - Investigar sobre modelos de IA para la app y base de datos para la aplicacion movil.
+
+### Semana 5
 
 
 # Comandos Versiones viejas
