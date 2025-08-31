@@ -29,6 +29,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUserLastLogin(id: number): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(id: number): Promise<boolean>;
 
   // Portfolio operations
   getPortfolios(userId: number): Promise<Portfolio[]>;
@@ -74,6 +75,9 @@ export interface IStorage {
 
 // Memory Storage implementation
 export class MemStorage implements IStorage {
+  async deleteUser(id: number): Promise<boolean> {
+    return this.users.delete(id);
+  }
   private users: Map<number, User>;
   private portfolios: Map<number, Portfolio>;
   private assets: Map<number, Asset>;
@@ -139,7 +143,12 @@ export class MemStorage implements IStorage {
       createdAt: now,
       lastLogin: null,
       role: "user", // Establecer rol predeterminado
-      isEmailVerified: false // Establecer estado de verificación predeterminado
+      isEmailVerified: false, // Establecer estado de verificación predeterminado
+      profilePicture: null, // <-- Agrega esto
+      username: insertUser.username ?? null,
+      password: insertUser.password ?? null,
+      name: insertUser.name ?? null,
+      preferredLanguage: insertUser.preferredLanguage ?? null,
     };
     this.users.set(id, user);
     return user;
@@ -173,7 +182,15 @@ export class MemStorage implements IStorage {
   async createPortfolio(portfolio: InsertPortfolio): Promise<Portfolio> {
     const id = this.portfolioIdCounter++;
     const now = new Date();
-    const newPortfolio: Portfolio = { ...portfolio, id, createdAt: now, updatedAt: now };
+    const newPortfolio: Portfolio = {
+      ...portfolio,
+      id,
+      name: portfolio.name,
+      userId: portfolio.userId,
+      totalValue: portfolio.totalValue ?? 0,
+      createdAt: now,
+      updatedAt: now
+    };
     this.portfolios.set(id, newPortfolio);
     return newPortfolio;
   }
@@ -210,7 +227,21 @@ export class MemStorage implements IStorage {
   async createAsset(asset: InsertAsset): Promise<Asset> {
     const id = this.assetIdCounter++;
     const now = new Date();
-    const newAsset: Asset = { ...asset, id, createdAt: now, updatedAt: now };
+    const newAsset: Asset = {
+      ...asset,
+      id,
+      name: asset.name,
+      symbol: asset.symbol,
+      type: asset.type,
+      quantity: asset.quantity,
+      price: asset.price,
+      value: asset.value,
+      change24h: asset.change24h ?? null,
+      icon: asset.icon ?? null,
+      portfolioId: asset.portfolioId,
+      createdAt: now,
+      updatedAt: now
+    };
     this.assets.set(id, newAsset);
 
     // Update portfolio total value
@@ -290,7 +321,17 @@ export class MemStorage implements IStorage {
   async createStrategy(strategy: InsertStrategy): Promise<Strategy> {
     const id = this.strategyIdCounter++;
     const now = new Date();
-    const newStrategy: Strategy = { ...strategy, id, createdAt: now, updatedAt: now };
+    const newStrategy: Strategy = {
+      ...strategy,
+      id,
+      name: strategy.name,
+      userId: strategy.userId,
+      description: strategy.description ?? null,
+      parameters: strategy.parameters ?? {},
+      active: strategy.active ?? null,
+      createdAt: now,
+      updatedAt: now
+    };
     this.strategies.set(id, newStrategy);
     return newStrategy;
   }
@@ -317,7 +358,12 @@ export class MemStorage implements IStorage {
   async getChatHistory(userId: number): Promise<ChatEntry[]> {
     return Array.from(this.chats.values())
       .filter((chat) => chat.userId === userId)
-      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      .sort((a, b) => {
+        if (!a.timestamp && !b.timestamp) return 0;
+        if (!a.timestamp) return 1;
+        if (!b.timestamp) return -1;
+        return a.timestamp.getTime() - b.timestamp.getTime();
+      });
   }
 
   async saveChatMessage(chatEntry: InsertChatEntry): Promise<ChatEntry> {
@@ -346,7 +392,22 @@ export class MemStorage implements IStorage {
   async createWallet(wallet: InsertWallet): Promise<Wallet> {
     const id = this.walletIdCounter++;
     const now = new Date();
-    const newWallet: Wallet = { ...wallet, id, createdAt: now, updatedAt: now };
+    const newWallet: Wallet = {
+      ...wallet,
+      id,
+      userId: wallet.userId,
+      type: wallet.type,
+      address: wallet.address,
+      label: wallet.label ?? null,
+      publicKey: wallet.publicKey ?? null,
+      balance: wallet.balance ?? 0,
+      network: wallet.network ?? null,
+      isConnected: wallet.isConnected ?? false,
+      isDefault: wallet.isDefault ?? false,
+      lastSynced: wallet.lastSynced ?? null,
+      createdAt: now,
+      updatedAt: now
+    };
     this.wallets.set(id, newWallet);
     return newWallet;
   }
@@ -386,7 +447,18 @@ export class MemStorage implements IStorage {
   async saveDecentralizedMessage(message: InsertDecentralizedMessage): Promise<DecentralizedMessage> {
     const id = this.decentralizedMsgIdCounter++;
     const now = new Date();
-    const newMessage: DecentralizedMessage = { ...message, id, timestamp: now };
+    const newMessage: DecentralizedMessage = {
+      ...message,
+      id,
+      walletId: message.walletId ?? null,
+      senderAddress: message.senderAddress,
+      content: message.content,
+      topic: message.topic ?? null,
+      timestamp: now,
+      transactionHash: message.transactionHash ?? null,
+      chainId: message.chainId,
+      isEncrypted: message.isEncrypted ?? null
+    };
     this.decentralizedMsgs.set(id, newMessage);
     return newMessage;
   }
@@ -435,6 +507,13 @@ export class DatabaseStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return db.select().from(users);
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    await db.delete(users).where(eq(users.id, id));
+    // Verificar si el usuario fue eliminado
+    const user = await this.getUser(id);
+    return user === undefined;
   }
 
   // Portfolio operations

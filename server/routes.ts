@@ -10,6 +10,35 @@ import dotenv from "dotenv";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint para verificar si una clave secreta existe
+  // Montar el router para endpoints personalizados como /api/contact
+  const router = express.Router();
+  router.post("/api/contact", async (req, res) => {
+    const { name, email, message, to } = req.body;
+    try {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: `Nuevo mensaje de contacto de ${name} <${email}>`,
+        text: `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
+      };
+      const info = await transporter.sendMail(mailOptions);
+      console.log("[nodemailer] sendMail response:", info);
+      res.status(200).json({ success: true, info });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error("[nodemailer] error:", errorMessage);
+      res.status(500).json({ success: false, error: errorMessage });
+    }
+  });
+  app.use(router);
   app.get("/api/check-secret", (req, res) => {
     const { key } = req.query;
     if (!key || typeof key !== 'string') {
@@ -477,30 +506,3 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   return httpServer;
 }
-dotenv.config();
-const router = express.Router();
-router.post("/api/contact", async (req, res) => {
-  const { name, email, message } = req.body;
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: `Nuevo mensaje de contacto de ${name}`,
-      text: message,
-    });
-
-    res.status(200).json({ success: true });
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: errorMessage });
-  }
-});
-export default router;

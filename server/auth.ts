@@ -19,7 +19,7 @@ enum UserRole {
 
 // Extended user interface
 interface ExtendedUser extends SelectUser {
-  role?: UserRole;
+  role: "user" | "admin";
 }
 
 declare global {
@@ -39,7 +39,7 @@ async function hashPassword(password: string) {
 async function comparePasswords(supplied: string, stored: string) {
   const [hashed, salt] = stored.split(".");
   const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  const suppliedBuf = (await scryptAsync(supplied ?? "", salt, 64)) as Buffer;
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
@@ -105,7 +105,7 @@ export function setupAuth(app: Express) {
     new LocalStrategy(async (username, password, done) => {
       try {
         const user = await storage.getUserByUsername(username);
-        if (!user || !(await comparePasswords(password, user.password))) {
+  if (!user || !(await comparePasswords(password, user.password ?? ""))) {
           return done(null, false);
         } else {
           // Check if admin user
@@ -117,7 +117,7 @@ export function setupAuth(app: Express) {
           
           // Update last login time
           await storage.updateUserLastLogin(user.id);
-          return done(null, user);
+          return done(null, { ...user, role: user.username === "jplhc" ? "admin" : "user" });
         }
       } catch (error) {
         return done(error);
@@ -137,7 +137,7 @@ export function setupAuth(app: Express) {
           (user as ExtendedUser).role = UserRole.USER;
         }
       }
-      done(null, user);
+  done(null, user ? { ...user, role: user.username === "jplhc" ? "admin" : "user" } : null);
     } catch (error) {
       done(error, null);
     }
@@ -292,4 +292,25 @@ export function setupAuth(app: Express) {
       next(error);
     }
   });
+
+  app.delete("/api/admin/users/:id", isAdmin, async (req, res, next) => {
+    try {
+      const userId = parseInt(req.params.id, 10);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: "ID de usuario inválido" });
+      }
+      
+      // Prevent deletion of admin user
+      const userToDelete = await storage.getUser(userId);
+      if (userToDelete?.username === "jplhc") {
+        return res.status(400).json({ error: "No se puede eliminar el usuario administrador" });
+      }
+
+      await storage.deleteUser(userId);
+      res.sendStatus(204);
+    } catch (error) {
+      next(error);
+    }
+  });
 }
+
