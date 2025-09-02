@@ -181,10 +181,15 @@ http://localhost:5173
 
 ~~- Consitencia entre tablas y bd.~~
 
-- Investigar sobre modelos de IA para la app y base de datos para la aplicacion movil.
-
 ### Semana 5
 
+- Registro de usuario sugerencias de username
+
+- API para mercado de valores
+
+- API para registro y inicio de google y apple 
+
+- Mirar lo del rendimiento para implementar el resto de funcionalidades
 
 # Comandos Versiones viejas
 
