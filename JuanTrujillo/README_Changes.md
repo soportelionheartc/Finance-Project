@@ -183,13 +183,13 @@ http://localhost:5173
 
 ### Semana 5
 
-- Registro de usuario sugerencias de username
+~~- Registro de usuario sugerencias de username~~
 
 - API para mercado de valores
 
-- API para registro y inicio de google y apple 
+- API para registro y inicio de google y apple (parte)
 
-- Mirar lo del rendimiento para implementar el resto de funcionalidades
+- Mirar lo del rendimiento para implementar el resto de funcionalidades (parte)
 
 # Comandos Versiones viejas
 

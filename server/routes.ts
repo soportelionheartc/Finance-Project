@@ -21,7 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
         },
-      });
+      } as nodemailer.TransportOptions);
 
       const mailOptions = {
         from: process.env.EMAIL_USER,

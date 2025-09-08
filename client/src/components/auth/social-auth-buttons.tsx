@@ -79,8 +79,7 @@ export function SocialAuthButtons() {
         <Button
           type="button"
           variant="outline"
-          onClick={() => onSocialLogin("google")}
-          disabled={socialLoginMutation.isPending}
+          onClick={() => { window.location.href = "/api/auth/google"; }}
           className="flex items-center justify-center gap-2 bg-black border-zinc-700 text-white hover:bg-zinc-900"
         >
           <SiGoogle className="h-4 w-4" />

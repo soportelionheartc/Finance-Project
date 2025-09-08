@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real, json, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real, json, pgEnum, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -30,6 +30,13 @@ export const insertUserSchema = createInsertSchema(users).omit({
   role: true,
   isEmailVerified: true,
   profilePicture: true,
+});
+
+// Tabla de sesiones para Passport.js o express-session
+export const session = pgTable("session", {
+  sid: varchar("sid").primaryKey(),
+  sess: json("sess").notNull(),
+  expire: timestamp("expire").notNull(),
 });
 
 // Tabla para autenticación mediante proveedores externos
@@ -83,12 +90,21 @@ export const portfolios = pgTable("portfolios", {
   totalValue: real("total_value").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  initial_value: real("initial_value").default(0),
 });
 
 export const insertPortfolioSchema = createInsertSchema(portfolios).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+});
+
+// Tabla para el historial de valores del portafolio
+export const portfolio_history = pgTable("portfolio_history", {
+  id: serial("id").primaryKey(),
+  portfolio_id: integer("portfolio_id").notNull().references(() => portfolios.id),
+  value: real("value").notNull(),
+  date: timestamp("date").notNull()
 });
 
 // Asset schema

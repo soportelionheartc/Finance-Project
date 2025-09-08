@@ -189,7 +189,8 @@ export class MemStorage implements IStorage {
       userId: portfolio.userId,
       totalValue: portfolio.totalValue ?? 0,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      initial_value: portfolio.initial_value ?? null,
     };
     this.portfolios.set(id, newPortfolio);
     return newPortfolio;

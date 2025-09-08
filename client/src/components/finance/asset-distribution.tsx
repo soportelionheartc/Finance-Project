@@ -10,10 +10,10 @@ type AssetCategory = {
 };
 
 const ASSET_LABELS: Record<string, string> = {
-  crypto: "Criptomoneda",
+  crypto: "Cripto",
   stock: "Acción",
-  etf: "ETF y Fondos",
-  bond: "Renta Fija",
+  etf: "ETF-Fondos",
+  bond: "RentaFija",
   cash: "Efectivo",
 };
 
@@ -136,19 +136,19 @@ export const AssetDistribution = () => {
               {/* Gráfico de barras: Rendimiento individual por activo */}
               {assetData.length > 0 && (
                 <div className="mx-auto max-w-[350px] w-[350px] mr-4">
-                <BarChart width={300} height={300} data={assetData.map(a => ({
-                  activo: ASSET_LABELS[a.type] || a.type,
-                  rendimiento: a.percentage
-                }))}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="activo" />
-                  <YAxis />
-                  <Bar dataKey="rendimiento">
-                    {assetData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
+                  <BarChart width={300} height={300} data={assetData.map(a => ({
+                    activo: ASSET_LABELS[a.type] || a.type,
+                    rendimiento: a.percentage
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="activo" angle={70} textAnchor="start" interval={0} height={80} tick={{ fontSize: 15 }} />
+                    <YAxis />
+                    <Bar dataKey="rendimiento">
+                      {assetData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
                 </div>
               )}
             </div>

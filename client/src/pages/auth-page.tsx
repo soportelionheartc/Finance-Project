@@ -21,6 +21,8 @@ export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation, socialLoginMutation } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
+  // Estado para sugerencias de username
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
 
   // Definir todos los hooks antes de cualquier retorno condicional
   const loginForm = useForm<LoginFormValues>({
@@ -41,6 +43,63 @@ export default function AuthPage() {
       name: "",
     },
   });
+
+  // Generar sugerencias de username para nombres y apellidos compuestos
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    registerForm.setValue("name", e.target.value);
+    const value = e.target.value.trim();
+    if (!value) {
+      setUsernameSuggestions([]);
+      return;
+    }
+    const partes = value.split(/\s+/).filter(Boolean);
+    if (partes.length < 2) {
+      setUsernameSuggestions([partes[0]?.toLowerCase() || ""]);
+      return;
+    }
+    // Ejemplo: Juan David Perez Gomez
+    const nombres = partes.slice(0, -2); // todos menos los dos últimos
+    const apellidos = partes.slice(-2); // los dos últimos
+    const primerNombre = partes[0] || "";
+    const segundoNombre = partes[1] || "";
+    const primerApellido = apellidos[0] || "";
+    const segundoApellido = apellidos[1] || "";
+    const iniciales = partes.map(p => p[0]).join("");
+    // Números aleatorios para combinaciones
+    const nums = [
+      Math.floor(Math.random() * 100),
+      Math.floor(Math.random() * 900 + 100),
+      new Date().getFullYear() % 100, // dos últimos dígitos del año
+    ];
+    const combinaciones = [
+      `${primerNombre}${primerApellido}`,
+      `${primerNombre}${segundoApellido}`,
+      `${primerNombre}.${primerApellido}`,
+      `${primerNombre}_${primerApellido}`,
+      `${primerNombre}${segundoNombre}${primerApellido}`,
+      `${primerNombre}${segundoNombre}`,
+      `${primerNombre}${segundoNombre}${primerApellido}${segundoApellido}`,
+      `${primerNombre[0] || ''}${primerApellido}`,
+      `${primerNombre}${primerApellido[0] || ''}`,
+      `${iniciales}`,
+      `${primerNombre}${segundoNombre[0] || ''}${primerApellido}`,
+      `${primerNombre}${primerApellido}${segundoApellido}`,
+      // combinaciones con números
+      `${primerNombre}${primerApellido}${nums[0]}`,
+      `${primerNombre}${primerApellido}${nums[1]}`,
+      `${primerNombre}${primerApellido}${nums[2]}`,
+      `${primerNombre}.${primerApellido}${nums[0]}`,
+      `${primerNombre}_${primerApellido}${nums[1]}`,
+      `${iniciales}${nums[2]}`,
+      `${primerNombre}${segundoNombre}${primerApellido}${nums[0]}`,
+    ];
+    setUsernameSuggestions(combinaciones.map(s => s.toLowerCase()).filter(Boolean));
+  };
+
+  // Autocompletar username al hacer clic en sugerencia
+  const handleSuggestionClick = (suggestion: string) => {
+    registerForm.setValue("username", suggestion);
+  };
 
   // Función para cerrar sesión manualmente
   const handleLogout = () => {
@@ -76,7 +135,7 @@ export default function AuthPage() {
       <div className="flex min-h-screen bg-black items-center justify-center">
         <div className="w-full max-w-md p-8 rounded-lg border border-zinc-800 bg-zinc-900 shadow-lg">
           <div className="text-center mb-6">
-            <LionLogo  withText size="lg" />
+            <LionLogo withText size="lg" />
             <h2 className="mt-6 text-xl font-bold text-white">
               Ya has iniciado sesión
             </h2>
@@ -257,6 +316,7 @@ export default function AuthPage() {
                           placeholder="Nombre y apellido"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...registerForm.register("name")}
+                          onChange={handleNameChange}
                         />
                         {registerForm.formState.errors.name && (
                           <p className="text-sm font-medium text-destructive">
@@ -273,6 +333,21 @@ export default function AuthPage() {
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...registerForm.register("username")}
                         />
+                        {/* Sugerencias de username */}
+                        {usernameSuggestions.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {usernameSuggestions.map((s, i) => (
+                              <button
+                                type="button"
+                                key={s + i}
+                                className="px-2 py-1 bg-zinc-800 border border-primary text-primary rounded text-xs hover:bg-primary hover:text-black transition"
+                                onClick={() => handleSuggestionClick(s)}
+                              >
+                                {s}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                         {registerForm.formState.errors.username && (
                           <p className="text-sm font-medium text-destructive">
                             {registerForm.formState.errors.username.message}

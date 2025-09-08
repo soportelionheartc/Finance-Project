@@ -7,6 +7,8 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser, InsertUser } from "@shared/schema";
 import { log } from "./vite";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import 'dotenv/config';
 
 // Generate random session secret if not provided
 const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
@@ -24,7 +26,7 @@ interface ExtendedUser extends SelectUser {
 
 declare global {
   namespace Express {
-    interface User extends ExtendedUser {}
+    interface User extends ExtendedUser { }
   }
 }
 
@@ -47,10 +49,10 @@ export async function ensureAdminUser() {
   try {
     // Check if admin exists
     const adminUser = await storage.getUserByUsername("jplhc");
-    
+
     if (!adminUser) {
       log("Creating admin user: jplhc", "auth");
-      
+
       // Create admin user
       const admin: InsertUser = {
         username: "jplhc",
@@ -58,12 +60,12 @@ export async function ensureAdminUser() {
         email: "admin@lionheartcapital.com",
         name: "Lion Heart Admin"
       };
-      
+
       const createdAdmin = await storage.createUser(admin);
-      
+
       // Set admin role (this would normally be in a separate table in a real app)
       (createdAdmin as ExtendedUser).role = UserRole.ADMIN;
-      
+
       log("Admin user created successfully", "auth");
     } else {
       log("Admin user already exists", "auth");
@@ -82,6 +84,39 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
 }
 
 export function setupAuth(app: Express) {
+  // Google OAuth2 Strategy
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    callbackURL: "/api/auth/google/callback"
+  }, async (accessToken, refreshToken, profile, done) => {
+    try {
+      if (!profile.emails || !profile.emails[0]?.value) {
+        return done(new Error("No se recibió el email de Google"), undefined);
+      }
+      let user = await storage.getUserByEmail(profile.emails[0].value);
+      if (!user) {
+        user = await storage.createUser({
+          username: profile.displayName.replace(/\s/g, "_").toLowerCase(),
+          email: profile.emails[0].value,
+          name: profile.displayName,
+          password: null,
+        });
+      }
+      return done(null, user);
+    } catch (err) {
+      return done(err, undefined);
+    }
+  }));
+
+  app.get("/api/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+  app.get("/api/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/auth?error=google" }),
+    (req: Request, res: Response) => {
+      res.redirect("/dashboard"); // Cambia la ruta si quieres otro destino
+    }
+  );
   const sessionSettings: session.SessionOptions = {
     secret: SESSION_SECRET,
     resave: false,
@@ -105,7 +140,7 @@ export function setupAuth(app: Express) {
     new LocalStrategy(async (username, password, done) => {
       try {
         const user = await storage.getUserByUsername(username);
-  if (!user || !(await comparePasswords(password, user.password ?? ""))) {
+        if (!user || !(await comparePasswords(password, user.password ?? ""))) {
           return done(null, false);
         } else {
           // Check if admin user
@@ -114,7 +149,7 @@ export function setupAuth(app: Express) {
           } else {
             (user as ExtendedUser).role = UserRole.USER;
           }
-          
+
           // Update last login time
           await storage.updateUserLastLogin(user.id);
           return done(null, { ...user, role: user.username === "jplhc" ? "admin" : "user" });
@@ -137,7 +172,7 @@ export function setupAuth(app: Express) {
           (user as ExtendedUser).role = UserRole.USER;
         }
       }
-  done(null, user ? { ...user, role: user.username === "jplhc" ? "admin" : "user" } : null);
+      done(null, user ? { ...user, role: user.username === "jplhc" ? "admin" : "user" } : null);
     } catch (error) {
       done(error, null);
     }
@@ -150,7 +185,7 @@ export function setupAuth(app: Express) {
       if (existingUsername) {
         return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
       }
-      
+
       // Check if email exists
       const existingEmail = await storage.getUserByEmail(req.body.email);
       if (existingEmail) {
@@ -210,49 +245,16 @@ export function setupAuth(app: Express) {
     res.json(userWithoutPassword);
   });
 
-  // Simulated social login endpoints
-  app.post("/api/auth/google", async (req, res, next) => {
-    try {
-      // This is a simulation. In a real scenario, you'd use a proper OAuth flow and Google APIs
-      const randomId = Math.floor(Math.random() * 10000);
-      const email = `google_user_${randomId}@example.com`;
-      
-      // Check if email already exists
-      let user = await storage.getUserByEmail(email);
-      
-      if (!user) {
-        // Create new user
-        user = await storage.createUser({
-          username: `google_user_${randomId}`,
-          email,
-          password: await hashPassword(randomBytes(16).toString('hex')), // Random password
-          name: `Google User ${randomId}`,
-        });
-      }
-      
-      // Set role
-      (user as ExtendedUser).role = UserRole.USER;
-      
-      req.login(user, (err) => {
-        if (err) return next(err);
-        // Don't send password back to client
-        const { password, ...userWithoutPassword } = user;
-        res.status(200).json(userWithoutPassword);
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-  
+
   app.post("/api/auth/apple", async (req, res, next) => {
     try {
       // This is a simulation. In a real scenario, you'd use a proper OAuth flow and Apple Sign In APIs
       const randomId = Math.floor(Math.random() * 10000);
       const email = `apple_user_${randomId}@example.com`;
-      
+
       // Check if email already exists
       let user = await storage.getUserByEmail(email);
-      
+
       if (!user) {
         // Create new user
         user = await storage.createUser({
@@ -262,10 +264,10 @@ export function setupAuth(app: Express) {
           name: `Apple User ${randomId}`,
         });
       }
-      
+
       // Set role
       (user as ExtendedUser).role = UserRole.USER;
-      
+
       req.login(user, (err) => {
         if (err) return next(err);
         // Don't send password back to client
@@ -286,7 +288,7 @@ export function setupAuth(app: Express) {
         const { password, ...userWithoutPassword } = user;
         return userWithoutPassword;
       });
-      
+
       res.json(usersWithoutPasswords);
     } catch (error) {
       next(error);
@@ -299,7 +301,7 @@ export function setupAuth(app: Express) {
       if (isNaN(userId)) {
         return res.status(400).json({ error: "ID de usuario inválido" });
       }
-      
+
       // Prevent deletion of admin user
       const userToDelete = await storage.getUser(userId);
       if (userToDelete?.username === "jplhc") {

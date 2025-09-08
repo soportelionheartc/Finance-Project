@@ -1,4 +1,3 @@
-// ...existing code...
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Header } from "@/components/layout/header";
@@ -11,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowUp, ArrowDown, Plus, Filter, Download, ChartPie, TrendingUp, BarChart2, Wallet } from "lucide-react";
+import { ArrowRight, ArrowUp, ArrowDown, Plus, Filter, Download, ChartPie, TrendingUp, TrendingDown, BarChart2, Wallet } from "lucide-react";
 import { useEffect } from "react";
+import { AddAssetForm } from "@/components/finance/add-asset-form";
 
 type Asset = {
   id: number;
@@ -134,10 +134,9 @@ export default function PortafolioPage() {
     fetchAssets();
   }, [selectedPortfolioId]);
 
-
-
   // Estado para activos
   const [assets, setAssets] = useState<Asset[]>([]);
+
 
   // Distribución de activos basada en la BD
   const assetTypeLabels: Record<string, string> = {
@@ -237,6 +236,14 @@ export default function PortafolioPage() {
     }
   ]);
 
+
+  // Calcular el rendimiento total usando el valor inicial y actual del portafolio seleccionado
+  const initialPortfolioValue = selectedPortfolio?.initial_value ?? 0;
+  const currentPortfolioValue = selectedPortfolio?.totalValue ?? 0;
+  const totalReturn = initialPortfolioValue > 0
+    ? ((currentPortfolioValue - initialPortfolioValue) / initialPortfolioValue) * 100
+    : 0;
+
   // Estado para el texto de búsqueda
   const [searchText, setSearchText] = useState("");
 
@@ -298,6 +305,53 @@ export default function PortafolioPage() {
     return "text-gray-500";
   };
 
+  // --- Función para añadir un activo al portafolio seleccionado ---
+  const handleAddAsset = async () => {
+    if (!newAsset.name || !newAsset.symbol || !newAsset.quantity || !newAsset.price) return;
+    if (!selectedPortfolio || !selectedPortfolio.id) return;
+    // Calcular valor y asignación
+    const value = Number(newAsset.quantity) * Number(newAsset.price);
+    const totalValue = assets.reduce((acc, a) => acc + a.value, 0) + value;
+    const assetToAdd = {
+      name: newAsset.name,
+      symbol: newAsset.symbol,
+      type: newAsset.type,
+      quantity: Number(newAsset.quantity),
+      price: Number(newAsset.price),
+      value,
+      change24h: 0,
+      allocation: (value / totalValue) * 100,
+      lastUpdated: newAsset.date || new Date().toISOString()
+    };
+    try {
+      const res = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(assetToAdd)
+      });
+      if (!res.ok) throw new Error("Error al guardar el activo");
+      // Recargar activos desde el backend
+      const assetsRes = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, { credentials: "include" });
+      const assetsData = await assetsRes.json();
+      setAssets(Array.isArray(assetsData) ? assetsData : []);
+
+      // Recargar portafolio actualizado
+      const portfolioRes = await fetch(`/api/portfolios/${selectedPortfolio.id}`, { credentials: "include" });
+      if (portfolioRes.ok) {
+        const updatedPortfolio = await portfolioRes.json();
+        setPortfolios(prev => prev.map(p => p.id === updatedPortfolio.id ? updatedPortfolio : p));
+      }
+
+      setShowAddAssetDialog(false);
+      setNewAsset({ type: "crypto", name: "", symbol: "", quantity: "", price: "", date: "" });
+    } catch (err) {
+      alert("Error al guardar el activo");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -330,17 +384,27 @@ export default function PortafolioPage() {
                 <CardTitle className="text-2xl font-medium">
                   Valor Total
                 </CardTitle>
-                <div className="text-xl font-bold text-muted-foreground ml-4">{selectedPortfolio ? formatCurrency(selectedPortfolio.totalValue) : '-'}</div>
+                <div className="flex flex-col ml-4">
+                  <div className="text-xl font-bold text-muted-foreground">
+                    {selectedPortfolio ? formatCurrency(selectedPortfolio.totalValue) : '-'}
+                  </div>
+                </div>
                 <Wallet className="h-4 w-4 text-primary ml-4" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-xs text-green-500 mt-1">
-                <span className="text-sm">
-                  {selectedPortfolio && selectedPortfolio.performanceDay !== undefined
-                    ? `${formatPercentage(selectedPortfolio.performanceDay)} hoy`
-                    : 'No hay datos de rendimiento diario disponibles'}
-                </span>
+              <div className="text-base mt-1">
+                {initialPortfolioValue > 0 ? (
+                  <span className="text-muted-foreground flex items-center justify-center text-center w-full">
+                    Rendimiento total:
+                    <span className={`ml-2 flex items-center justify-center ${getChangeColor(totalReturn)}`}>
+                      {totalReturn >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+                      {formatPercentage(totalReturn)}
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">Sin datos</span>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -362,26 +426,46 @@ export default function PortafolioPage() {
                 <div className="grid grid-cols-4 gap-2 text-xs">
                   <div>
                     <p className="text-muted-foreground text-base">Día</p>
-                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceDay) : ''}`}>
-                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceDay) : '-'}
+                    <p className={`font-medium text-sm flex items-center ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceDay) : ''}`}>
+                      {selectedPortfolio ? (
+                        <>
+                          {selectedPortfolio.performanceDay > 0 ? <TrendingUp className="h-3.5 w-3.5 mr-1" /> : selectedPortfolio.performanceDay < 0 ? <TrendingDown className="h-3.5 w-3.5 mr-1" /> : null}
+                          {formatPercentage(selectedPortfolio.performanceDay)}
+                        </>
+                      ) : '-'}
                     </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-base">Semana</p>
-                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceWeek) : ''}`}>
-                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceWeek) : '-'}
+                    <p className={`font-medium text-sm flex items-center ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceWeek) : ''}`}>
+                      {selectedPortfolio ? (
+                        <>
+                          {selectedPortfolio.performanceWeek > 0 ? <TrendingUp className="h-3.5 w-3.5 mr-1" /> : selectedPortfolio.performanceWeek < 0 ? <TrendingDown className="h-3.5 w-3.5 mr-1" /> : null}
+                          {formatPercentage(selectedPortfolio.performanceWeek)}
+                        </>
+                      ) : '-'}
                     </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-base">Mes</p>
-                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceMonth) : ''}`}>
-                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceMonth) : '-'}
+                    <p className={`font-medium text-sm flex items-center ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceMonth) : ''}`}>
+                      {selectedPortfolio ? (
+                        <>
+                          {selectedPortfolio.performanceMonth > 0 ? <TrendingUp className="h-3.5 w-3.5 mr-1" /> : selectedPortfolio.performanceMonth < 0 ? <TrendingDown className="h-3.5 w-3.5 mr-1" /> : null}
+                          {formatPercentage(selectedPortfolio.performanceMonth)}
+                        </>
+                      ) : '-'}
                     </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-base">Año</p>
-                    <p className={`font-medium text-sm ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceYear) : ''}`}>
-                      {selectedPortfolio ? formatPercentage(selectedPortfolio.performanceYear) : '-'}
+                    <p className={`font-medium text-sm flex items-center ${selectedPortfolio ? getChangeColor(selectedPortfolio.performanceYear) : ''}`}>
+                      {selectedPortfolio ? (
+                        <>
+                          {selectedPortfolio.performanceYear > 0 ? <TrendingUp className="h-3.5 w-3.5 mr-1" /> : selectedPortfolio.performanceYear < 0 ? <TrendingDown className="h-3.5 w-3.5 mr-1" /> : null}
+                          {formatPercentage(selectedPortfolio.performanceYear)}
+                        </>
+                      ) : '-'}
                     </p>
                   </div>
                 </div>
@@ -917,155 +1001,21 @@ export default function PortafolioPage() {
               Ingresa los detalles del activo que deseas añadir a tu portafolio
             </DialogDescription>
           </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-type" className="text-center">
-                Tipo
-              </Label>
-              <Select value={newAsset.type} onValueChange={value => setNewAsset({ ...newAsset, type: value })}>
-                <SelectTrigger id="asset-type" className="col-span-3">
-                  <SelectValue placeholder="Seleccionar tipo de activo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crypto">Criptomoneda</SelectItem>
-                  <SelectItem value="stock">Acción</SelectItem>
-                  <SelectItem value="etf">ETF / Fondo</SelectItem>
-                  <SelectItem value="bond">Renta Fija</SelectItem>
-                  <SelectItem value="cash">Efectivo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-name" className="text-center">
-                Nombre
-              </Label>
-              <Input
-                id="asset-name"
-                placeholder="Ej. Bitcoin"
-                className="col-span-3"
-                value={newAsset.name}
-                onChange={e => setNewAsset({ ...newAsset, name: e.target.value })}
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-symbol" className="text-center">
-                Símbolo
-              </Label>
-              <Input
-                id="asset-symbol"
-                placeholder="Ej. BTC"
-                className="col-span-3"
-                value={newAsset.symbol}
-                onChange={e => setNewAsset({ ...newAsset, symbol: e.target.value })}
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-quantity" className="text-center">
-                Cantidad
-              </Label>
-              <Input
-                id="asset-quantity"
-                type="number"
-                placeholder="Ej. 0.5"
-                className="col-span-3"
-                value={newAsset.quantity}
-                onChange={e => setNewAsset({ ...newAsset, quantity: e.target.value })}
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-price" className="text-center">
-                Precio Unitario
-              </Label>
-              <Input
-                id="asset-price"
-                type="number"
-                placeholder="Ej. 65000000"
-                className="col-span-3"
-                value={newAsset.price}
-                onChange={e => setNewAsset({ ...newAsset, price: e.target.value })}
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="asset-date" className="text-center">
-                Fecha de Compra
-              </Label>
-              <Input
-                id="asset-date"
-                type="date"
-                className="col-span-3 "
-                value={newAsset.date}
-                onChange={e => setNewAsset({ ...newAsset, date: e.target.value })}
-              />
-            </div>
-          </div>
-
+          <AddAssetForm
+            asset={newAsset}
+            setAsset={setNewAsset}
+            submitLabel="Añadir Activo"
+            onSubmit={handleAddAsset}
+            disabled={false}
+          />
           <DialogFooter>
-            <div className="flex w-full justify-between">
-              <Button
-                className="bg-primary hover:bg-primary/90 text-black w-[150px] mb-4"
-                onClick={async () => {
-                  if (!newAsset.name || !newAsset.symbol || !newAsset.quantity || !newAsset.price) return;
-                  if (!selectedPortfolio || !selectedPortfolio.id) return;
-                  // Calcular valor y asignación
-                  const value = Number(newAsset.quantity) * Number(newAsset.price);
-                  const totalValue = assets.reduce((acc, a) => acc + a.value, 0) + value;
-                  const assetToAdd = {
-                    name: newAsset.name,
-                    symbol: newAsset.symbol,
-                    type: newAsset.type,
-                    quantity: Number(newAsset.quantity),
-                    price: Number(newAsset.price),
-                    value,
-                    change24h: 0,
-                    allocation: (value / totalValue) * 100,
-                    lastUpdated: newAsset.date || new Date().toISOString()
-                  };
-                  try {
-                    const res = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json"
-                      },
-                      credentials: "include",
-                      body: JSON.stringify(assetToAdd)
-                    });
-                    if (!res.ok) throw new Error("Error al guardar el activo");
-                    // Recargar activos desde el backend
-                    const assetsRes = await fetch(`/api/portfolios/${selectedPortfolio.id}/assets`, { credentials: "include" });
-                    const assetsData = await assetsRes.json();
-                    setAssets(Array.isArray(assetsData) ? assetsData : []);
-
-                    // Recargar portafolio actualizado
-                    const portfolioRes = await fetch(`/api/portfolios/${selectedPortfolio.id}`, { credentials: "include" });
-                    if (portfolioRes.ok) {
-                      const updatedPortfolio = await portfolioRes.json();
-                      setPortfolios(prev => prev.map(p => p.id === updatedPortfolio.id ? updatedPortfolio : p));
-                    }
-
-                    setShowAddAssetDialog(false);
-                    setNewAsset({ type: "crypto", name: "", symbol: "", quantity: "", price: "", date: "" });
-                  } catch (err) {
-                    alert("Error al guardar el activo");
-                  }
-                }}
-              >
-                Añadir Activo
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowAddAssetDialog(false)}
-                className="hover:bg-primary/90 w-[150px] h-[42px]"
-              >
-                Cancelar
-              </Button>
-
-            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowAddAssetDialog(false)}
+              className="hover:bg-primary/90 w-[150px] h-[42px]"
+            >
+              Cancelar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
