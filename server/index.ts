@@ -2,10 +2,31 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import 'dotenv/config';
+import session from "express-session";
+import 'dotenv/config';
+import { storage } from "./storage";
+import passport from 'passport';
+import { randomBytes } from 'crypto';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Configuración de sesión y passport
+const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
+app.set("trust proxy", 1);
+app.use(session({
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: storage.sessionStore,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 1 día
+  }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   const start = Date.now();

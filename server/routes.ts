@@ -6,9 +6,12 @@ import OpenAI from "openai";
 import nodemailer from "nodemailer";
 import express from "express";
 import dotenv from "dotenv";
+import { set } from "date-fns";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  setupAuth(app);
+  
   // Endpoint para verificar si una clave secreta existe
   // Montar el router para endpoints personalizados como /api/contact
   const router = express.Router();
