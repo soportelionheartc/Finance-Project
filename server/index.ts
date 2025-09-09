@@ -1,3 +1,4 @@
+import { ensureAdminUser } from './auth';
 import path from 'path';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
@@ -10,6 +11,9 @@ import passport from 'passport';
 import { randomBytes } from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
+// Crear usuario admin si no existe
+ensureAdminUser();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
