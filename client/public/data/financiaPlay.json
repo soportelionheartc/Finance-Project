@@ -1,0 +1,272 @@
+{
+  "meta": {
+    "product": "FinanciaPlay",
+    "version": "1.0.1",
+    "generatedAt": "2025-11-02T12:00:00Z"
+  },
+  "levels": [
+    {
+      "id": "1",
+      "name": "Aprendiz del Dinero",
+      "description": "Conceptos básicos: dinero, ahorro, presupuesto",
+      "pointsToUnlock": 1000,
+      "games": [
+        {
+          "id": "1-1",
+          "type": "quiz_mc",
+          "title": "Quiz rápido",
+          "levels": [
+            {
+              "level": 1,
+              "points": 100,
+              "minPointsToPass": 70,
+              "timeLimitSec": 90,
+              "payload": {
+                "questions": [
+                  { "q": "¿Qué es un presupuesto?", "options": ["Plan para ingresos/gastos", "Crédito", "Impuesto"], "answerIndex": 0, "explain": "Un presupuesto organiza ingresos y gastos para priorizar y decidir." },
+                  { "q": "Fondo de emergencia recomendado:", "options": ["½ mes", "3–6 meses", "24 meses"], "answerIndex": 1, "explain": "La guía típica sugiere 3–6 meses de gastos esenciales." },
+                  { "q": "Gastar menos de lo que ganas significa:", "options": ["Endeudarse", "Ahorrar", "Invertir todo en cripto"], "answerIndex": 1, "explain": "Ingresos mayores a gastos permiten generar ahorro." }
+                ]
+              },
+              "unlocked": true
+            },
+            {
+              "level": 2,
+              "points": 120,
+              "minPointsToPass": 85,
+              "timeLimitSec": 90,
+              "payload": {
+                "questions": [
+                  { "q": "Interés compuesto significa:", "options": ["Interés solo al capital", "Interés sobre interés", "No hay intereses"], "answerIndex": 1, "explain": "El interés compuesto capitaliza los intereses y acelera el crecimiento." },
+                  { "q": "Cuál es la mejor estrategia para reducir deuda cara?", "options": ["Pagar mínimo", "Pagar primero de alto interés", "Ignorar deuda"], "answerIndex": 1, "explain": "Priorizar deuda cara libera flujo y reduce riesgo financiero." },
+                  { "q": "Ahorrar es importante porque:", "options": ["Evita emergencias", "Aumenta gastos", "No sirve para nada"], "answerIndex": 0, "explain": "El ahorro protege frente a imprevistos y emergencias." }
+                ]
+              },
+              "unlocked": false
+            },
+            {
+              "level": 3,
+              "points": 150,
+              "minPointsToPass": 100,
+              "timeLimitSec": 120,
+              "payload": {
+                "questions": [
+                  { "q": "¿Qué porcentaje recomendado destinar a ahorro según 50/30/20?", "options": ["10%", "20%", "30%"], "answerIndex": 1, "explain": "La regla sugiere 20% para ahorro o pago de deuda." },
+                  { "q": "Qué es un gasto fijo?", "options": ["Arriendo mensual", "Cena esporádica", "Ropa nueva"], "answerIndex": 0, "explain": "Los gastos fijos se repiten mensualmente y son previsibles." },
+                  { "q": "Diversificar inversiones ayuda a:", "options": ["Reducir riesgo", "Aumentar riesgo", "No cambia nada"], "answerIndex": 0, "explain": "Diversificar reparte el riesgo de los activos y protege tu dinero." }
+                ]
+              },
+              "unlocked": false
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "type": "true_false",
+          "title": "Verdadero/Falso financiero",
+          "levels": [
+            {
+              "level": 4,
+              "points": 80,
+              "minPointsToPass":2,
+              "timeLimitSec": 60,
+              "payload": {
+                "questions": [
+                  { "question": "Gastar menos de lo que ganas es condición para ahorrar.", "answer": true, "explain": "Ingresos > Gastos permite generar ahorro." },
+                  { "question": "Las deudas de consumo suelen tener tasa menor que hipotecarias.", "answer": false, "explain": "En general, crédito de consumo y tarjetas tienen tasas más altas." },
+                  { "question": "Diversificar reduce riesgo no sistemático.", "answer": true, "explain": "Diversificar reparte el riesgo específico de cada activo." }
+                ]
+              },
+              "unlocked": false
+            },
+            {
+              "level": 5,
+              "points": 80,
+              "minPointsToPass":2,
+              "timeLimitSec": 60,
+              "payload": {
+                "questions": [
+                  { "question": "Ahorrar regularmente ayuda a enfrentar imprevistos.", "answer": true, "explain": "El ahorro permite manejar emergencias sin endeudarse." },
+                  { "question": "Invertir todo tu dinero en un solo activo es seguro.", "answer": false, "explain": "Diversificar reduce riesgos y protege tu capital." },
+                  { "question": "Pagar solo el mínimo de la tarjeta de crédito reduce deuda rápido.", "answer": false, "explain": "Solo pagar el mínimo aumenta los intereses y prolonga la deuda." }
+                ]
+              },
+              "unlocked": false
+            },
+            {
+              "level": 6,
+              "points": 80,
+              "minPointsToPass":2,
+              "timeLimitSec": 60,
+              "payload": {
+                "questions": [
+              { "question": "Es recomendable revisar tu presupuesto cada mes.", "answer": true, "explain": "El control mensual ayuda a mantener finanzas saludables." },
+              { "question": "Comprar impulsivamente siempre es buena estrategia.", "answer": false, "explain": "La compra impulsiva genera gastos innecesarios y dificulta ahorrar." },
+              { "question": "Diversificar significa repartir inversiones entre distintos activos.", "answer": true, "explain": "Diversificar protege tu dinero ante riesgos específicos." }
+            ]
+              },
+              "unlocked": false
+            }
+            ]
+        },
+        {
+  "id": "3",
+  "type": "decision",
+  "title": "Decisiones inteligentes",
+  "levels": [
+    {
+      "level": 7,
+      "points": 120,
+      "minPointsToPass": 2,
+      "timeLimitSec": 120,
+      "payload": {
+        "scenarios": [
+          {
+            "text": "Tienes $500 y quieres invertir. El banco ofrece 2% anual seguro y la bolsa 10% con riesgo moderado. ¿Qué opción eliges?",
+            "options": ["Banco seguro", "Bolsa riesgo moderado", "Guardar en casa"],
+            "correctIndex": 1
+          },
+          {
+            "text": "Recibiste un bono inesperado de $200. ¿Qué harías primero?",
+            "options": ["Gastar en ocio", "Ahorrar parcialmente y pagar deuda", "Invertir todo en criptos"],
+            "correctIndex": 1
+          }
+        ]
+      },
+      "unlocked": false
+    },
+    {
+      "level": 8,
+      "points": 120,
+      "minPointsToPass": 2,
+      "timeLimitSec": 120,
+      "payload": {
+        "scenarios": [
+          {
+            "text": "Tu tarjeta de crédito tiene 20% de interés anual y debes $1000. Solo puedes pagar $100/mes. ¿Cuál es la mejor estrategia?",
+            "options": ["Pagar mínimo y esperar", "Priorizar deuda de alto interés", "Solicitar nuevo crédito para pagar"],
+            "correctIndex": 1
+          },
+          {
+            "text": "Quieres ahorrar para emergencias pero tu sueldo es limitado. ¿Qué haces?",
+            "options": ["Ahorrar $10/mes", "No ahorrar y gastar todo", "Pedir préstamo para ahorrar más"],
+            "correctIndex": 0
+          },
+          {
+            "text": "Tu amigo te propone invertir en un negocio sin investigar. ¿Qué decisión tomas?",
+            "options": ["Invertir todo", "Investigar primero y decidir", "Rechazar sin pensar"],
+            "correctIndex": 1
+          }
+        ]
+      },
+      "unlocked": false
+    },
+    {
+      "level": 9,
+      "points": 120,
+      "minPointsToPass": 2,
+      "timeLimitSec": 120,
+      "payload": {
+        "scenarios": [
+          {
+            "text": "Tienes varios objetivos: comprar carro, ahorrar para vacaciones y fondo de emergencia. Tienes $1000 disponible. ¿Qué priorizas?",
+            "options": ["Carro primero", "Fondo de emergencia", "Vacaciones", "Invertir en acciones arriesgadas"],
+            "correctIndex": 1
+          },
+          {
+            "text": "Una inversión segura da poco retorno, otra riesgosa puede dar mucho pero también perderlo todo. Tu perfil es moderado. ¿Qué haces?",
+            "options": ["Invertir seguro", "Invertir riesgoso", "Dividir entre ambas opciones"],
+            "correctIndex": 2
+          },
+          {
+            "text": "Recibiste un ingreso extra y tienes deudas pequeñas y un fondo de emergencia pequeño. ¿Cómo lo asignas?",
+            "options": ["Pagar deudas primero", "Agregar al fondo de emergencia", "Gastar en ocio"],
+            "correctIndex": 0
+          }
+            ]
+          },
+          "unlocked": false
+        }
+      ]
+    },
+       {
+  "id": "4",
+  "type": "true_false",
+  "title": "Mitos y realidades",
+  "levels": [
+    {
+      "level": 10,
+      "points": 80,
+      "minPointsToPass": 2,
+      "timeLimitSec": 60,
+      "payload": {
+        "questions": [
+          {
+            "question": "Si una inversión promete retorno muy alto sin riesgo, probablemente es fraudulenta.",
+            "answer": true
+          },
+          {
+            "question": "Endeudarse siempre es malo para tus finanzas.",
+            "answer": false
+          },
+          {
+            "question": "Diversificar tu dinero reduce el riesgo de perderlo todo en un solo activo.",
+            "answer": true
+          }
+        ]
+      },
+      "unlocked": false
+    },
+    {
+      "level": 11,
+      "points": 80,
+      "minPointsToPass": 2,
+      "timeLimitSec": 60,
+      "payload": {
+        "questions": [
+          {
+            "question": "Pagar solo el mínimo de tus tarjetas de crédito es suficiente para eliminar deuda rápidamente.",
+            "answer": false
+          },
+          {
+            "question": "Ahorrar en cuentas de alto interés puede ser mejor que gastar en lujos innecesarios.",
+            "answer": true
+          },
+          {
+            "question": "Invertir sin estudiar ni planificar es una estrategia segura.",
+            "answer": false
+          }
+        ]
+      },
+      "unlocked": false
+    },
+    {
+      "level": 12,
+      "points": 80,
+      "minPointsToPass": 2,
+      "timeLimitSec": 60,
+      "payload": {
+        "questions": [
+          {
+            "question": "El historial de crédito influye en las tasas de interés que te ofrecen los bancos.",
+            "answer": true
+          },
+          {
+            "question": "Todas las inversiones riesgosas pierden dinero siempre.",
+            "answer": false
+          },
+          {
+            "question": "Una planificación financiera a largo plazo puede ayudarte a alcanzar metas más grandes.",
+            "answer": true
+          }
+        ]
+      },
+      "unlocked": false
+        }
+      ]
+    }
+
+      ]
+    }
+  ]
+}

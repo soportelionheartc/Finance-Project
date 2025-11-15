@@ -67,60 +67,75 @@ const Forum: React.FC = () => {
         },
     ];
 
-    // Persistencia simple en localStorage
-    const [posts, setPosts] = useState<Post[]>(() => {
-        const saved = localStorage.getItem("forum-posts");
-        if (saved) {
-            try {
-                return JSON.parse(saved);
-            } catch {
-                return defaultPosts;
-            }
-        }
-        return defaultPosts;
-    });
+   const [posts, setPosts] = useState<Post[]>([]);
     const [content, setContent] = useState("");
-    const addPost = () => {
-        if (!user || !content) return;
-        const newPost: Post = {
-            id: Date.now(),
-            author: user.name || user.username || "Usuario",
-            content,
-            replies: [],
-        };
-        const updatedPosts = [newPost, ...posts];
-        setPosts(updatedPosts);
-        localStorage.setItem("forum-posts", JSON.stringify(updatedPosts));
-        setContent("");
-    };
-    const addReply = (postId: number, replyAuthor: string, replyContent: string) => {
-        if (!user || !replyContent) return;
-        const updatedPosts = posts.map(post =>
-            post.id === postId
-                ? {
-                    ...post,
-                    replies: [
-                        ...post.replies,
-                        { id: Date.now(), author: user.name || user.username || "Usuario", content: replyContent },
-                    ],
-                }
-                : post
-        );
-        setPosts(updatedPosts);
-        localStorage.setItem("forum-posts", JSON.stringify(updatedPosts));
-    };
+
+    const addPost = async () => {
+  if (!user || !content) return;
+  try {
+    const res = await fetch("/api/forum/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        author: user.name || user.username || "Usuario",
+        content,
+      }),
+    });
+    const newPost = await res.json();
+    setPosts([newPost, ...posts]);
+    setContent("");
+  } catch (err) {
+    console.error("Error al crear post:", err);
+  }
+};
+
+
+  const addReply = async (postId: number, replyAuthor: string, replyContent: string) => {
+  if (!user || !replyContent) return;
+  try {
+    // Crear la respuesta en el backend
+    await fetch(`/api/forum/posts/${postId}/replies`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        author: user.name || user.username || "Usuario",
+        content: replyContent,
+      }),
+    });
+
+    // Volver a traer todos los posts actualizados
+    const res = await fetch("/api/forum/posts");
+    const data = await res.json();
+    setPosts(data); // Actualizamos el estado con todo
+  } catch (err) {
+    console.error("Error al agregar respuesta:", err);
+  }
+};
+
+
     // Sincronizar cambios manuales en localStorage (por si hay otros tabs)
-    useEffect(() => {
-        const syncPosts = (e: StorageEvent) => {
-            if (e.key === "forum-posts" && e.newValue) {
-                try {
-                    setPosts(JSON.parse(e.newValue));
-                } catch { }
-            }
-        };
-        window.addEventListener("storage", syncPosts);
-        return () => window.removeEventListener("storage", syncPosts);
-    }, []);
+  useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch("/api/forum/posts");
+      const data = await res.json();
+      setPosts(data);
+    } catch (err) {
+      console.error("Error al obtener posts:", err);
+    }
+  };
+
+  // Primera carga inmediata
+  fetchPosts();
+
+  // 🔄 Refresca cada 5 segundos
+  const interval = setInterval(fetchPosts, 5000);
+
+  // Limpieza al desmontar
+  return () => clearInterval(interval);
+}, []);
+
+
 
 
 
@@ -235,7 +250,7 @@ const ReplySection: React.FC<{ post: Post; addReply: (postId: number, author: st
             <button
                 className="bg-yellow-500 text-black px-4 py-1 rounded-lg font-semibold whitespace-nowrap max-w-[150px] overflow-hidden text-ellipsis"
                 onClick={() => {
-                    addReply(post.id, "", replyContent);
+                   addReply(post.id, "", replyContent);
                     setReplyContent("");
                 }}
             >

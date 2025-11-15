@@ -12,6 +12,8 @@ import { randomBytes } from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+
+
 // Crear usuario admin si no existe
 ensureAdminUser();
 
@@ -103,7 +105,7 @@ app.use((req, res, next) => {
   server.listen({
     port,
     host: "0.0.0.0",
-    reusePort: true,
+    
   }, () => {
     log(`serving on port ${port}`);
   });

@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { MessageCircle, Linkedin, Instagram, Facebook, Globe } from "lucide-react";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
 import { useState } from "react";
+import { useLocation } from "wouter";
 import BasicForum from "@/components/basic-forum";
 
 const consejosFinancieros = [
@@ -52,6 +53,7 @@ function CarruselConsejos() {
 export default function HomePage() {
   const { user } = useAuth();
   const [showModal, setShowModal] = useState(true);
+  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -101,6 +103,7 @@ export default function HomePage() {
             <BasicForum />
           </div>
         </div>
+        
       </main>
 
       <footer className="border-t py-6 text-sm text-muted-foreground">

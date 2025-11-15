@@ -63,6 +63,7 @@
     "input-otp": "^1.2.4",
     "lucide-react": "^0.453.0",
     "memorystore": "^1.6.7",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.5",
     "openai": "^4.91.0",
     "passport": "^0.7.0",
@@ -83,6 +84,7 @@
     "wagmi": "^2.14.16",
     "wouter": "^3.3.5",
     "ws": "^8.18.0",
+    "yahoo-finance2": "^3.10.0",
     "zod": "^3.23.8",
     "zod-validation-error": "^3.4.0"
   },

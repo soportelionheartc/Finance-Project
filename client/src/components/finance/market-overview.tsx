@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getColombianStocks, getUSStocks, getCryptocurrencies, type Stock, type Crypto, MARKET_SOURCES } from '@/services/financial-api';
+import { getColombianStocks, getUSStocks, getCryptos, type Stock, type Crypto, MARKET_SOURCES } from '@/services/financial-api';
 import { TrendingUp, RefreshCw, ExternalLink, ArrowUp, ArrowDown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -18,7 +18,7 @@ export function MarketOverview() {
       const [colombiaData, usData, cryptoData] = await Promise.all([
         getColombianStocks(),
         getUSStocks(),
-        getCryptocurrencies()
+        getCryptos()
       ]);
       
       setColombianStocks(colombiaData);

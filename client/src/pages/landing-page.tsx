@@ -51,7 +51,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <LionLogo className="h-10 w-10" />
             <div>
-              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
               <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="grid md:grid-cols-2 gap-8 items-center py-6">
           <div className="space-y-4 flex flex-col items-center text-center bg-gradient-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
-            <h2 className="text-4xl font-bold text-primary">LION HEART CAPITAL</h2>
+            <h2 className="text-4xl font-bold text-primary">FINANCE 360°</h2>
             <h3 className="text-xl text-white mb-2">FINANZAS E INVERSIONES DE ALTO IMPACTO</h3>
             <p className="text-gray-300 text-lg mb-6">
               Soluciones financieras inteligentes impulsadas por IA para optimizar tus inversiones y estrategias de trading.
@@ -78,7 +78,7 @@ export default function LandingPage() {
             <div className="flex gap-4 pt-2">
               <Link href="/servicios">
                 <Button variant="outline" size="lg" className="border-primary text-primary">
-                  Explorar Servicios
+                Explorar Servicios
                 </Button>
               </Link>
             </div>

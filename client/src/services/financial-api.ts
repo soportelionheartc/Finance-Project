@@ -70,206 +70,95 @@ export interface Crypto {
 
 // Función para obtener las principales acciones de Colombia (BVC)
 // Los datos son de muestra, pero cada registro incluye la URL real a la fuente de datos
+// ✅ Obtener acciones colombianas (datos reales desde backend Express)
 export async function getColombianStocks(): Promise<Stock[]> {
   try {
-    return [
-      { 
-        ticker: 'ECOPETL', 
-        company: 'Ecopetrol', 
-        price: 4850, 
-        priceFormatted: '4850 COP', 
-        change: 42, 
-        changePercent: 0.87, 
-        volume: '4.2M',
-        isPositive: true,
-        url: MARKET_SOURCES.COLOMBIA.ecopetrol
-      },
-      { 
-        ticker: 'BCOLOMBIA', 
-        company: 'Bancolombia', 
-        price: 62750, 
-        priceFormatted: '62.750 COP', 
-        change: 254, 
-        changePercent: 0.41,
-        volume: '685K',
-        isPositive: true,
-        url: MARKET_SOURCES.COLOMBIA.bancolombia
-      },
-      { 
-        ticker: 'GRUPOSURA', 
-        company: 'Grupo Sura', 
-        price: 58320, 
-        priceFormatted: '58.320 COP', 
-        change: 678, 
-        changePercent: 1.17, 
-        volume: '352K',
-        isPositive: true,
-        url: MARKET_SOURCES.COLOMBIA.grupoSura
-      },
-      { 
-        ticker: 'ISA', 
-        company: 'ISA', 
-        price: 42170, 
-        priceFormatted: '42.170 COP', 
-        change: -320, 
-        changePercent: -0.75, 
-        volume: '245K',
-        isPositive: false,
-        url: MARKET_SOURCES.COLOMBIA.isa
-      },
-      { 
-        ticker: 'GRUPOARGOS', 
-        company: 'Grupo Argos', 
-        price: 21540, 
-        priceFormatted: '21.540 COP', 
-        change: 183, 
-        changePercent: 0.86, 
-        volume: '387K',
-        isPositive: true,
-        url: MARKET_SOURCES.COLOMBIA.grupoArgos
-      }
-    ];
+    const response = await fetch("/api/finance/colombia");
+    const data = await response.json();
+
+    return data.map((item: any) => {
+      const price = item.price ?? 0;
+      const changePercent = item.change ?? 0;
+
+      return {
+        ticker: item.symbol,
+        company: item.name,
+        price,
+        priceFormatted: `${price.toLocaleString("es-CO")} COP`,
+        change: changePercent,
+        changePercent,
+        volume: "N/A",
+        isPositive: changePercent >= 0,
+        url:
+          MARKET_SOURCES.COLOMBIA[
+            item.symbol?.toLowerCase() as keyof typeof MARKET_SOURCES.COLOMBIA
+          ] || MARKET_SOURCES.COLOMBIA.url,
+      };
+    });
   } catch (error) {
-    console.error('Error al obtener datos de acciones colombianas:', error);
+    console.error("❌ Error al obtener datos reales del mercado colombiano:", error);
     return [];
   }
 }
 
-// Función para obtener las principales acciones de NYSE/NASDAQ
-// Los datos son de muestra, pero cada registro incluye la URL real a la fuente de datos
+
+
+// ✅ Obtener acciones de EE.UU. desde tu backend Express (datos reales)
 export async function getUSStocks(): Promise<Stock[]> {
   try {
-    return [
-      { 
-        ticker: 'AAPL', 
-        company: 'Apple', 
-        price: 298.45, 
-        priceFormatted: '298.45 USD', 
-        change: 3.82, 
-        changePercent: 1.29, 
-        volume: '78.2M',
-        isPositive: true,
-        url: MARKET_SOURCES.USA.apple
-      },
-      { 
-        ticker: 'MSFT', 
-        company: 'Microsoft', 
-        price: 652.38, 
-        priceFormatted: '652.38 USD', 
-        change: -4.76, 
-        changePercent: -0.72, 
-        volume: '31.5M',
-        isPositive: false,
-        url: MARKET_SOURCES.USA.microsoft
-      },
-      { 
-        ticker: 'AMZN', 
-        company: 'Amazon', 
-        price: 284.57, 
-        priceFormatted: '284.57 USD', 
-        change: 2.34, 
-        changePercent: 0.83, 
-        volume: '42.7M',
-        isPositive: true,
-        url: MARKET_SOURCES.USA.amazon
-      },
-      { 
-        ticker: 'TSLA', 
-        company: 'Tesla', 
-        price: 328.95, 
-        priceFormatted: '328.95 USD', 
-        change: 5.64, 
-        changePercent: 1.74, 
-        volume: '105.6M',
-        isPositive: true,
-        url: MARKET_SOURCES.USA.tesla
-      },
-      { 
-        ticker: 'NVDA', 
-        company: 'NVIDIA', 
-        price: 1485.92, 
-        priceFormatted: '1485.92 USD', 
-        change: -21.35, 
-        changePercent: -1.42, 
-        volume: '58.4M',
-        isPositive: false,
-        url: MARKET_SOURCES.USA.nvidia
-      }
-    ];
+    const response = await fetch("/api/finance/markets?symbols=AAPL,MSFT,GOOG,AMZN,TSLA,NVDA");
+    const data = await response.json();
+
+    // Transformar los datos para ajustarse al formato del front
+    return data.map((item: any) => {
+      const price = item.price ?? 0;
+      const changePercent = item.change ?? 0;
+
+      return {
+        ticker: item.symbol,
+        company: item.name,
+        price,
+        priceFormatted: `${price.toFixed(2)} USD`,
+        change: changePercent,
+        changePercent,
+        volume: "N/A",
+        isPositive: changePercent >= 0,
+        url: `https://finance.yahoo.com/quote/${item.symbol}`
+      };
+    });
   } catch (error) {
-    console.error('Error al obtener datos de acciones de EE.UU.:', error);
+    console.error("❌ Error al obtener datos reales del mercado de EE.UU.:", error);
     return [];
   }
 }
+
 
 // Función para obtener las principales criptomonedas
 // Los datos son de muestra, pero cada registro incluye la URL real a la fuente de datos
-export async function getCryptocurrencies(): Promise<Crypto[]> {
+export async function getCryptos(): Promise<Crypto[]> {
   try {
-    return [
-      { 
-        ticker: 'BTC', 
-        name: 'Bitcoin', 
-        price: 125845.32, 
-        priceFormatted: '125,845.32 USD', 
-        change: 1254.65, 
-        changePercent: 1.01, 
-        marketCap: '$ 2.45T',
-        volume24h: '$ 37.2B',
-        isPositive: true,
-        url: MARKET_SOURCES.CRYPTO.bitcoin
-      },
-      { 
-        ticker: 'ETH', 
-        name: 'Ethereum', 
-        price: 8724.58, 
-        priceFormatted: '8724.58 USD', 
-        change: -105.32, 
-        changePercent: -1.19, 
-        marketCap: '$ 1.05T',
-        volume24h: '$ 17.4B',
-        isPositive: false,
-        url: MARKET_SOURCES.CRYPTO.ethereum
-      },
-      { 
-        ticker: 'BNB', 
-        name: 'BNB', 
-        price: 1347.25, 
-        priceFormatted: '1347.25 USD', 
-        change: 24.18, 
-        changePercent: 1.83, 
-        marketCap: '$ 205.6B',
-        volume24h: '$ 4.3B',
-        isPositive: true,
-        url: MARKET_SOURCES.CRYPTO.bnb
-      },
-      { 
-        ticker: 'SOL', 
-        name: 'Solana', 
-        price: 472.65, 
-        priceFormatted: '472.65 USD', 
-        change: 5.37, 
-        changePercent: 1.15, 
-        marketCap: '$ 192.8B',
-        volume24h: '$ 6.7B',
-        isPositive: true,
-        url: MARKET_SOURCES.CRYPTO.solana
-      },
-      { 
-        ticker: 'XRP', 
-        name: 'XRP', 
-        price: 2.57, 
-        priceFormatted: '2.57 USD', 
-        change: -0.0342, 
-        changePercent: -1.31, 
-        marketCap: '$ 138.5B',
-        volume24h: '$ 3.2B',
-        isPositive: false,
-        url: MARKET_SOURCES.CRYPTO.xrp
-      }
-    ];
+    const response = await fetch("/api/finance/cryptos");
+    const data = await response.json();
+
+    return data.map((item: any) => {
+      const price = item.price ?? 0;
+      const changePercent = item.change ?? 0;
+
+      return {
+        ticker: item.symbol, // Ej: BTC-USD
+        name: item.name,     // Ej: Bitcoin
+        price,
+        priceFormatted: `$${price.toLocaleString("en-US")}`,
+        change: changePercent,
+        changePercent,
+        marketCap: item.marketCap || "N/A",
+        volume24h: item.volume24h || "N/A",
+        isPositive: changePercent >= 0,
+        url: `https://coinmarketcap.com/currencies/${item.name.toLowerCase().replace(/\s+/g, "-")}/`,
+      };
+    });
   } catch (error) {
-    console.error('Error al obtener datos de criptomonedas:', error);
+    console.error("❌ Error al obtener criptomonedas:", error);
     return [];
   }
 }

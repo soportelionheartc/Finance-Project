@@ -43,11 +43,24 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
         <Link href="/" className="flex items-center space-x-2">
           <LionLogo className="h-10 w-10" />
           <div>
-              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
               <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
           </div>
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
+          {/* BOTONES NUEVOS AQUÍ */}
+          <Button variant="ghost" onClick={() => setLocation('/portafolio')}>
+            Mis Portafolios
+          </Button>
+
+          <Button variant="ghost" onClick={() => setLocation('/asistente-financiero')}>
+            Asistente Financiero
+          </Button>
+
+          <Button variant="ghost" onClick={() => setLocation('/educacion-financiera')}>
+            🎮Educación Financiera
+          </Button>
+
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -82,20 +95,12 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
                   <User className="mr-2 h-4 w-4" />
                   <span>Perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setLocation('/portafolio')}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Mis Portafolios</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setLocation('/asistente-financiero')}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Asistente Financiero</span>
-                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setLocation('/configuracion')}>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Configuración</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onSelect={handleLogout}
                   disabled={logoutMutation.isPending}
                 >

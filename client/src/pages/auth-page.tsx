@@ -170,7 +170,7 @@ export default function AuthPage() {
         <div className="flex items-center gap-3 border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
           <LionLogo className="h-10 w-10" />
           <div>
-            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >LION HEART CAPITAL</h1>
+            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
             <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
           </div>
         </div>
