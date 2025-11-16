@@ -152,18 +152,7 @@ export const AssetDistribution = () => {
                 </div>
               )}
             </div>
-            <div>
-              <h2 className="text-center mt-3 mb-4">Portafolio Archivos</h2>
-              <form className="flex flex-col items-center gap-4 w-full">
-                <input
-                  type="file"
-                  className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100"
-                />
-                <button type="submit" className="bg-yellow-500 text-black px-4 py-2 rounded font-semibold">
-                  Subir archivo
-                </button>
-              </form>
-            </div>
+            
           </>
         )}
       </CardContent>
