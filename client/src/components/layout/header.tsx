@@ -44,22 +44,10 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
           <LionLogo className="h-10 w-10" />
           <div>
               <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
-              <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
+              <p>Zupi Fintech</p>
           </div>
         </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          {/* BOTONES NUEVOS AQUÍ */}
-          <Button variant="ghost" onClick={() => setLocation('/portafolio')}>
-            Mis Portafolios
-          </Button>
-
-          <Button variant="ghost" onClick={() => setLocation('/asistente-financiero')}>
-            Asistente Financiero
-          </Button>
-
-          <Button variant="ghost" onClick={() => setLocation('/educacion-financiera')}>
-            🎮Educación Financiera
-          </Button>
 
           {user && (
             <DropdownMenu>

@@ -116,7 +116,6 @@ export default function NoticiasPage() {
               <LionLogo className="h-10 w-10" />
               <div>
                 <h1 className="font-bold text-lg">LION HEART CAPITAL</h1>
-                <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
               </div>
             </div>
           </Link>

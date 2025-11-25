@@ -80,6 +80,19 @@ CREATE TABLE "strategies" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE "transactions" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"portfolio_id" integer NOT NULL,
+	"asset_name" text NOT NULL,
+	"symbol" text NOT NULL,
+	"type" text NOT NULL,
+	"quantity" real NOT NULL,
+	"price" real NOT NULL,
+	"fee" real,
+	"date" timestamp NOT NULL,
+	"notes" text
+);
+--> statement-breakpoint
 CREATE TABLE "users" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"username" text,
@@ -119,4 +132,5 @@ ALTER TABLE "decentralized_messages" ADD CONSTRAINT "decentralized_messages_wall
 ALTER TABLE "portfolio_history" ADD CONSTRAINT "portfolio_history_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "strategies" ADD CONSTRAINT "strategies_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "wallets" ADD CONSTRAINT "wallets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;

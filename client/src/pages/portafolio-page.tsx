@@ -13,6 +13,9 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowUp, ArrowDown, Plus, Filter, Download, ChartPie, TrendingUp, TrendingDown, BarChart2, Wallet } from "lucide-react";
 import { useEffect } from "react";
 import { AddAssetForm } from "@/components/finance/add-asset-form";
+import { PortfolioSummary } from "@/components/finance/portfolio-summary";
+import { AssetDistribution } from "@/components/finance/asset-distribution";
+
 
 type Asset = {
   id: number;
@@ -94,6 +97,11 @@ export default function PortafolioPage() {
   });
 
   // ...existing code...
+useEffect(() => {
+  if (!selectedPortfolioId && portfolios.length > 0) {
+    setSelectedPortfolioId(portfolios[0].id);
+  }
+}, [portfolios, selectedPortfolioId]);
 
   useEffect(() => {
     async function fetchPortfolios() {
@@ -178,63 +186,42 @@ export default function PortafolioPage() {
     : assets;
 
   // Estado para transacciones (editable)
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      assetName: "Bitcoin",
-      symbol: "BTC",
-      type: "compra",
-      quantity: 0.15,
-      price: 65870000,
-      value: 9880500,
-      date: "2025-03-28T15:45:22",
-      fee: 49402
-    },
-    {
-      id: 2,
-      assetName: "Ecopetrol",
-      symbol: "ECO",
-      type: "venta",
-      quantity: 200,
-      price: 2580,
-      value: 516000,
-      date: "2025-03-25T11:23:08",
-      fee: 2580
-    },
-    {
-      id: 3,
-      assetName: "Ethereum",
-      symbol: "ETH",
-      type: "compra",
-      quantity: 1.2,
-      price: 3485000,
-      value: 4182000,
-      date: "2025-03-20T09:15:30",
-      fee: 20910
-    },
-    {
-      id: 4,
-      assetName: "Vanguard S&P 500 ETF",
-      symbol: "VOO",
-      type: "compra",
-      quantity: 2,
-      price: 1897000,
-      value: 3794000,
-      date: "2025-03-15T14:32:45",
-      fee: 18970
-    },
-    {
-      id: 5,
-      assetName: "TES Colombia 2026",
-      symbol: "TESCOL26",
-      type: "compra",
-      quantity: 1,
-      price: 5000000,
-      value: 5000000,
-      date: "2025-03-10T10:05:18",
-      fee: 25000
+ // Estado para transacciones (cargadas desde backend)
+const [transactions, setTransactions] = useState<any[]>([]);
+const [loadingTransactions, setLoadingTransactions] = useState(false);
+const [transactionsError, setTransactionsError] = useState<string | null>(null);
+
+useEffect(() => {
+  async function fetchTransactions() {
+    if (!selectedPortfolioId) {
+      setTransactions([]);
+      return;
     }
-  ]);
+    setLoadingTransactions(true);
+    setTransactionsError(null);
+    try {
+      const res = await fetch(`/api/portfolios/${selectedPortfolioId}/transactions`, {
+        credentials: "include",
+      });
+      if (!res.ok) {
+        // lee mensaje del backend si viene
+        const body = await res.text();
+        throw new Error(`Error ${res.status} al obtener transacciones. ${body}`);
+      }
+      const data = await res.json();
+      setTransactions(Array.isArray(data) ? data : []);
+    } catch (err: any) {
+      console.error("Error cargando transacciones:", err);
+      setTransactions([]);
+      setTransactionsError(err.message || "Error desconocido al cargar transacciones");
+    } finally {
+      setLoadingTransactions(false);
+    }
+  }
+
+  fetchTransactions();
+}, [selectedPortfolioId]);
+
 
 
   // Calcular el rendimiento total usando el valor inicial y actual del portafolio seleccionado
@@ -355,15 +342,20 @@ export default function PortafolioPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
       <main className="container mx-auto px-4 py-6">
         <div className="flex flex-col space-y-2 mb-6 justify-center items-center">
-          <h1 className="text-3xl font-bold text-yellow-500 mb-2">
+        <h1 className="text-3xl font-bold text-yellow-500 mb-2">
             Mis Portafolios
           </h1>
           <p className="text-muted-foreground">
             Gestiona y analiza tus inversiones en un solo lugar
           </p>
+          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <PortfolioSummary />
+      <AssetDistribution />
+        </div>
+        <div className="flex flex-col space-y-2 mb-6 justify-center items-center">
           {portfolios.length > 1 && (
             <div className="sticky top-0 z-20 pb-2 overflow-x-auto w-full justify-center flex">
               <Tabs value={selectedPortfolioId ? String(selectedPortfolioId) : undefined} onValueChange={val => setSelectedPortfolioId(Number(val))}>
@@ -472,6 +464,7 @@ export default function PortafolioPage() {
               </CardContent>
             </Card>
           ) : (
+            
             <Card className="bg-zinc-900 border-zinc-800">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-2xl font-medium">

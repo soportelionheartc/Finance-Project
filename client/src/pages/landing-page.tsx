@@ -52,7 +52,7 @@ export default function LandingPage() {
             <LionLogo className="h-10 w-10" />
             <div>
               <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
-              <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
+              <p>Zupi Fintech</p>
             </div>
           </div>
           <Button
@@ -100,7 +100,7 @@ export default function LandingPage() {
           <FinancialNewsFeed />
         </section>
 
-        {/* Premium Features */}
+        {/*{/* Premium Features 
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-bold text-xl text-primary uppercase">Servicios Financieros Premium</h3>
@@ -172,7 +172,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* AI Chat (Free) */}
+        {/* AI Chat (Free) 
         <section className="space-y-4">
           <h3 className="font-bold text-xl text-primary uppercase">Asesoría Financiera IA</h3>
           <Card className="bg-zinc-900 border border-zinc-700">
@@ -212,7 +212,7 @@ export default function LandingPage() {
               </div>
             </CardContent>
           </Card>
-        </section>
+        </section>*/}
       </main>
 
       {/* Footer */}

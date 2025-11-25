@@ -128,11 +128,6 @@ export const PortfolioSummary = () => {
   return (
     <Card className="bg-[#1a1400] text-[#ffd700] rounded-xl shadow-lg max-w-md mx-auto p-6">
       <div className="flex justify-center">
-        <Link href="/portafolio">
-          <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow">
-            Portafolios
-          </Button>
-        </Link>
         <Button
           size="sm"
           className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow ml-5"

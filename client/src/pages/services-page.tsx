@@ -18,7 +18,6 @@ export default function ServicesPage() {
               </div>
               <div>
                 <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">LION HEART CAPITAL</h1>
-                <p className="text-xs text-muted-foreground">CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
               </div>
             </div>
           </Link>

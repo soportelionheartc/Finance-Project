@@ -5,10 +5,9 @@ import { storage } from "./storage";
 import OpenAI from "openai";
 import nodemailer from "nodemailer";
 import financeRoutes from "./financeRoutes";
-import express from "express";
 import dotenv from "dotenv";
 import forumRoutes from "./forumRoutes";
-import { set } from "date-fns";
+
 
 dotenv.config(); // asegura cargar .env
 
@@ -186,6 +185,29 @@ app.post("/api/ai/analyze-portfolio", ensureAuthenticated, async (req, res) => {
       res.status(500).json({ error: "Error al eliminar el asset" });
     }
   });
+// Transactions
+app.get("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, res) => {
+  try {
+    const portfolioId = parseInt(req.params.id, 10);
+    const transactions = await storage.getTransactions(portfolioId);
+    res.json(transactions);
+  } catch (err) {
+    console.error("Error obteniendo transacciones:", err);
+    res.status(500).json({ error: "Error al obtener las transacciones" });
+  }
+});
+
+app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, res) => {
+  try {
+    const portfolioId = parseInt(req.params.id, 10);
+    const txData = req.body;
+    const newTx = await storage.createTransaction({ ...txData, portfolioId });
+    res.json(newTx);
+  } catch (err) {
+    console.error("Error creando transacción:", err);
+    res.status(500).json({ error: "Error al crear la transacción" });
+  }
+});
 
   //app.use(router);
 

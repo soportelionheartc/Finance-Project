@@ -43,7 +43,6 @@ export function LionLogo({ className = '', size = 'md', withText = false }: Logo
       {withText && (
         <div className="ml-2">
           <h2 className="text-lg font-bold leading-tight tracking-tight text-primary" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>LION HEART CAPITAL</h2>
-          <p className="text-xs text-gray-400" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>CONSULTORÍA FINANCIERA Y DE INVERSIÓN</p>
         </div>
       )}
     </div>

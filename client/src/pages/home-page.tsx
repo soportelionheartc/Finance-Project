@@ -1,16 +1,14 @@
 import { Header } from "@/components/layout/header";
-import { AssetDistribution } from "@/components/finance/asset-distribution";
-import { PortfolioSummary } from "@/components/finance/portfolio-summary";
 import { MarketOverview } from "@/components/finance/market-overview";
 import { NewsFeed } from "@/components/finance/news-feed";
-import { AiChat } from "@/components/finance/ai-chat";
-import { AssetList } from "@/components/finance/asset-list";
 import { useAuth } from "@/hooks/use-auth";
 import { MessageCircle, Linkedin, Instagram, Facebook, Globe } from "lucide-react";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import BasicForum from "@/components/basic-forum";
+import { Button } from "@/components/ui/button";
+
 
 const consejosFinancieros = [
   "Diversifica tus inversiones para reducir riesgos.",
@@ -66,7 +64,7 @@ export default function HomePage() {
               onClick={() => setShowModal(false)}
               aria-label="Cerrar"
             >
-              ×
+              x
             </button>
             <h4 className="text-lg font-bold text-yellow-500 mb-2">Hola, {user?.name}</h4>
             <p className="text-gray-300 mb-4">Antes de disfrutar de las funcionalidades de la app te queremos dejar algunos consejos financieros</p>
@@ -76,6 +74,29 @@ export default function HomePage() {
       )}
 
       <main className="flex-1 container mx-auto px-4 py-6">
+         <div className="flex flex-row justify-center items-center gap-4 mt-4">
+
+         <Button
+    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
+    onClick={() => setLocation('/portafolio')}
+  >
+    Mis Portafolios
+  </Button>
+
+  <Button
+    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
+    onClick={() => setLocation('/asistente-financiero')}
+  >
+    Asistente Financiero
+  </Button>
+
+  <Button
+    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
+    onClick={() => setLocation('/educacion-financiera')}
+  >
+    🎮 Educación Financiera
+  </Button>
+</div>
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
           <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Hola, {user?.name || user?.username || 'Inversionista'}
@@ -86,12 +107,7 @@ export default function HomePage() {
         </div>
         <CarruselConsejos />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Primera columna */}
-          <div className="space-y-6">
-            <PortfolioSummary />
-            <AssetDistribution />
-          </div>
+        <div >
 
           {/* Segunda columna */}
           <div className="space-y-6">

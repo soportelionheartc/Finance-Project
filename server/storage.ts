@@ -69,6 +69,19 @@ export interface IStorage {
   getDecentralizedMessage(id: number): Promise<DecentralizedMessage | undefined>;
   saveDecentralizedMessage(message: InsertDecentralizedMessage): Promise<DecentralizedMessage>;
 
+// Transaction operations
+  getTransactions(portfolioId: number): Promise<any[]>;
+  createTransaction(
+  transaction: {
+    portfolioId: number,
+    type: string,
+    asset: string,
+    amount: number,
+    price: number,
+    date: Date
+  }
+): Promise<any>;
+
   // Session store
   sessionStore: any; // Using 'any' for SessionStore to avoid type errors
 }
@@ -440,7 +453,22 @@ export class MemStorage implements IStorage {
         return a.timestamp.getTime() - b.timestamp.getTime();
       });
   }
+  
+  //transacciones
+async getTransactions(portfolioId: number): Promise<any[]> {
+  return [];
+}
 
+async createTransaction(transaction: {
+  portfolioId: number;
+  type: string;
+  asset: string;
+  amount: number;
+  price: number;
+  date: Date;
+}): Promise<any> {
+  return { id: Date.now(), ...transaction };
+}
   async getDecentralizedMessage(id: number): Promise<DecentralizedMessage | undefined> {
     return this.decentralizedMsgs.get(id);
   }
@@ -743,6 +771,42 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return newMessage;
   }
+
+  // Transaction operations
+async getTransactions(portfolioId: number): Promise<any[]> {
+  const query = sql`
+    SELECT * FROM transactions 
+    WHERE "portfolioId" = ${portfolioId}
+    ORDER BY date DESC
+  `;
+  const result = await db.execute(query);
+  return result.rows ?? [];
+}
+
+async createTransaction(transaction: {
+  portfolioId: number;
+  type: string;
+  asset: string;
+  amount: number;
+  price: number;
+  date: Date;
+}): Promise<any> {
+  const query = sql`
+    INSERT INTO transactions ("portfolioId", type, asset, amount, price, date)
+    VALUES (
+      ${transaction.portfolioId},
+      ${transaction.type},
+      ${transaction.asset},
+      ${transaction.amount},
+      ${transaction.price},
+      ${transaction.date}
+    )
+    RETURNING *
+  `;
+  const result = await db.execute(query);
+  return result.rows[0];
+}
+
 }
 
 // Use DatabaseStorage instead of MemStorage

@@ -179,7 +179,43 @@ export const insertDecentralizedMessageSchema = createInsertSchema(decentralized
   timestamp: true,
 });
 
+// Transactions schema
+export const transactions = pgTable("transactions", {
+  id: serial("id").primaryKey(),
+
+  portfolioId: integer("portfolio_id")
+    .notNull()
+    .references(() => portfolios.id),
+
+  assetName: text("asset_name").notNull(),
+
+  symbol: text("symbol").notNull(),
+
+  type: text("type").notNull(),  // compra / venta
+
+  quantity: real("quantity").notNull(),
+
+  price: real("price").notNull(),
+
+  fee: real("fee"),
+
+  date: timestamp("date", { mode: "string" }).notNull(),
+
+  notes: text("notes"),
+});
+
+
+export const insertTransactionSchema = createInsertSchema(transactions).omit({
+  id: true,
+});
+
+
+
 // Type exports
+
+export type Transaction = typeof transactions.$inferSelect;
+export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
