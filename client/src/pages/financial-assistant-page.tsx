@@ -1,10 +1,20 @@
 import { Header } from "@/components/layout/header";
 import { AiChat } from "@/components/finance/ai-chat";
+import { Button } from "@/components/ui/button";
 
 export default function FinancialAssistantPage() {
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <Header />
+
+             <Button
+      variant="outline"
+      onClick={() => window.history.back()}
+      className="mb-4 w-fit"
+    >
+      ← Volver
+    </Button>
+
             <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-xl w-full text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">Asistente Financiero Inteligente</h1>

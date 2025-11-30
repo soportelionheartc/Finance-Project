@@ -17,32 +17,24 @@ export function LionLogo({ className = '', size = 'md', withText = false }: Logo
   return (
     <div className={`flex items-center ${className}`}>
       <div
-        className={`${sizeClass} flex items-center justify-center rounded-full border-2 border-primary overflow-hidden relative`}
-        style={{
-          background: '#2b271fff',
-          boxShadow: '0 0 12px 3px #D4AF3788, 0 0 24px 6px #B8860B33', // brillo ligeramente reducido
-        }}
+        className={`${sizeClass} flex items-center justify-center rounded-full overflow-hidden relative`}
       >
-        <span
-          className="text-primary font-semibold absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none"
-          style={{
-            fontFamily: 'Montserrat, Arial, sans-serif',
-            fontWeight: 600,
-            fontSize:
-              size === 'sm' ? '0.9rem' :
-                size === 'md' ? '1.5rem' :
-                  size === 'lg' ? '2.4rem' : '3.8rem',
-            letterSpacing: '0.05em',
-            textShadow: '0 1px 8px rgba(212,175,55,0.25)',
-          }}
-        >
-          LH
-        </span>
+        {/* ← AQUI metemos tu imagen */}
+        <img
+          src="/data/ZupiFintechLogo.png"
+          alt="Zupi Fintech Logo"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {withText && (
         <div className="ml-2">
-          <h2 className="text-lg font-bold leading-tight tracking-tight text-primary" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>LION HEART CAPITAL</h2>
+          <h2
+            className="text-lg font-bold leading-tight tracking-tight text-primary"
+            style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}
+          >
+          
+          </h2>
         </div>
       )}
     </div>
