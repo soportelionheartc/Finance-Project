@@ -74,28 +74,35 @@ export default function HomePage() {
       )}
 
       <main className="flex-1 container mx-auto px-4 py-6">
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+       <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
   <Button
-    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
+    className="w-full bg-black border border-yellow-500 text-yellow-500 
+               hover:bg-yellow-600 hover:text-black transition-all duration-200 
+               font-semibold rounded-xl shadow-md"
     onClick={() => setLocation('/portafolio')}
   >
-    Mis Portafolios
+    💼 Mis Portafolios
   </Button>
 
   <Button
-    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
+    className="w-full bg-black border border-yellow-500 text-yellow-500 
+               hover:bg-yellow-600 hover:text-black transition-all duration-200 
+               font-semibold rounded-xl shadow-md"
     onClick={() => setLocation('/asistente-financiero')}
   >
-    Asistente Financiero
+    🤖 Asistente Financiero
   </Button>
 
   <Button
-    className="w-full bg-yellow-500 text-black hover:bg-yellow-400 font-semibold"
-    onClick={() => setLocation('/educacion-financiera')}
+    className="w-full bg-black border border-yellow-500 text-yellow-500 
+               hover:bg-yellow-600 hover:text-black transition-all duration-200 
+               font-semibold rounded-xl shadow-md"
+               onClick={() => setLocation('/educacion-financiera')}
   >
     🎮 Educación Financiera
   </Button>
 </div>
+
 
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
           <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">

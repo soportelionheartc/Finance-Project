@@ -219,7 +219,7 @@ export default function LandingPage() {
       <footer className="border-t border-zinc-800 p-6 text-center text-sm text-gray-400">
         <div className="container mx-auto">
           <div className="text-center">
-            <p className="font-medium text-primary">Lion Heart Capital S.A.S.</p>
+            <p className="font-medium text-primary">Zupi Fintech S.A.S.</p>
             <p className="mt-2">Contacto: lionheartcapital1303@gmail.com</p>
           </div>
 
