@@ -160,27 +160,30 @@ export default function BlockchainPortfolioPage() {
   const [chatHistory, setChatHistory] = useState([
     {
       id: 1,
-      role: 'system',
-      content: 'Bienvenido al chat descentralizado de Lion Heart Capital. Discute sobre blockchain, inversiones y criptomonedas con otros usuarios y nuestro asistente IA.'
+      role: "system",
+      content:
+        "Bienvenido al chat descentralizado de Zupi Fintech. Discute sobre blockchain, inversiones y criptomonedas con otros usuarios y nuestro asistente IA.",
     },
     {
       id: 2,
-      role: 'assistant',
-      content: 'Hola, soy el asistente IA de Lion Heart. Puedo ayudarte con análisis de mercado, estrategias de inversión y responder preguntas sobre blockchain.',
-      sender: 'AI Assistant'
+      role: "assistant",
+      content:
+        "Hola, soy el asistente IA de Lion Heart. Puedo ayudarte con análisis de mercado, estrategias de inversión y responder preguntas sobre blockchain.",
+      sender: "AI Assistant",
     },
     {
       id: 3,
-      role: 'user',
-      content: '¿Cómo se ve el mercado de Solana hoy?',
-      sender: 'Carlos R.'
+      role: "user",
+      content: "¿Cómo se ve el mercado de Solana hoy?",
+      sender: "Carlos R.",
     },
     {
       id: 4,
-      role: 'assistant',
-      content: 'Solana ha mostrado un incremento del 5.2% en las últimas 24 horas. El sentimiento es positivo con el aumento en la actividad de desarrollo y nuevos protocolos DeFi lanzados en su ecosistema.',
-      sender: 'AI Assistant'
-    }
+      role: "assistant",
+      content:
+        "Solana ha mostrado un incremento del 5.2% en las últimas 24 horas. El sentimiento es positivo con el aumento en la actividad de desarrollo y nuevos protocolos DeFi lanzados en su ecosistema.",
+      sender: "AI Assistant",
+    },
   ]);
 
   // Actualizar el valor total del portafolio cuando cambian los activos
@@ -363,11 +366,13 @@ export default function BlockchainPortfolioPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        
+
         <main className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
           <Card className="w-full max-w-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800 shadow-xl">
             <CardHeader className="text-center pb-2">
-              <CardTitle className="text-2xl text-primary">Portafolio Blockchain Avanzado</CardTitle>
+              <CardTitle className="text-2xl text-primary">
+                Portafolio Blockchain Avanzado
+              </CardTitle>
               <CardDescription>
                 Conecta tu wallet para acceder al análisis avanzado con IA
               </CardDescription>
@@ -378,15 +383,16 @@ export default function BlockchainPortfolioPage() {
                   <Wallet className="h-12 w-12 text-primary" />
                 </div>
                 <p className="text-center max-w-lg text-muted-foreground">
-                  Conecta tu wallet para ver tu portafolio en tiempo real, analizar tu rendimiento 
-                  con inteligencia artificial, y acceder al chat descentralizado exclusivo.
+                  Conecta tu wallet para ver tu portafolio en tiempo real,
+                  analizar tu rendimiento con inteligencia artificial, y acceder
+                  al chat descentralizado exclusivo.
                 </p>
               </div>
-              
+
               {/* Botón Blockchain prominente */}
               <div className="mb-6">
-                <Button 
-                  onClick={handleBlockchainButton} 
+                <Button
+                  onClick={handleBlockchainButton}
                   disabled={isLoading}
                   className="w-full h-20 text-xl font-bold flex items-center justify-center bg-gradient-to-br from-yellow-500 to-yellow-600 border-none text-black shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/30 hover:from-yellow-600 hover:to-yellow-700 transition-all"
                 >
@@ -394,13 +400,15 @@ export default function BlockchainPortfolioPage() {
                   BLOCKCHAIN
                 </Button>
               </div>
-              
+
               {/* Botones Wallets */}
               <div className="grid grid-cols-1 gap-3">
-                <p className="text-center text-sm text-muted-foreground mb-1">O conecta usando:</p>
+                <p className="text-center text-sm text-muted-foreground mb-1">
+                  O conecta usando:
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <Button 
-                    onClick={() => connectWallet('phantom')} 
+                  <Button
+                    onClick={() => connectWallet("phantom")}
                     disabled={isLoading}
                     variant="outline"
                     className="h-14 text-base flex items-center justify-center"
@@ -408,9 +416,9 @@ export default function BlockchainPortfolioPage() {
                     <Wallet className="h-5 w-5 mr-2" />
                     <span>Phantom</span>
                   </Button>
-                  
-                  <Button 
-                    onClick={() => connectWallet('metamask')} 
+
+                  <Button
+                    onClick={() => connectWallet("metamask")}
                     disabled={isLoading}
                     variant="outline"
                     className="h-14 text-base flex items-center justify-center"
@@ -423,7 +431,7 @@ export default function BlockchainPortfolioPage() {
             </CardContent>
             <CardFooter className="flex justify-center border-t border-zinc-800 pt-4">
               <p className="text-sm text-muted-foreground text-center">
-                Análisis avanzado exclusivo para usuarios de Lion Heart Capital
+                Análisis avanzado exclusivo para usuarios de Zupi Fintech
               </p>
             </CardFooter>
           </Card>

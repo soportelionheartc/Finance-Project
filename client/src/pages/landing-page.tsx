@@ -51,7 +51,9 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <LionLogo className="h-10 w-10" />
             <div>
-              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
+              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+                FINANCE 360°
+              </h1>
               <p>Zupi Fintech</p>
             </div>
           </div>
@@ -59,7 +61,7 @@ export default function LandingPage() {
             variant="outline"
             className="border-primary text-primary"
             size="sm"
-            onClick={() => window.location.href = "/auth"}
+            onClick={() => (window.location.href = "/auth")}
           >
             Acceder
           </Button>
@@ -68,17 +70,24 @@ export default function LandingPage() {
 
       <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
         {/* Hero Section */}
-        <section className="grid md:grid-cols-2 gap-8 items-center py-6">
+        <section className="grid gap-8 items-center py-6">
           <div className="space-y-4 flex flex-col items-center text-center bg-gradient-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
             <h2 className="text-4xl font-bold text-primary">FINANCE 360°</h2>
-            <h3 className="text-xl text-white mb-2">FINANZAS E INVERSIONES DE ALTO IMPACTO</h3>
+            <h3 className="text-xl text-white mb-2">
+              FINANZAS E INVERSIONES DE ALTO IMPACTO
+            </h3>
             <p className="text-gray-300 text-lg mb-6">
-              Soluciones financieras inteligentes impulsadas por IA para optimizar tus inversiones y estrategias de trading.
+              Soluciones financieras inteligentes impulsadas por IA para
+              optimizar tus inversiones y estrategias de trading.
             </p>
             <div className="flex gap-4 pt-2">
               <Link href="/servicios">
-                <Button variant="outline" size="lg" className="border-primary text-primary">
-                Explorar Servicios
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-primary text-primary"
+                >
+                  Explorar Servicios
                 </Button>
               </Link>
             </div>
@@ -87,7 +96,9 @@ export default function LandingPage() {
 
         {/* Mercados Globales con datos en tiempo real */}
         <section className="space-y-6">
-          <h3 className="font-bold text-xl text-primary uppercase">Mercados Globales</h3>
+          <h3 className="font-bold text-xl text-primary uppercase">
+            Mercados Globales
+          </h3>
           <MarketOverview />
         </section>
 
@@ -225,11 +236,15 @@ export default function LandingPage() {
 
           <div className="mt-8">
             <p>¡Próximamente en App Store y Google Play!</p>
-            <p className="text-xs mt-1">Descarga nuestra aplicación móvil para acceder a todas las funcionalidades desde tu dispositivo.</p>
+            <p className="text-xs mt-1">
+              Descarga nuestra aplicación móvil para acceder a todas las
+              funcionalidades desde tu dispositivo.
+            </p>
           </div>
 
           <div className="mt-4">
-            © {new Date().getFullYear()} Lion Heart Capital. Todos los derechos reservados.
+            © {new Date().getFullYear()} Zupi Fintech. Todos los derechos
+            reservados.
           </div>
         </div>
       </footer>

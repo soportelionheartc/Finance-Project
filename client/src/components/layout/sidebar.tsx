@@ -77,8 +77,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <div className="p-3 md:p-4 border-b border-zinc-800">
             <div className="flex flex-col items-center">
               <LionLogo className="w-12 h-12 md:w-16 md:h-16 mb-1 md:mb-2" />
-              <h2 className="text-base md:text-lg font-bold text-primary text-center">LION HEART CAPITAL S.A.S.</h2>
-              <p className="text-xs md:text-sm text-gray-400 text-center">CONSULTORA FINANCIERA Y DE INVERSIÓN</p>
+              <h2 className="text-base md:text-lg font-bold text-primary text-center">
+                ZUPI FINTECH
+              </h2>
+              <p className="text-xs md:text-sm text-gray-400 text-center">
+                CONSULTORA FINANCIERA Y DE INVERSIÓN
+              </p>
             </div>
           </div>
 
@@ -87,33 +91,49 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <p className="text-sm text-gray-300">Juan Pablo Arango</p>
               <p className="text-xs text-primary mb-1">CEO & Founder</p>
               <p className="text-xs text-gray-400 truncate">+57 3163581762</p>
-              <p className="text-xs text-gray-400 truncate">lionheartcapital1303@gmail.com</p>
+              <p className="text-xs text-gray-400 truncate">
+                lionheartcapital1303@gmail.com
+              </p>
             </div>
           </div>
 
           <nav className="py-2">
-            <SidebarLink href="/" icon={<Home className="h-5 w-5 text-primary" />} onClick={onClose}>
+            <SidebarLink
+              href="/"
+              icon={<Home className="h-5 w-5 text-primary" />}
+              onClick={onClose}
+            >
               Inicio
             </SidebarLink>
-            
-            <SidebarLink href="/servicios" icon={<DollarSign className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+            <SidebarLink
+              href="/servicios"
+              icon={<DollarSign className="h-5 w-5 text-primary" />}
+              onClick={onClose}
+            >
               Servicios Financieros
             </SidebarLink>
-            
-            <SidebarLink href="/contacto" icon={<Mail className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+            <SidebarLink
+              href="/contacto"
+              icon={<Mail className="h-5 w-5 text-primary" />}
+              onClick={onClose}
+            >
               Contacto
             </SidebarLink>
           </nav>
 
           <div className="p-3 md:p-4 mt-auto border-t border-zinc-800 bg-zinc-900">
             <div className="text-center">
-              <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">Integración Blockchain</h4>
+              <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">
+                Integración Blockchain
+              </h4>
               <p className="text-xs text-gray-300 mb-2 text-xs">
                 Conecta tu wallet para gestionar tus activos digitales.
               </p>
-              <Button 
+              <Button
                 className="w-full bg-primary text-black hover:bg-primary/90 transition-colors text-xs md:text-sm"
-                onClick={() => window.location.href = "/auth"}
+                onClick={() => (window.location.href = "/auth")}
               >
                 <LogIn className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
                 Iniciar Sesión para Acceder
@@ -140,8 +160,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <div className="p-3 md:p-4 border-b border-zinc-800">
           <div className="flex flex-col items-center">
             <LionLogo className="w-12 h-12 md:w-16 md:h-16 mb-1 md:mb-2" />
-            <h2 className="text-base md:text-lg font-bold text-primary text-center">LION HEART CAPITAL S.A.S.</h2>
-            <p className="text-xs md:text-sm text-gray-400 text-center">CONSULTORA FINANCIERA Y DE INVERSIÓN</p>
+            <h2 className="text-base md:text-lg font-bold text-primary text-center">
+              ZUPI FINTECH
+            </h2>
+            <p className="text-xs md:text-sm text-gray-400 text-center">
+              CONSULTORA FINANCIERA Y DE INVERSIÓN
+            </p>
           </div>
         </div>
 
@@ -150,57 +174,97 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <p className="text-sm text-gray-300">Juan Pablo Arango</p>
             <p className="text-xs text-primary mb-1">CEO & Founder</p>
             <p className="text-xs text-gray-400 truncate">+57 3163581762</p>
-            <p className="text-xs text-gray-400 truncate">lionheartcapital1303@gmail.com</p>
+            <p className="text-xs text-gray-400 truncate">
+              lionheartcapital1303@gmail.com
+            </p>
           </div>
         </div>
 
         <nav className="py-2">
-          <SidebarLink href="/" icon={<Home className="h-5 w-5 text-primary" />} onClick={onClose}>
+          <SidebarLink
+            href="/"
+            icon={<Home className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Inicio
           </SidebarLink>
-          
-          <SidebarLink href="/dashboard" icon={<LayoutDashboard className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/dashboard"
+            icon={<LayoutDashboard className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Dashboard
           </SidebarLink>
-          
-          <SidebarLink href="/finanzas-personales" icon={<DollarSign className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/finanzas-personales"
+            icon={<DollarSign className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Finanzas Personales
           </SidebarLink>
-          
-          <SidebarLink href="/portafolio" icon={<ChartPie className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/portafolio"
+            icon={<ChartPie className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Mi Portafolio
           </SidebarLink>
-          
-          <SidebarLink href="/trading-bot" icon={<LineChart className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/trading-bot"
+            icon={<LineChart className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Trading Bot
           </SidebarLink>
-          
-          <SidebarLink href="/wallet" icon={<Wallet className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/wallet"
+            icon={<Wallet className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Wallets
           </SidebarLink>
-          
-          <SidebarLink href="/chat-descentralizado" icon={<MessageSquare className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/chat-descentralizado"
+            icon={<MessageSquare className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Chat Descentralizado
           </SidebarLink>
-          
-          <SidebarLink href="/servicios" icon={<Info className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/servicios"
+            icon={<Info className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Servicios
           </SidebarLink>
-          
-          <SidebarLink href="/contacto" icon={<Mail className="h-5 w-5 text-primary" />} onClick={onClose}>
+
+          <SidebarLink
+            href="/contacto"
+            icon={<Mail className="h-5 w-5 text-primary" />}
+            onClick={onClose}
+          >
             Contacto
           </SidebarLink>
         </nav>
-        
+
         <div className="p-3 md:p-4 mt-auto border-t border-zinc-800 bg-zinc-900">
           <div className="text-center">
-            <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">Integración Blockchain</h4>
+            <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">
+              Integración Blockchain
+            </h4>
             <p className="text-xs text-gray-300 mb-2 text-xs">
               Conecta tu wallet para gestionar tus activos digitales.
             </p>
-            <Button 
+            <Button
               className="w-full bg-primary text-black hover:bg-primary/90 transition-colors text-xs md:text-sm"
-              onClick={() => window.location.href = "/wallet"}
+              onClick={() => (window.location.href = "/wallet")}
             >
               <Wallet className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
               Conectar Wallet
