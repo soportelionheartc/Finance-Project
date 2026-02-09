@@ -33,6 +33,7 @@ export default function AuthPage() {
     },
   });
 
+  //TODO: revisar el register form que esta funcionando todo trocado
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
@@ -170,7 +171,9 @@ export default function AuthPage() {
         <div className="flex items-center gap-3 border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
           <LionLogo className="h-10 w-10" />
           <div>
-            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
+            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+              FINANCE 360°
+            </h1>
             <p>Zupi Fintech</p>
           </div>
         </div>
@@ -180,7 +183,10 @@ export default function AuthPage() {
           <div className="mb-6">
             <div className="flex justify-start mb-4">
               <Link href="/">
-                <Button variant="ghost" className="hover:bg-primary/20 flex items-center text-primary px-0">
+                <Button
+                  variant="ghost"
+                  className="hover:bg-primary/20 flex items-center text-primary px-0"
+                >
                   <ArrowLeft className="h-5 w-5 mr-1" />
                   Regresar
                 </Button>
@@ -190,34 +196,43 @@ export default function AuthPage() {
 
           <div className="max-w-2xl mx-auto text-center mb-8">
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
-              <span className="block">Lion Heart Capital</span>
-              <span className="block text-primary mt-2">Tu éxito financiero</span>
+              <span className="block">Zupi Fintech</span>
+              <span className="block text-primary mt-2">
+                Tu éxito financiero
+              </span>
             </h1>
             <p className="mt-4 text-md text-gray-300">
-              Accede a nuestra plataforma para obtener análisis financieros avanzados, gestionar tus activos de forma inteligente y maximizar tus inversiones con ayuda de la inteligencia artificial.
+              Accede a nuestra plataforma para obtener análisis financieros
+              avanzados, gestionar tus activos de forma inteligente y maximizar
+              tus inversiones con ayuda de la inteligencia artificial.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-3 max-w-md mx-auto">
               <div className="text-center">
                 <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                   <h3 className="text-primary text-lg font-bold">IA</h3>
-                  <p className="text-gray-400 text-xs mt-1">Análisis inteligente de datos</p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    Análisis inteligente de datos
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                   <h3 className="text-primary text-lg font-bold">Blockchain</h3>
-                  <p className="text-gray-400 text-xs mt-1">Integración con wallets</p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    Integración con wallets
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                   <h3 className="text-primary text-lg font-bold">Mercados</h3>
-                  <p className="text-gray-400 text-xs mt-1">Acceso a datos globales</p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    Acceso a datos globales
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-
 
           <div className="mt-6">
             <Tabs
@@ -227,8 +242,18 @@ export default function AuthPage() {
               onValueChange={setActiveTab}
             >
               <TabsList className="grid w-full grid-cols-2 mb-8 bg-black border border-primary/30">
-                <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-black">Iniciar sesión</TabsTrigger>
-                <TabsTrigger value="register" className="data-[state=active]:bg-primary data-[state=active]:text-black">Registrarse</TabsTrigger>
+                <TabsTrigger
+                  value="login"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-black"
+                >
+                  Iniciar sesión
+                </TabsTrigger>
+                <TabsTrigger
+                  value="register"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-black"
+                >
+                  Registrarse
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
@@ -237,32 +262,44 @@ export default function AuthPage() {
                     {loginMutation.error && (
                       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
                         <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
-                          <h4 className="text-lg font-bold text-yellow-500 mb-2">Acceso denegado</h4>
+                          <h4 className="text-lg font-bold text-yellow-500 mb-2">
+                            Acceso denegado
+                          </h4>
                           <p className="text-gray-300 mb-4">
-                            Credenciales incorrectas. Por favor verifica tu usuario y contraseña
+                            Credenciales incorrectas. Por favor verifica tu
+                            usuario y contraseña
                             <br />
                             Si no tienes cuenta, regístrate.
                           </p>
-                          <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => loginMutation.reset()}>
+                          <Button
+                            className="bg-yellow-500 text-black font-semibold px-6 mt-2"
+                            onClick={() => loginMutation.reset()}
+                          >
                             Cerrar
                           </Button>
                         </div>
                       </div>
                     )}
-                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <form
+                      onSubmit={loginForm.handleSubmit(onLoginSubmit)}
+                      className="space-y-4"
+                    >
                       <div className="space-y-2">
-                        <Label htmlFor="username" className="text-gray-300">Nombre de usuario</Label>
+                        <Label htmlFor="username" className="text-gray-300">
+                          Nombre de usuario
+                        </Label>
                         <Input
                           id="username"
                           placeholder="Usuario"
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("username")}
                         />
-
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="password" className="text-gray-300">Contraseña</Label>
+                        <Label htmlFor="password" className="text-gray-300">
+                          Contraseña
+                        </Label>
                         <Input
                           id="password"
                           placeholder="**********"
@@ -270,7 +307,6 @@ export default function AuthPage() {
                           className="bg-black border-zinc-700 focus:border-primary"
                           {...loginForm.register("password")}
                         />
-
                       </div>
 
                       <Button
@@ -278,12 +314,16 @@ export default function AuthPage() {
                         className="w-full bg-primary hover:bg-primary/90 text-black font-bold"
                         disabled={loginMutation.isPending}
                       >
-                        {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar sesión"}
+                        {loginMutation.isPending
+                          ? "Iniciando sesión..."
+                          : "Iniciar sesión"}
                       </Button>
                     </form>
 
                     <div className="mt-6">
-                      <p className="text-center text-sm text-gray-400 mb-3">O continuar con</p>
+                      <p className="text-center text-sm text-gray-400 mb-3">
+                        O continuar con
+                      </p>
                       <SocialAuthButtons />
                     </div>
                   </CardContent>
@@ -297,20 +337,33 @@ export default function AuthPage() {
                     {registerMutation.error && (
                       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
                         <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
-                          <h4 className="text-lg font-bold text-yellow-500 mb-2">Registro fallido</h4>
+                          <h4 className="text-lg font-bold text-yellow-500 mb-2">
+                            Registro fallido
+                          </h4>
                           <p className="text-gray-300 mb-4">
-                            Error al registrarse. Por favor verifica los datos e intenta de nuevo.
+                            Error al registrarse. Por favor verifica los datos e
+                            intenta de nuevo.
                           </p>
-                          <Button className="bg-yellow-500 text-black font-semibold px-6 mt-2" onClick={() => registerMutation.reset()}>
+                          <Button
+                            className="bg-yellow-500 text-black font-semibold px-6 mt-2"
+                            onClick={() => registerMutation.reset()}
+                          >
                             Cerrar
                           </Button>
                         </div>
                       </div>
                     )}
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-
+                    <form
+                      onSubmit={registerForm.handleSubmit(onRegisterSubmit)}
+                      className="space-y-4"
+                    >
                       <div className="space-y-2">
-                        <Label htmlFor="register-name" className="text-gray-300">Nombre completo</Label>
+                        <Label
+                          htmlFor="register-name"
+                          className="text-gray-300"
+                        >
+                          Nombre completo
+                        </Label>
                         <Input
                           id="register-name"
                           placeholder="Nombre y apellido"
@@ -326,7 +379,12 @@ export default function AuthPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="register-username" className="text-gray-300">Nombre de usuario</Label>
+                        <Label
+                          htmlFor="register-username"
+                          className="text-gray-300"
+                        >
+                          Nombre de usuario
+                        </Label>
                         <Input
                           id="register-username"
                           placeholder="usuario"
@@ -356,7 +414,12 @@ export default function AuthPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="register-email" className="text-gray-300">Correo electrónico</Label>
+                        <Label
+                          htmlFor="register-email"
+                          className="text-gray-300"
+                        >
+                          Correo electrónico
+                        </Label>
                         <Input
                           id="register-email"
                           type="email"
@@ -372,7 +435,12 @@ export default function AuthPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="register-password" className="text-gray-300">Contraseña</Label>
+                        <Label
+                          htmlFor="register-password"
+                          className="text-gray-300"
+                        >
+                          Contraseña
+                        </Label>
                         <Input
                           id="register-password"
                           type="password"
@@ -388,7 +456,12 @@ export default function AuthPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="register-confirm-password" className="text-gray-300">Confirmar contraseña</Label>
+                        <Label
+                          htmlFor="register-confirm-password"
+                          className="text-gray-300"
+                        >
+                          Confirmar contraseña
+                        </Label>
                         <Input
                           id="register-confirm-password"
                           type="password"
@@ -398,7 +471,10 @@ export default function AuthPage() {
                         />
                         {registerForm.formState.errors.passwordConfirm && (
                           <p className="text-sm font-medium text-destructive">
-                            {registerForm.formState.errors.passwordConfirm.message}
+                            {
+                              registerForm.formState.errors.passwordConfirm
+                                .message
+                            }
                           </p>
                         )}
                       </div>
@@ -408,12 +484,16 @@ export default function AuthPage() {
                         className="w-full bg-primary hover:bg-primary/90 text-black font-bold"
                         disabled={registerMutation.isPending}
                       >
-                        {registerMutation.isPending ? "Registrando..." : "Registrarse"}
+                        {registerMutation.isPending
+                          ? "Registrando..."
+                          : "Registrarse"}
                       </Button>
                     </form>
 
                     <div className="mt-6">
-                      <p className="text-center text-sm text-gray-400 mb-3">O continuar con</p>
+                      <p className="text-center text-sm text-gray-400 mb-3">
+                        O continuar con
+                      </p>
                       <SocialAuthButtons />
                     </div>
                   </CardContent>
@@ -423,7 +503,7 @@ export default function AuthPage() {
           </div>
 
           <div className="mt-6 text-center text-sm text-gray-500">
-            <p>© 2025 Lion Heart Capital S.A.S. Todos los derechos reservados.</p>
+            <p>© 2025 Zupi Fintech Todos los derechos reservados.</p>
           </div>
         </div>
       </div>

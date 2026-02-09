@@ -75,12 +75,13 @@ function RouterContent() {
         <Route component={NotFound} />
       </Switch>
 
-      {showButton && (
+      {/* Se comenta el botón de blockchain para ser removido en un futuro */}
+      {/* {showButton && (
         <button className="blockchain-button" onClick={handleBlockchainClick}>
           <Coins className="h-6 w-6" />
           BLOCKCHAIN
         </button>
-      )}
+      )} */}
     </>
   );
 }

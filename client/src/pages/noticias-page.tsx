@@ -131,11 +131,11 @@ export default function NoticiasPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Noticias Financieras</h1>
           <div className="text-sm text-muted-foreground">
-            {selectedCategory !== 'Todas' && (
-              <Button 
-                variant="ghost" 
+            {selectedCategory !== "Todas" && (
+              <Button
+                variant="ghost"
                 className="h-8 px-2"
-                onClick={() => setSelectedCategory('Todas')}
+                onClick={() => setSelectedCategory("Todas")}
               >
                 <ChevronRight className="h-4 w-4 mr-1" />
                 Ver todas
@@ -146,16 +146,16 @@ export default function NoticiasPage() {
 
         {/* Categorías */}
         <div className="mb-6 flex flex-wrap gap-2">
-          <Badge 
-            className={`cursor-pointer py-1 px-3 ${selectedCategory === 'Todas' ? 'bg-black text-primary border-primary/30' : 'bg-black border border-zinc-700'}`}
-            onClick={() => setSelectedCategory('Todas')}
+          <Badge
+            className={`cursor-pointer py-1 px-3 ${selectedCategory === "Todas" ? "bg-black text-primary border-primary/30" : "bg-black border border-zinc-700"}`}
+            onClick={() => setSelectedCategory("Todas")}
           >
             Todas
           </Badge>
           {categories.map((category) => (
-            <Badge 
+            <Badge
               key={category}
-              className={`cursor-pointer py-1 px-3 ${selectedCategory === category ? 'bg-black text-primary border-primary/30' : 'bg-black border border-zinc-700'}`}
+              className={`cursor-pointer py-1 px-3 ${selectedCategory === category ? "bg-black text-primary border-primary/30" : "bg-black border border-zinc-700"}`}
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -167,7 +167,10 @@ export default function NoticiasPage() {
         {isLoading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="bg-zinc-900 border-zinc-700 overflow-hidden">
+              <Card
+                key={i}
+                className="bg-zinc-900 border-zinc-700 overflow-hidden"
+              >
                 <CardContent className="p-0">
                   <Skeleton className="h-40 w-full rounded-t-lg bg-black" />
                   <div className="p-4 space-y-2">
@@ -186,7 +189,10 @@ export default function NoticiasPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredNews.map((news) => (
-              <Card key={news.id} className="bg-zinc-900 border-zinc-700 overflow-hidden">
+              <Card
+                key={news.id}
+                className="bg-zinc-900 border-zinc-700 overflow-hidden"
+              >
                 <CardContent className="p-0">
                   <div className="h-40 bg-black flex items-center justify-center">
                     <TrendingUp className="h-16 w-16 text-primary/50" />
@@ -197,46 +203,51 @@ export default function NoticiasPage() {
                         Premium
                       </Badge>
                     )}
-                    
-                    <Badge variant="outline" className="bg-black border-primary/30 text-primary">
+
+                    <Badge
+                      variant="outline"
+                      className="bg-black border-primary/30 text-primary"
+                    >
                       {news.category}
                     </Badge>
-                    
-                    <h3 className="font-medium text-lg line-clamp-2">{news.title}</h3>
-                    
+
+                    <h3 className="font-medium text-lg line-clamp-2">
+                      {news.title}
+                    </h3>
+
                     <p className="text-sm text-muted-foreground line-clamp-3">
                       {news.summary}
                     </p>
-                    
+
                     <div className="flex justify-between items-center pt-2 text-xs text-muted-foreground">
                       <div className="flex items-center">
                         <Clock className="h-3 w-3 mr-1" />
                         {news.timeAgo}
                       </div>
-                      
+
                       <div className="flex gap-2">
                         {news.premium ? (
                           <Link href="/auth">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               className="h-6 w-6 rounded-full hover:text-primary hover:bg-primary/10"
                             >
                               <Eye className="h-3 w-3" />
                             </Button>
                           </Link>
                         ) : (
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="h-6 w-6 rounded-full"
                           >
                             <Share2 className="h-3 w-3" />
                           </Button>
                         )}
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-6 w-6 rounded-full"
                         >
                           <Bookmark className="h-3 w-3" />
@@ -255,12 +266,18 @@ export default function NoticiasPage() {
           <CardContent className="p-6 md:p-8">
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div className="space-y-4">
-                <h3 className="text-xl md:text-2xl font-bold text-primary">Accede a noticias y análisis premium</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-primary">
+                  Accede a noticias y análisis premium
+                </h3>
                 <p className="text-gray-400">
-                  Obtén acceso a análisis técnicos detallados, estrategias de inversión exclusivas y alertas de mercado antes que nadie.
+                  Obtén acceso a análisis técnicos detallados, estrategias de
+                  inversión exclusivas y alertas de mercado antes que nadie.
                 </p>
                 <Link href="/auth">
-                  <Button variant="outline" className="border-primary text-primary mt-2">
+                  <Button
+                    variant="outline"
+                    className="border-primary text-primary mt-2"
+                  >
                     Iniciar sesión para acceder
                   </Button>
                 </Link>
@@ -280,34 +297,54 @@ export default function NoticiasPage() {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-              <p className="font-medium text-primary">Lion Heart Capital S.A.S.</p>
+              <p className="font-medium text-primary">Zupi Fintech</p>
               <p className="mt-2">Contacto: lionheartcapital1303@gmail.com</p>
             </div>
-            
+
             <div className="space-y-4">
               <p className="font-medium text-primary">Síguenos</p>
               <div className="flex gap-4 justify-center">
-                <a href="https://wa.me/+573000000000" target="_blank" rel="noopener noreferrer">
-                  <Button size="icon" variant="outline" className="border-primary text-primary rounded-full">
+                <a
+                  href="https://wa.me/+573000000000"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="border-primary text-primary rounded-full"
+                  >
                     <MessageCircle className="h-5 w-5" />
                   </Button>
                 </a>
-                <a href="https://kick.com/lionheartcapital" target="_blank" rel="noopener noreferrer">
-                  <Button size="icon" variant="outline" className="border-primary text-primary rounded-full">
+                <a
+                  href="https://kick.com/lionheartcapital"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="border-primary text-primary rounded-full"
+                  >
                     <SiKickstarter className="h-5 w-5" />
                   </Button>
                 </a>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-8">
             <p>¡Próximamente en App Store y Google Play!</p>
-            <p className="text-xs mt-1">Descarga nuestra aplicación móvil para acceder a todas las funcionalidades desde tu dispositivo.</p>
+            <p className="text-xs mt-1">
+              Descarga nuestra aplicación móvil para acceder a todas las
+              funcionalidades desde tu dispositivo.
+            </p>
           </div>
-          
+
           <div className="mt-4">
-            © {new Date().getFullYear()} Lion Heart Capital. Todos los derechos reservados.
+            © {new Date().getFullYear()} Zupi Fintech. Todos los derechos
+            reservados.
           </div>
         </div>
       </footer>
