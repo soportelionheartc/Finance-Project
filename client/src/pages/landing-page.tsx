@@ -102,14 +102,15 @@ export default function LandingPage() {
           <MarketOverview />
         </section>
 
+        {/* Se comenta la seccion de noticias con el fin de agregar funcionalidades premium en un futuro */}
         {/* Financial News Section */}
-        <section className="space-y-6">
+        {/* <section className="space-y-6">
           <h3 className="font-bold text-xl text-primary uppercase flex items-center">
             <Newspaper className="mr-2 h-5 w-5" />
             Noticias Financieras
           </h3>
           <FinancialNewsFeed />
-        </section>
+        </section> */}
 
         {/*{/* Premium Features 
         <section className="space-y-4">
