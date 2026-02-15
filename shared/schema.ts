@@ -209,7 +209,21 @@ export const insertTransactionSchema = createInsertSchema(transactions).omit({
   id: true,
 });
 
+// Email verification codes schema
+export const emailVerificationCodes = pgTable("email_verification_codes", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  code: text("code").notNull(), // stores hashed 6-digit code
+  expiresAt: timestamp("expires_at").notNull(),
+  attempts: integer("attempts").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  isUsed: boolean("is_used").default(false),
+});
 
+export const insertEmailVerificationCodeSchema = createInsertSchema(emailVerificationCodes).omit({
+  id: true,
+  createdAt: true,
+});
 
 // Type exports
 
@@ -239,3 +253,6 @@ export type InsertChatEntry = z.infer<typeof insertChatHistorySchema>;
 
 export type DecentralizedMessage = typeof decentralizedMessages.$inferSelect;
 export type InsertDecentralizedMessage = z.infer<typeof insertDecentralizedMessageSchema>;
+
+export type VerificationCode = typeof emailVerificationCodes.$inferSelect;
+export type InsertVerificationCode = z.infer<typeof insertEmailVerificationCodeSchema>;
