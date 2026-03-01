@@ -1,6 +1,6 @@
 // Importacion para obetener la informacion del .env para realizar la conexcion a la base de datos despues.
 import 'dotenv/config';
-import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages } from "@shared/schema";
+import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes } from "@shared/schema";
 import type {
   User, InsertUser,
   Portfolio, InsertPortfolio,
@@ -8,13 +8,14 @@ import type {
   Strategy, InsertStrategy,
   ChatEntry, InsertChatEntry,
   Wallet, InsertWallet,
-  DecentralizedMessage, InsertDecentralizedMessage
+  DecentralizedMessage, InsertDecentralizedMessage,
+  VerificationCode, InsertVerificationCode
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import connectPg from "connect-pg-simple";
 import { db } from "./db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, lt, or, desc, gte, count } from "drizzle-orm";
 import { pool } from "./db";
 
 const MemoryStore = createMemoryStore(session);
@@ -81,6 +82,15 @@ export interface IStorage {
     date: Date
   }
 ): Promise<any>;
+
+  // Verification code operations
+  createVerificationCode(userId: number, hashedCode: string, expiresAt: Date): Promise<VerificationCode>;
+  getLatestVerificationCode(userId: number): Promise<VerificationCode | undefined>;
+  markCodeAsUsed(codeId: number): Promise<void>;
+  incrementCodeAttempts(codeId: number): Promise<void>;
+  updateUserEmailVerification(userId: number, verified: boolean): Promise<User | undefined>;
+  deleteExpiredVerificationCodes(): Promise<void>;
+  countRecentVerificationCodes(userId: number, since: Date): Promise<number>;
 
   // Session store
   sessionStore: any; // Using 'any' for SessionStore to avoid type errors
@@ -491,6 +501,35 @@ async createTransaction(transaction: {
     this.decentralizedMsgs.set(id, newMessage);
     return newMessage;
   }
+
+  // Verification code operations (stubs for MemStorage)
+  async createVerificationCode(_userId: number, _hashedCode: string, _expiresAt: Date): Promise<VerificationCode> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getLatestVerificationCode(_userId: number): Promise<VerificationCode | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async markCodeAsUsed(_codeId: number): Promise<void> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async incrementCodeAttempts(_codeId: number): Promise<void> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async updateUserEmailVerification(_userId: number, _verified: boolean): Promise<User | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async deleteExpiredVerificationCodes(): Promise<void> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async countRecentVerificationCodes(_userId: number, _since: Date): Promise<number> {
+    throw new Error("Not implemented in MemStorage");
+  }
 }
 
 // Database Storage implementation
@@ -807,6 +846,80 @@ async createTransaction(transaction: {
   return result.rows[0];
 }
 
+  // Verification code operations
+  async createVerificationCode(userId: number, hashedCode: string, expiresAt: Date): Promise<VerificationCode> {
+    const [verificationCode] = await db
+      .insert(emailVerificationCodes)
+      .values({
+        userId,
+        code: hashedCode,
+        expiresAt,
+      })
+      .returning();
+    return verificationCode;
+  }
+
+  async getLatestVerificationCode(userId: number): Promise<VerificationCode | undefined> {
+    const [code] = await db
+      .select()
+      .from(emailVerificationCodes)
+      .where(
+        and(
+          eq(emailVerificationCodes.userId, userId),
+          eq(emailVerificationCodes.isUsed, false)
+        )
+      )
+      .orderBy(desc(emailVerificationCodes.createdAt))
+      .limit(1);
+    return code;
+  }
+
+  async markCodeAsUsed(codeId: number): Promise<void> {
+    await db
+      .update(emailVerificationCodes)
+      .set({ isUsed: true })
+      .where(eq(emailVerificationCodes.id, codeId));
+  }
+
+  async incrementCodeAttempts(codeId: number): Promise<void> {
+    await db
+      .update(emailVerificationCodes)
+      .set({ attempts: sql`${emailVerificationCodes.attempts} + 1` })
+      .where(eq(emailVerificationCodes.id, codeId));
+  }
+
+  async updateUserEmailVerification(userId: number, verified: boolean): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ isEmailVerified: verified })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async deleteExpiredVerificationCodes(): Promise<void> {
+    await db
+      .delete(emailVerificationCodes)
+      .where(
+        or(
+          lt(emailVerificationCodes.expiresAt, new Date()),
+          eq(emailVerificationCodes.isUsed, true)
+        )
+      );
+  }
+
+  async countRecentVerificationCodes(userId: number, since: Date): Promise<number> {
+    const [result] = await db
+      .select({ count: count() })
+      .from(emailVerificationCodes)
+      .where(
+        and(
+          eq(emailVerificationCodes.userId, userId),
+          gte(emailVerificationCodes.createdAt, since)
+        )
+      );
+    return result?.count ?? 0;
+  }
 }
 
 // Use DatabaseStorage instead of MemStorage
