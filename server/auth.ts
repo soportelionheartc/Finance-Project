@@ -9,6 +9,8 @@ import { User as SelectUser, InsertUser } from "@shared/schema";
 import { log } from "./vite";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import 'dotenv/config';
+import { generateVerificationCode, hashVerificationCode, verifyCodeMatch, isCodeExpired } from "./verificationUtils";
+import { sendVerificationEmail } from "./emailService";
 
 // Generate random session secret if not provided
 const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
@@ -102,6 +104,14 @@ export function setupAuth(app: Express) {
           name: profile.displayName,
           password: null,
         });
+        // Google OAuth users are automatically verified since Google already verified their email
+        await storage.updateUserEmailVerification(user.id, true);
+        // Refresh user to get updated verification status
+        user = (await storage.getUser(user.id))!;
+      } else if (!user.isEmailVerified) {
+        // If existing user was not verified, mark them as verified now
+        await storage.updateUserEmailVerification(user.id, true);
+        user = (await storage.getUser(user.id))!;
       }
       return done(null, user);
     } catch (err) {
@@ -205,11 +215,29 @@ export function setupAuth(app: Express) {
       // Set role
       (user as ExtendedUser).role = UserRole.USER;
 
+      // Generate and store verification code
+      const verificationCode = generateVerificationCode();
+      const hashedCode = hashVerificationCode(verificationCode);
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+      
+      try {
+        await storage.createVerificationCode(user.id, hashedCode, expiresAt);
+        // Send verification email
+        if (user.email) {
+          const displayName = user.name || user.username || "Usuario";
+          await sendVerificationEmail(user.email, verificationCode, displayName);
+          log(`Verification email sent to ${user.email}`, "auth");
+        }
+      } catch (emailError) {
+        // Log error but don't fail registration
+        log(`Failed to send verification email to ${user.email}: ${emailError}`, "auth");
+      }
+
       req.login(user, (err) => {
         if (err) return next(err);
         // Don't send password back to client
         const { password, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
+        res.status(201).json({ ...userWithoutPassword, needsVerification: true });
       });
     } catch (error) {
       next(error);
@@ -245,6 +273,132 @@ export function setupAuth(app: Express) {
     res.json(userWithoutPassword);
   });
 
+  // Verify email endpoint
+  app.post("/api/verify-email", async (req, res, next) => {
+    try {
+      // User must be logged in
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Debes iniciar sesión para verificar tu correo" });
+      }
+
+      const userId = req.user.id;
+      const { code } = req.body;
+
+      if (!code || typeof code !== "string" || code.length !== 6) {
+        return res.status(400).json({ error: "El código de verificación debe tener 6 dígitos" });
+      }
+
+      // Get the latest verification code for this user
+      const verificationRecord = await storage.getLatestVerificationCode(userId);
+
+      if (!verificationRecord) {
+        return res.status(400).json({ error: "No hay código de verificación pendiente. Solicita uno nuevo." });
+      }
+
+      // Check if code is expired
+      if (isCodeExpired(verificationRecord.expiresAt)) {
+        return res.status(400).json({ error: "El código ha expirado. Solicita uno nuevo." });
+      }
+
+      // Check if already used
+      if (verificationRecord.isUsed) {
+        return res.status(400).json({ error: "Este código ya fue utilizado. Solicita uno nuevo." });
+      }
+
+      // Check max attempts (3)
+      const currentAttempts = verificationRecord.attempts ?? 0;
+      if (currentAttempts >= 3) {
+        return res.status(400).json({ error: "Has excedido el número máximo de intentos. Solicita un código nuevo." });
+      }
+
+      // Verify the code (the 'code' field in DB stores the hashed code)
+      const isMatch = verifyCodeMatch(code, verificationRecord.code);
+
+      if (!isMatch) {
+        // Increment attempts
+        await storage.incrementCodeAttempts(verificationRecord.id);
+        const remainingAttempts = 2 - currentAttempts;
+        return res.status(400).json({ 
+          error: remainingAttempts > 0 
+            ? `Código incorrecto. Te quedan ${remainingAttempts} intento${remainingAttempts > 1 ? 's' : ''}.`
+            : "Código incorrecto. Has excedido el número máximo de intentos. Solicita un código nuevo."
+        });
+      }
+
+      // Code matches! Mark as used and verify user email
+      await storage.markCodeAsUsed(verificationRecord.id);
+      await storage.updateUserEmailVerification(userId, true);
+
+      // Refresh the user session with the updated verification status
+      const updatedUser = await storage.getUser(userId);
+      if (updatedUser) {
+        req.login({ ...updatedUser, role: updatedUser.username === "jplhc" ? "admin" : "user" }, (err) => {
+          if (err) {
+            log(`Error refreshing session after verification: ${err}`, "auth");
+          }
+        });
+      }
+
+      log(`Email verified successfully for user ${userId}`, "auth");
+      res.json({ success: true, message: "¡Correo electrónico verificado exitosamente!" });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Resend verification code endpoint
+  app.post("/api/resend-verification", async (req, res, next) => {
+    try {
+      // User must be logged in
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Debes iniciar sesión para solicitar un código de verificación" });
+      }
+
+      const userId = req.user.id;
+      const userEmail = req.user.email;
+      const userName = req.user.name || req.user.username || "Usuario";
+
+      // Check if email exists
+      if (!userEmail) {
+        return res.status(400).json({ error: "No hay correo electrónico asociado a tu cuenta" });
+      }
+
+      // Check if user is already verified
+      if (req.user.isEmailVerified) {
+        return res.status(400).json({ error: "Tu correo electrónico ya está verificado" });
+      }
+
+      // Rate limit: max 5 codes per hour
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const recentCodesCount = await storage.countRecentVerificationCodes(userId, oneHourAgo);
+
+      if (recentCodesCount >= 5) {
+        return res.status(429).json({ 
+          error: "Has alcanzado el límite de solicitudes (5 por hora). Por favor espera antes de intentar de nuevo."
+        });
+      }
+
+      // Generate new verification code
+      const verificationCode = generateVerificationCode();
+      const hashedCode = hashVerificationCode(verificationCode);
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
+
+      await storage.createVerificationCode(userId, hashedCode, expiresAt);
+
+      // Send verification email
+      try {
+        await sendVerificationEmail(userEmail, verificationCode, userName);
+        log(`Verification code resent to ${userEmail}`, "auth");
+        res.json({ success: true, message: "Se ha enviado un nuevo código de verificación a tu correo electrónico." });
+      } catch (emailError) {
+        log(`Failed to resend verification email to ${userEmail}: ${emailError}`, "auth");
+        return res.status(500).json({ error: "No se pudo enviar el correo de verificación. Inténtalo de nuevo más tarde." });
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
 
   app.post("/api/auth/apple", async (req, res, next) => {
     try {
@@ -263,6 +417,12 @@ export function setupAuth(app: Express) {
           password: await hashPassword(randomBytes(16).toString('hex')), // Random password
           name: `Apple User ${randomId}`,
         });
+      }
+
+      // Auto-verify Apple OAuth users (Apple already verified the email)
+      if (!user.isEmailVerified) {
+        await storage.updateUserEmailVerification(user.id, true);
+        user = (await storage.getUser(user.id))!;
       }
 
       // Set role
