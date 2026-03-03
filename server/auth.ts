@@ -9,7 +9,7 @@ import { User as SelectUser, InsertUser } from "@shared/schema";
 import { log } from "./vite";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import 'dotenv/config';
-import { generateVerificationCode, hashVerificationCode, verifyCodeMatch, isCodeExpired } from "./verificationUtils";
+import { generateVerificationCode, generateVerificationToken, hashVerificationCode, verifyCodeMatch, isCodeExpired } from "./verificationUtils";
 import { sendVerificationEmail } from "./emailService";
 
 // Generate random session secret if not provided
@@ -217,15 +217,16 @@ export function setupAuth(app: Express) {
 
       // Generate and store verification code
       const verificationCode = generateVerificationCode();
+      const verificationToken = generateVerificationToken();
       const hashedCode = hashVerificationCode(verificationCode);
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
       
       try {
-        await storage.createVerificationCode(user.id, hashedCode, expiresAt);
+        await storage.createVerificationCode(user.id, hashedCode, verificationToken, expiresAt);
         // Send verification email
         if (user.email) {
           const displayName = user.name || user.username || "Usuario";
-          await sendVerificationEmail(user.email, verificationCode, displayName);
+          await sendVerificationEmail(user.email, verificationCode, displayName, verificationToken);
           log(`Verification email sent to ${user.email}`, "auth");
         }
       } catch (emailError) {
@@ -233,11 +234,10 @@ export function setupAuth(app: Express) {
         log(`Failed to send verification email to ${user.email}: ${emailError}`, "auth");
       }
 
-      req.login(user, (err) => {
-        if (err) return next(err);
-        // Don't send password back to client
-        const { password, ...userWithoutPassword } = user;
-        res.status(201).json({ ...userWithoutPassword, needsVerification: true });
+      // Do NOT log in the user - they must verify email first
+      res.status(201).json({ 
+        email: user.email,
+        message: "Cuenta creada exitosamente. Por favor verifica tu correo electrónico para continuar."
       });
     } catch (error) {
       next(error);
@@ -250,6 +250,16 @@ export function setupAuth(app: Express) {
       if (!user) {
         return res.status(401).json({ error: "Credenciales incorrectas" });
       }
+      
+      // Check if email is verified
+      if (!user.isEmailVerified) {
+        return res.status(403).json({ 
+          error: "Debes verificar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.",
+          errorCode: "EMAIL_NOT_VERIFIED",
+          email: user.email
+        });
+      }
+      
       req.login(user, (err) => {
         if (err) return next(err);
         // Don't send password back to client
@@ -276,17 +286,28 @@ export function setupAuth(app: Express) {
   // Verify email endpoint
   app.post("/api/verify-email", async (req, res, next) => {
     try {
-      // User must be logged in
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Debes iniciar sesión para verificar tu correo" });
-      }
+      const { email, code } = req.body;
 
-      const userId = req.user.id;
-      const { code } = req.body;
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "El correo electrónico es requerido" });
+      }
 
       if (!code || typeof code !== "string" || code.length !== 6) {
         return res.status(400).json({ error: "El código de verificación debe tener 6 dígitos" });
       }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+
+      // Check if already verified
+      if (user.isEmailVerified) {
+        return res.status(400).json({ error: "Este correo ya está verificado" });
+      }
+
+      const userId = user.id;
 
       // Get the latest verification code for this user
       const verificationRecord = await storage.getLatestVerificationCode(userId);
@@ -329,44 +350,132 @@ export function setupAuth(app: Express) {
       await storage.markCodeAsUsed(verificationRecord.id);
       await storage.updateUserEmailVerification(userId, true);
 
-      // Refresh the user session with the updated verification status
-      const updatedUser = await storage.getUser(userId);
-      if (updatedUser) {
-        req.login({ ...updatedUser, role: updatedUser.username === "jplhc" ? "admin" : "user" }, (err) => {
-          if (err) {
-            log(`Error refreshing session after verification: ${err}`, "auth");
-          }
-        });
-      }
-
+      // DO NOT log in the user - they must log in manually after verification
       log(`Email verified successfully for user ${userId}`, "auth");
-      res.json({ success: true, message: "¡Correo electrónico verificado exitosamente!" });
+      
+      res.json({ 
+        success: true, 
+        message: "¡Correo electrónico verificado exitosamente! Ya puedes iniciar sesión."
+      });
     } catch (error) {
       next(error);
     }
   });
+  // One-click email verification via token (GET request for email links)
+  app.get("/verify-email-token/:token", async (req, res, next) => {
+    try {
+      const { token } = req.params;
 
+      if (!token || typeof token !== "string") {
+        return res.status(400).send(`
+          <!DOCTYPE html>
+          <html>
+            <head><title>Error de Verificación</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white;">
+              <h1 style="color: #ff6b6b;">❌ Token inválido</h1>
+              <p>El enlace de verificación no es válido.</p>
+              <a href="/auth" style="color: #FFC107; text-decoration: none; font-weight: bold;">Volver al inicio de sesión</a>
+            </body>
+          </html>
+        `);
+      }
+
+      // Find verification code by token
+      const verificationRecord = await storage.getVerificationCodeByToken(token);
+
+      if (!verificationRecord) {
+        return res.status(404).send(`
+          <!DOCTYPE html>
+          <html>
+            <head><title>Error de Verificación</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white;">
+              <h1 style="color: #ff6b6b;">❌ Token no encontrado</h1>
+              <p>El enlace de verificación no existe o ya fue utilizado.</p>
+              <a href="/verify-email" style="color: #FFC107; text-decoration: none; font-weight: bold;">Ingresar código manualmente</a>
+            </body>
+          </html>
+        `);
+      }
+
+      // Check if code is expired
+      if (isCodeExpired(verificationRecord.expiresAt)) {
+        return res.status(400).send(`
+          <!DOCTYPE html>
+          <html>
+            <head><title>Código Expirado</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white;">
+              <h1 style="color: #ff9800;">⏱️ Código expirado</h1>
+              <p>El enlace de verificación ha expirado. Los enlaces expiran después de 15 minutos.</p>
+              <a href="/verify-email" style="color: #FFC107; text-decoration: none; font-weight: bold;">Solicitar un nuevo código</a>
+            </body>
+          </html>
+        `);
+      }
+
+      // Check if already used
+      if (verificationRecord.isUsed) {
+        return res.status(400).send(`
+          <!DOCTYPE html>
+          <html>
+            <head><title>Ya Verificado</title></head>
+            <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white;">
+              <h1 style="color: #4caf50;">✅ Ya verificado</h1>
+              <p>Este correo electrónico ya fue verificado.</p>
+              <a href="/auth" style="color: #FFC107; text-decoration: none; font-weight: bold;">Ir al inicio de sesión</a>
+            </body>
+          </html>
+        `);
+      }
+
+      // Mark as used and verify user email
+      await storage.markCodeAsUsed(verificationRecord.id);
+      await storage.updateUserEmailVerification(verificationRecord.userId, true);
+
+      log(`Email verified successfully via token for user ${verificationRecord.userId}`, "auth");
+      
+      // Send success HTML page with redirect
+      res.status(200).send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Verificación Exitosa</title>
+            <meta http-equiv="refresh" content="3;url=/auth">
+          </head>
+          <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white;">
+            <h1 style="color: #4caf50;">✅ ¡Correo verificado exitosamente!</h1>
+            <p style="color: #b8b8b8;">Tu correo electrónico ha sido verificado correctamente.</p>
+            <p style="color: #FFC107;">Serás redirigido al inicio de sesión en 3 segundos...</p>
+            <a href="/auth" style="color: #FFC107; text-decoration: none; font-weight: bold;">O haz clic aquí para continuar</a>
+          </body>
+        </html>
+      `);
+    } catch (error) {
+      next(error);
+    }
+  });
   // Resend verification code endpoint
   app.post("/api/resend-verification", async (req, res, next) => {
     try {
-      // User must be logged in
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Debes iniciar sesión para solicitar un código de verificación" });
+      const { email } = req.body;
+
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ error: "El correo electrónico es requerido" });
       }
 
-      const userId = req.user.id;
-      const userEmail = req.user.email;
-      const userName = req.user.name || req.user.username || "Usuario";
-
-      // Check if email exists
-      if (!userEmail) {
-        return res.status(400).json({ error: "No hay correo electrónico asociado a tu cuenta" });
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
       }
 
       // Check if user is already verified
-      if (req.user.isEmailVerified) {
-        return res.status(400).json({ error: "Tu correo electrónico ya está verificado" });
+      if (user.isEmailVerified) {
+        return res.status(400).json({ error: "Este correo ya está verificado" });
       }
+
+      const userId = user.id;
+      const userEmail = user.email;
+      const userName = user.name || user.username || "Usuario";
 
       // Rate limit: max 5 codes per hour
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
@@ -380,14 +489,15 @@ export function setupAuth(app: Express) {
 
       // Generate new verification code
       const verificationCode = generateVerificationCode();
+      const verificationToken = generateVerificationToken();
       const hashedCode = hashVerificationCode(verificationCode);
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
 
-      await storage.createVerificationCode(userId, hashedCode, expiresAt);
+      await storage.createVerificationCode(userId, hashedCode, verificationToken, expiresAt);
 
       // Send verification email
       try {
-        await sendVerificationEmail(userEmail, verificationCode, userName);
+        await sendVerificationEmail(userEmail, verificationCode, userName, verificationToken);
         log(`Verification code resent to ${userEmail}`, "auth");
         res.json({ success: true, message: "Se ha enviado un nuevo código de verificación a tu correo electrónico." });
       } catch (emailError) {

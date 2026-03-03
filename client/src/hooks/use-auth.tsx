@@ -35,9 +35,9 @@ type AuthContextType = {
   isAdmin: boolean;
   loginMutation: UseMutationResult<User, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
-  registerMutation: UseMutationResult<User, Error, RegisterData>;
+  registerMutation: UseMutationResult<{ email: string; message: string }, Error, RegisterData>;
   socialLoginMutation: UseMutationResult<User, Error, string>;
-  verifyEmailMutation: UseMutationResult<User, Error, { code: string }>;
+  verifyEmailMutation: UseMutationResult<{ success: boolean; message: string }, Error, { code: string }>;
   resendVerificationMutation: UseMutationResult<{ message: string }, Error, void>;
 };
 
@@ -105,22 +105,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/register", userData);
       return await res.json();
     },
-    onSuccess: (response: User & { needsVerification?: boolean }) => {
-      queryClient.setQueryData(["/api/user"], response);
+    onSuccess: (response: { email: string; message: string }) => {
+      // Guardar email en localStorage para la página de verificación
+      localStorage.setItem('pendingVerificationEmail', response.email);
       
-      if (response.needsVerification) {
-        toast({
-          title: "¡Registro exitoso!",
-          description: "Por favor verifica tu correo electrónico para continuar",
-        });
-        window.location.href = "/verify-email";
-      } else {
-        toast({
-          title: "Registro exitoso",
-          description: `Bienvenido, ${response.name || response.username}`,
-        });
-        handleSuccessfulLogin(response);
-      }
+      toast({
+        title: "¡Registro exitoso!",
+        description: "Por favor verifica tu correo electrónico para continuar",
+      });
+      
+      // Redirigir a la página de verificación
+      // Usar replace para evitar que el usuario pueda volver atrás
+      window.location.replace("/verify-email");
     },
     onError: (error: Error) => {
       toast({
@@ -179,16 +175,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Mutación para verificar email
   const verifyEmailMutation = useMutation({
     mutationFn: async ({ code }: { code: string }) => {
-      const res = await apiRequest("POST", "/api/verify-email", { code });
+      const email = localStorage.getItem('pendingVerificationEmail');
+      if (!email) {
+        throw new Error('No se encontró el correo electrónico pendiente de verificación');
+      }
+      const res = await apiRequest("POST", "/api/verify-email", { email, code });
       return await res.json();
     },
-    onSuccess: (user: User) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    onSuccess: (data: { success: boolean; message: string }) => {
+      // Limpiar email de localStorage
+      localStorage.removeItem('pendingVerificationEmail');
+      
       toast({
         title: "¡Email verificado!",
-        description: "Tu cuenta ha sido verificada exitosamente",
+        description: "Ahora puedes iniciar sesión con tu cuenta",
       });
-      window.location.href = "/dashboard";
+      
+      // Redirigir a la página de login (NO al dashboard)
+      // Usar replace para evitar que el usuario pueda volver atrás
+      window.location.replace("/auth");
     },
     onError: (error: Error) => {
       toast({
@@ -202,7 +207,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Mutación para reenviar código de verificación
   const resendVerificationMutation = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", "/api/resend-verification");
+      const email = localStorage.getItem('pendingVerificationEmail');
+      if (!email) {
+        throw new Error('No se encontró el correo electrónico pendiente de verificación');
+      }
+      const res = await apiRequest("POST", "/api/resend-verification", { email });
       return await res.json();
     },
     onSuccess: (data: { message: string }) => {

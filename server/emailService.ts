@@ -22,12 +22,14 @@ export function createEmailTransporter(): Transporter {
  * @param code - The 6-digit verification code
  * @param name - User's name for personalization
  * @param language - Language for the email content ('es' for Spanish, 'en' for English)
+ * @param verificationToken - Optional token for one-click verification link
  * @returns Object containing the email subject and HTML body
  */
 export function getVerificationEmailTemplate(
   code: string,
   name: string,
-  language: "es" | "en" = "es"
+  language: "es" | "en" = "es",
+  verificationToken?: string
 ): { subject: string; html: string } {
   const isSpanish = language === "es";
 
@@ -52,6 +54,14 @@ export function getVerificationEmailTemplate(
   const instruction = isSpanish
     ? "Ingresa este código en la aplicación para completar tu verificación. No compartas este código con nadie."
     : "Enter this code in the application to complete your verification. Do not share this code with anyone.";
+
+  const orText = isSpanish
+    ? "O haz clic en el siguiente botón para verificar automáticamente:"
+    : "Or click the following button to verify automatically:";
+
+  const verifyButtonText = isSpanish
+    ? "✅ Verificar mi correo electrónico"
+    : "✅ Verify my email address";
 
   const securityNote = isSpanish
     ? "Si no solicitaste este código, puedes ignorar este correo de forma segura."
@@ -121,6 +131,20 @@ export function getVerificationEmailTemplate(
                 ${instruction}
               </p>
 
+              ${verificationToken ? `
+              <!-- One-Click Verification Section -->
+              <p style="color: #b8b8b8; font-size: 14px; margin: 0 0 15px 0; text-align: center;">
+                ${orText}
+              </p>
+              
+              <div style="text-align: center; margin: 0 0 25px 0;">
+                <a href="${process.env.BASE_URL || 'http://localhost:5000'}/verify-email-token/${verificationToken}" 
+                   style="display: inline-block; background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%); color: #1a1a2e; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);">
+                  ${verifyButtonText}
+                </a>
+              </div>
+              ` : ''}
+
               <hr style="border: none; border-top: 1px solid #2a2a4a; margin: 30px 0;">
 
               <p style="color: #888888; font-size: 13px; line-height: 1.6; margin: 0;">
@@ -158,6 +182,7 @@ export function getVerificationEmailTemplate(
  * @param email - Recipient email address
  * @param code - The 6-digit verification code
  * @param name - User's name for personalization
+ * @param verificationToken - Optional token for one-click verification link
  * @param language - Language for the email content (defaults to 'es' for Spanish)
  * @throws Error if email sending fails
  */
@@ -165,10 +190,11 @@ export async function sendVerificationEmail(
   email: string,
   code: string,
   name: string,
+  verificationToken?: string,
   language: "es" | "en" = "es"
 ): Promise<void> {
   const transporter = createEmailTransporter();
-  const { subject, html } = getVerificationEmailTemplate(code, name, language);
+  const { subject, html } = getVerificationEmailTemplate(code, name, language, verificationToken);
 
   const mailOptions = {
     from: `"Lion Heart Capital" <${process.env.EMAIL_USER}>`,

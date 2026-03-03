@@ -75,3 +75,13 @@ export function verifyCodeMatch(suppliedCode: string, storedHash: string): boole
 export function isCodeExpired(expiresAt: Date): boolean {
   return new Date() > expiresAt;
 }
+
+/**
+ * Generates a cryptographically secure random token for one-click email verification.
+ * The token is URL-safe and contains 32 bytes (64 hex characters).
+ * 
+ * @returns A 64-character hexadecimal string token
+ */
+export function generateVerificationToken(): string {
+  return randomBytes(32).toString("hex");
+}

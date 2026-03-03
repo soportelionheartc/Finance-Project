@@ -261,18 +261,34 @@ export default function AuthPage() {
                   <CardContent className="pt-6">
                     {loginMutation.error && (
                       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
-                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
+                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-md w-full text-center animate-fade-in">
                           <h4 className="text-lg font-bold text-yellow-500 mb-2">
-                            Acceso denegado
+                            {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' 
+                              ? '📧 Verifica tu correo electrónico' 
+                              : 'Acceso denegado'}
                           </h4>
                           <p className="text-gray-300 mb-4">
-                            Credenciales incorrectas. Por favor verifica tu
-                            usuario y contraseña
-                            <br />
-                            Si no tienes cuenta, regístrate.
+                            {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' 
+                              ? 'Debes verificar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y carpeta de spam.' 
+                              : 'Credenciales incorrectas. Por favor verifica tu usuario y contraseña. Si no tienes cuenta, regístrate.'}
                           </p>
+                          {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' && (
+                            <Button
+                              variant="outline"
+                              className="border-primary text-primary hover:bg-primary/20 mb-2 w-full"
+                              onClick={() => {
+                                const email = (loginMutation.error as any)?.email;
+                                if (email) {
+                                  localStorage.setItem('pendingVerificationEmail', email);
+                                  setLocation('/verify-email');
+                                }
+                              }}
+                            >
+                              Ir a verificar correo
+                            </Button>
+                          )}
                           <Button
-                            className="bg-yellow-500 text-black font-semibold px-6 mt-2"
+                            className="bg-yellow-500 text-black font-semibold px-6 w-full"
                             onClick={() => loginMutation.reset()}
                           >
                             Cerrar

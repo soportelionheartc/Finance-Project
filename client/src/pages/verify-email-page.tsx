@@ -5,14 +5,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail, ArrowLeft, Loader2 } from "lucide-react";
-import { Link } from "wouter";
+import { Mail, Loader2 } from "lucide-react";
 
 export default function VerifyEmailPage() {
   const [, setLocation] = useLocation();
-  const { user, verifyEmailMutation, resendVerificationMutation } = useAuth();
+  const { verifyEmailMutation, resendVerificationMutation } = useAuth();
   const [code, setCode] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [email, setEmail] = useState<string | null>(null);
+
+  // Obtener email de localStorage
+  useEffect(() => {
+    const pendingEmail = localStorage.getItem('pendingVerificationEmail');
+    if (!pendingEmail) {
+      // Si no hay email pendiente, redirigir a auth
+      setLocation("/auth");
+    } else {
+      setEmail(pendingEmail);
+    }
+  }, [setLocation]);
 
   // Cooldown timer para reenvío
   useEffect(() => {
@@ -23,15 +34,6 @@ export default function VerifyEmailPage() {
       return () => clearTimeout(timer);
     }
   }, [resendCooldown]);
-
-  // Si no hay usuario o ya está verificado, redirigir
-  useEffect(() => {
-    if (!user) {
-      setLocation("/auth");
-    } else if (user.isEmailVerified) {
-      setLocation("/dashboard");
-    }
-  }, [user, setLocation]);
 
   const handleVerify = () => {
     if (code.length === 6) {
@@ -46,8 +48,8 @@ export default function VerifyEmailPage() {
     }
   };
 
-  // Si no hay usuario, no mostrar nada (redirigirá)
-  if (!user) {
+  // Si no hay email, no mostrar nada (redirigirá)
+  if (!email) {
     return null;
   }
 
@@ -58,19 +60,6 @@ export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Botón de regresar */}
-        <div className="mb-6">
-          <Link href="/dashboard">
-            <Button
-              variant="ghost"
-              className="hover:bg-primary/20 flex items-center text-primary px-0"
-            >
-              <ArrowLeft className="h-5 w-5 mr-1" />
-              Regresar al inicio
-            </Button>
-          </Link>
-        </div>
-
         <Card className="border-zinc-800 bg-zinc-900">
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto bg-primary/20 rounded-full p-4 w-fit">
@@ -83,7 +72,7 @@ export default function VerifyEmailPage() {
               <CardDescription className="text-gray-400 mt-2">
                 Hemos enviado un código de 6 dígitos a
               </CardDescription>
-              <p className="text-primary font-medium mt-1">{user.email}</p>
+              <p className="text-primary font-medium mt-1">{email}</p>
             </div>
           </CardHeader>
 
@@ -163,7 +152,7 @@ export default function VerifyEmailPage() {
             {/* Mensaje informativo */}
             <Alert className="bg-zinc-800 border-zinc-700">
               <AlertDescription className="text-gray-400 text-sm">
-                El código expira en 10 minutos. Si no lo encuentras, revisa tu carpeta de spam.
+                El código expira en 15 minutos. Si no lo encuentras, revisa tu carpeta de spam.
               </AlertDescription>
             </Alert>
           </CardContent>

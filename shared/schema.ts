@@ -214,6 +214,7 @@ export const emailVerificationCodes = pgTable("email_verification_codes", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   code: text("code").notNull(), // stores hashed 6-digit code
+  verificationToken: text("verification_token").unique(), // unique token for one-click verification (nullable for backwards compatibility)
   expiresAt: timestamp("expires_at").notNull(),
   attempts: integer("attempts").default(0),
   createdAt: timestamp("created_at").defaultNow(),

@@ -84,8 +84,9 @@ export interface IStorage {
 ): Promise<any>;
 
   // Verification code operations
-  createVerificationCode(userId: number, hashedCode: string, expiresAt: Date): Promise<VerificationCode>;
+  createVerificationCode(userId: number, hashedCode: string, verificationToken: string, expiresAt: Date): Promise<VerificationCode>;
   getLatestVerificationCode(userId: number): Promise<VerificationCode | undefined>;
+  getVerificationCodeByToken(token: string): Promise<VerificationCode | undefined>;
   markCodeAsUsed(codeId: number): Promise<void>;
   incrementCodeAttempts(codeId: number): Promise<void>;
   updateUserEmailVerification(userId: number, verified: boolean): Promise<User | undefined>;
@@ -503,11 +504,15 @@ async createTransaction(transaction: {
   }
 
   // Verification code operations (stubs for MemStorage)
-  async createVerificationCode(_userId: number, _hashedCode: string, _expiresAt: Date): Promise<VerificationCode> {
+  async createVerificationCode(_userId: number, _hashedCode: string, _verificationToken: string, _expiresAt: Date): Promise<VerificationCode> {
     throw new Error("Not implemented in MemStorage");
   }
 
   async getLatestVerificationCode(_userId: number): Promise<VerificationCode | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getVerificationCodeByToken(_token: string): Promise<VerificationCode | undefined> {
     throw new Error("Not implemented in MemStorage");
   }
 
@@ -847,12 +852,13 @@ async createTransaction(transaction: {
 }
 
   // Verification code operations
-  async createVerificationCode(userId: number, hashedCode: string, expiresAt: Date): Promise<VerificationCode> {
+  async createVerificationCode(userId: number, hashedCode: string, verificationToken: string, expiresAt: Date): Promise<VerificationCode> {
     const [verificationCode] = await db
       .insert(emailVerificationCodes)
       .values({
         userId,
         code: hashedCode,
+        verificationToken,
         expiresAt,
       })
       .returning();
@@ -870,6 +876,20 @@ async createTransaction(transaction: {
         )
       )
       .orderBy(desc(emailVerificationCodes.createdAt))
+      .limit(1);
+    return code;
+  }
+
+  async getVerificationCodeByToken(token: string): Promise<VerificationCode | undefined> {
+    const [code] = await db
+      .select()
+      .from(emailVerificationCodes)
+      .where(
+        and(
+          eq(emailVerificationCodes.verificationToken, token),
+          eq(emailVerificationCodes.isUsed, false)
+        )
+      )
       .limit(1);
     return code;
   }
