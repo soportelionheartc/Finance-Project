@@ -1,6 +1,6 @@
 // Importacion para obetener la informacion del .env para realizar la conexcion a la base de datos despues.
 import 'dotenv/config';
-import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes } from "@shared/schema";
+import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes, investorProfiles } from "@shared/schema";
 import type {
   User, InsertUser,
   Portfolio, InsertPortfolio,
@@ -9,7 +9,8 @@ import type {
   ChatEntry, InsertChatEntry,
   Wallet, InsertWallet,
   DecentralizedMessage, InsertDecentralizedMessage,
-  VerificationCode, InsertVerificationCode
+  VerificationCode, InsertVerificationCode,
+  InvestorProfile, InsertInvestorProfile
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -92,6 +93,11 @@ export interface IStorage {
   updateUserEmailVerification(userId: number, verified: boolean): Promise<User | undefined>;
   deleteExpiredVerificationCodes(): Promise<void>;
   countRecentVerificationCodes(userId: number, since: Date): Promise<number>;
+
+  // Investor profile operations
+  createInvestorProfile(data: InsertInvestorProfile): Promise<InvestorProfile>;
+  getInvestorProfileByUserId(userId: number): Promise<InvestorProfile | undefined>;
+  updateInvestorProfile(userId: number, data: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined>;
 
   // Session store
   sessionStore: any; // Using 'any' for SessionStore to avoid type errors
@@ -535,6 +541,19 @@ async createTransaction(transaction: {
   async countRecentVerificationCodes(_userId: number, _since: Date): Promise<number> {
     throw new Error("Not implemented in MemStorage");
   }
+
+  // Investor profile operations (stubs for MemStorage)
+  async createInvestorProfile(_data: InsertInvestorProfile): Promise<InvestorProfile> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getInvestorProfileByUserId(_userId: number): Promise<InvestorProfile | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async updateInvestorProfile(_userId: number, _data: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
 }
 
 // Database Storage implementation
@@ -939,6 +958,36 @@ async createTransaction(transaction: {
         )
       );
     return result?.count ?? 0;
+  }
+
+  // Investor profile operations
+  async createInvestorProfile(data: InsertInvestorProfile): Promise<InvestorProfile> {
+    const [profile] = await db
+      .insert(investorProfiles)
+      .values(data)
+      .returning();
+    return profile;
+  }
+
+  async getInvestorProfileByUserId(userId: number): Promise<InvestorProfile | undefined> {
+    const [profile] = await db
+      .select()
+      .from(investorProfiles)
+      .where(eq(investorProfiles.userId, userId))
+      .limit(1);
+    return profile;
+  }
+
+  async updateInvestorProfile(userId: number, data: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined> {
+    const [updatedProfile] = await db
+      .update(investorProfiles)
+      .set({
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(investorProfiles.userId, userId))
+      .returning();
+    return updatedProfile;
   }
 }
 
