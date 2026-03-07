@@ -4,11 +4,13 @@ import { NewsFeed } from "@/components/finance/news-feed";
 import { useAuth } from "@/hooks/use-auth";
 import { MessageCircle, Linkedin, Instagram, Facebook, Globe } from "lucide-react";
 import { SiKickstarter, SiTiktok, SiTwitch } from "react-icons/si";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import BasicForum from "@/components/basic-forum";
 import { Button } from "@/components/ui/button";
 import { VerificationBanner } from "@/components/auth/verification-banner";
+import { InvestorProfileModal } from "@/components/investor-profile-modal";
+import { useQuery } from "@tanstack/react-query";
 
 
 const consejosFinancieros = [
@@ -53,6 +55,29 @@ export default function HomePage() {
   const { user } = useAuth();
   const [showModal, setShowModal] = useState(true);
   const [, setLocation] = useLocation();
+  
+  // Check if user has completed investor profile
+  const { data: investorProfile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["/api/investor-profile"],
+    retry: false,
+    enabled: !!user,
+  });
+  
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  
+  useEffect(() => {
+    // Show profile modal if user is authenticated, email verified, loading complete, and no profile exists
+    if (user && user.isEmailVerified && !isLoadingProfile && !investorProfile) {
+      setShowProfileModal(true);
+    }
+  }, [user, investorProfile, isLoadingProfile]);
+  
+  useEffect(() => {
+    // Hide modal if profile gets loaded (e.g., after completion)
+    if (investorProfile && showProfileModal) {
+      setShowProfileModal(false);
+    }
+  }, [investorProfile, showProfileModal]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -116,7 +141,7 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
-          <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Hola, {user?.name || user?.username || "Inversionista"}
           </h1>
           <p className="text-muted-foreground text-center">
@@ -211,6 +236,12 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      
+      {/* Investor Profile Modal */}
+      <InvestorProfileModal 
+        open={showProfileModal} 
+        onClose={() => setShowProfileModal(false)} 
+      />
     </div>
   );
 }

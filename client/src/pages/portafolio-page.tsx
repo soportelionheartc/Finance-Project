@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { AddAssetForm } from "@/components/finance/add-asset-form";
 import { PortfolioSummary } from "@/components/finance/portfolio-summary";
 import { AssetDistribution } from "@/components/finance/asset-distribution";
+import { InvestorProfileGuard } from "@/lib/investor-profile-guard";
 
 
 type Asset = {
@@ -340,15 +341,16 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-       <Button
-      variant="outline"
-      onClick={() => window.history.back()}
-      className="mb-4 w-fit"
-    >
-      ← Volver
-    </Button>
+    <InvestorProfileGuard>
+      <div className="min-h-screen bg-background">
+        <Header />
+         <Button
+        variant="outline"
+        onClick={() => window.history.back()}
+        className="mb-4 w-fit"
+      >
+        ← Volver
+      </Button>
       <main className="container mx-auto px-4 py-6">
         <div className="flex flex-col space-y-2 mb-6 justify-center items-center">
         <h1 className="text-3xl font-bold text-yellow-500 mb-2">
@@ -1020,5 +1022,6 @@ useEffect(() => {
         </DialogContent>
       </Dialog>
     </div>
+    </InvestorProfileGuard>
   );
 }

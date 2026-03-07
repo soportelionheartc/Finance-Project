@@ -1,16 +1,14 @@
 import { InvestorQuestionnaire } from "@/components/finance/investor-questionnaire";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
 import { Header } from "@/components/layout/header";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Info } from "lucide-react";
 
 export default function InvestorQuestionnairePage() {
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
   
   // Check if user already has a profile
   const { data: existingProfile, isLoading: isLoadingProfile } = useQuery({
@@ -39,9 +37,9 @@ export default function InvestorQuestionnairePage() {
       });
       
       // Redirect to dashboard after a brief delay
-      setTimeout(() => {
+      /* setTimeout(() => {
         setLocation("/dashboard");
-      }, 1500);
+      }, 1500); */
     },
     onError: (error: any) => {
       console.error("Error submitting investor profile:", error);
@@ -73,9 +71,9 @@ export default function InvestorQuestionnairePage() {
 
           {/* Retaking alert */}
           {isRetaking && (
-            <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800 dark:text-blue-200">
+            <Alert className="flex items-center">
+              <Info/>
+              <AlertDescription>
                 Estás re-tomando el cuestionario. Tus respuestas anteriores serán reemplazadas.
               </AlertDescription>
             </Alert>

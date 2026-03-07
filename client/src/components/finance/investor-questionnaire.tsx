@@ -12,6 +12,7 @@ import {
   type InvestorProfileType 
 } from "@/lib/investor-questions";
 import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
+import { useLocation } from "wouter";
 
 export interface InvestorQuestionnaireProps {
   onComplete: (answers: Record<number, number>) => void;
@@ -26,6 +27,8 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [showResult, setShowResult] = useState(false);
   const [profileType, setProfileType] = useState<InvestorProfileType | null>(null);
+  const [, setLocation] = useLocation();
+
 
   const totalQuestions = INVESTOR_QUESTIONS.length;
   const currentQuestion = INVESTOR_QUESTIONS[currentStep];
@@ -85,8 +88,8 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
         <Card className="border-2" style={{ borderColor: profile.color }}>
           <CardHeader className="text-center pb-4">
             <div className="flex items-center justify-center gap-3 mb-2">
-              <Badge 
-                style={{ backgroundColor: profile.color, color: '#000' }}
+              <Badge
+                style={{ backgroundColor: profile.color, color: "#000" }}
                 className="text-lg px-4 py-1.5"
               >
                 {profile.label}
@@ -105,7 +108,9 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
                 {profile.characteristics.map((characteristic, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <span className="text-muted-foreground">{characteristic}</span>
+                    <span className="text-muted-foreground">
+                      {characteristic}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -121,7 +126,9 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
                 {profile.recommendations.map((recommendation, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">✓</span>
-                    <span className="text-muted-foreground">{recommendation}</span>
+                    <span className="text-muted-foreground">
+                      {recommendation}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -132,17 +139,33 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-xl">⏰</span>
                 <span className="font-semibold">Frecuencia de revisión:</span>
-                <span className="text-muted-foreground">{profile.reviewFrequency}</span>
+                <span className="text-muted-foreground">
+                  {profile.reviewFrequency}
+                </span>
               </div>
             </div>
 
             {/* Educational Note */}
             <div className="bg-muted/50 rounded-lg p-4 mt-4">
               <p className="text-sm text-muted-foreground">
-                <strong>Nota:</strong> Este perfil es una guía inicial basada en tus respuestas. 
-                Tu estrategia de inversión puede evolucionar con el tiempo según tus objetivos y 
-                circunstancias. Consulta con un asesor financiero para una estrategia personalizada.
+                <strong>Nota:</strong> Este perfil es una guía inicial basada en
+                tus respuestas. Tu estrategia de inversión puede evolucionar con
+                el tiempo según tus objetivos y circunstancias. Consulta con un
+                asesor financiero para una estrategia personalizada.
               </p>
+            </div>
+
+            {/* Home Button */}
+            <div className="pt-4 border-t border-border">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setLocation("/dashboard");
+                }}
+                className="w-full"
+              >
+                Volver al Inicio
+              </Button>
             </div>
           </CardContent>
         </Card>
