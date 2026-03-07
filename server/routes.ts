@@ -31,6 +31,30 @@ function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
   res.status(401).json({ error: "Usuario no autenticado" });
 }
 
+// Helper function to calculate investor profile based on questionnaire answers
+function calculateInvestorProfile(answers: Record<number, number>): { riskProfile: string; totalScore: number } {
+  // Sum points from questions 1-6
+  const totalScore = Object.entries(answers)
+    .filter(([questionId]) => {
+      const qid = parseInt(questionId, 10);
+      return qid >= 1 && qid <= 6;
+    })
+    .reduce((sum, [, points]) => sum + points, 0);
+
+  // Determine risk profile based on total score
+  // Conservative: 0-7, Moderate: 8-14, Aggressive: 15-21
+  let riskProfile: string;
+  if (totalScore <= 7) {
+    riskProfile = 'conservative';
+  } else if (totalScore <= 14) {
+    riskProfile = 'moderate';
+  } else {
+    riskProfile = 'aggressive';
+  }
+
+  return { riskProfile, totalScore };
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
@@ -217,7 +241,93 @@ app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, re
   }
 });
 
-  //app.use(router);
+  // Investor Profile Routes
+  
+  // POST /api/investor-profile - Create/Submit questionnaire
+  app.post("/api/investor-profile", ensureAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user!.id;
+      const { answers } = req.body;
+
+      if (!answers || typeof answers !== 'object') {
+        return res.status(400).json({ error: "Se requieren respuestas al cuestionario" });
+      }
+
+      // Check if user already has a profile
+      const existingProfile = await storage.getInvestorProfileByUserId(userId);
+      if (existingProfile) {
+        return res.status(409).json({ error: "El usuario ya tiene un perfil de inversor. Usa PUT para actualizar." });
+      }
+
+      // Calculate risk profile and total score
+      const { riskProfile, totalScore } = calculateInvestorProfile(answers);
+
+      // Create the profile
+      const newProfile = await storage.createInvestorProfile({
+        userId,
+        riskProfile: riskProfile as "conservative" | "moderate" | "aggressive",
+        totalScore,
+        answers,
+        completedAt: new Date(),
+      });
+
+      res.status(201).json(newProfile);
+    } catch (err) {
+      console.error("Error al crear perfil de inversor:", err);
+      res.status(500).json({ error: "Error al crear el perfil de inversor" });
+    }
+  });
+
+  // GET /api/investor-profile - Retrieve current user's profile
+  app.get("/api/investor-profile", ensureAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user!.id;
+      const profile = await storage.getInvestorProfileByUserId(userId);
+
+      if (!profile) {
+        return res.status(404).json({ error: "No se encontró un perfil de inversor para este usuario" });
+      }
+
+      res.json(profile);
+    } catch (err) {
+      console.error("Error al obtener perfil de inversor:", err);
+      res.status(500).json({ error: "Error al obtener el perfil de inversor" });
+    }
+  });
+
+  // PUT /api/investor-profile - Update/Re-take questionnaire
+  app.put("/api/investor-profile", ensureAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user!.id;
+      const { answers } = req.body;
+
+      if (!answers || typeof answers !== 'object') {
+        return res.status(400).json({ error: "Se requieren respuestas al cuestionario" });
+      }
+
+      // Check if profile exists
+      const existingProfile = await storage.getInvestorProfileByUserId(userId);
+      if (!existingProfile) {
+        return res.status(404).json({ error: "No se encontró un perfil de inversor. Usa POST para crear uno." });
+      }
+
+      // Recalculate risk profile and total score
+      const { riskProfile, totalScore } = calculateInvestorProfile(answers);
+
+      // Update the profile
+      const updatedProfile = await storage.updateInvestorProfile(userId, {
+        riskProfile: riskProfile as "conservative" | "moderate" | "aggressive",
+        totalScore,
+        answers,
+        completedAt: new Date(),
+      });
+
+      res.json(updatedProfile);
+    } catch (err) {
+      console.error("Error al actualizar perfil de inversor:", err);
+      res.status(500).json({ error: "Error al actualizar el perfil de inversor" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
