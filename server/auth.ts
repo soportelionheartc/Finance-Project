@@ -11,6 +11,24 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import 'dotenv/config';
 import { generateVerificationCode, generateVerificationToken, hashVerificationCode, verifyCodeMatch, isCodeExpired } from "./verificationUtils";
 import { sendVerificationEmail } from "./emailService";
+import rateLimit from "express-rate-limit";
+
+// Rate limiters for email-related endpoints
+export const registerRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests per window per IP
+  message: { error: "Demasiadas solicitudes de registro. Por favor, inténtalo de nuevo en 15 minutos." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+export const resendVerificationRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3, // 3 requests per window per IP
+  message: { error: "Demasiadas solicitudes de reenvío. Por favor, inténtalo de nuevo en 15 minutos." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Generate random session secret if not provided
 const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
@@ -188,7 +206,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/register", async (req, res, next) => {
+  app.post("/api/register", registerRateLimiter, async (req, res, next) => {
     try {
       // Check if username exists
       const existingUsername = await storage.getUserByUsername(req.body.username);
@@ -454,7 +472,7 @@ export function setupAuth(app: Express) {
     }
   });
   // Resend verification code endpoint
-  app.post("/api/resend-verification", async (req, res, next) => {
+  app.post("/api/resend-verification", resendVerificationRateLimiter, async (req, res, next) => {
     try {
       const { email } = req.body;
 

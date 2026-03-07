@@ -3,10 +3,11 @@ import { createServer, type Server } from "http";
 import { setupAuth, isAdmin } from "./auth";
 import { storage } from "./storage";
 import OpenAI from "openai";
-import nodemailer from "nodemailer";
+import { sendContactEmail } from "./emailService";
 import financeRoutes from "./financeRoutes";
 import dotenv from "dotenv";
 import forumRoutes from "./forumRoutes";
+import rateLimit from "express-rate-limit";
 
 
 dotenv.config(); // asegura cargar .env
@@ -14,6 +15,15 @@ dotenv.config(); // asegura cargar .env
 const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
+
+// Rate limiter for contact form
+const contactRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // 10 requests per hour per IP
+  message: { error: "Demasiados mensajes de contacto. Por favor, inténtalo de nuevo en 1 hora." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Middleware para asegurar que el usuario esté logueado
 function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
@@ -29,31 +39,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
  // const router = express.Router();
 
-  // Contact form
-  app.post("/api/contact", async (req, res) => {
-    const { name, email, message, to } = req.body;
-    try {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      } as nodemailer.TransportOptions);
+  // Contact form (with rate limiting and SendGrid)
+  app.post("/api/contact", contactRateLimiter, async (req, res) => {
+    const { name, email, message } = req.body;
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
-        subject: `Nuevo mensaje de contacto de ${name} <${email}>`,
-        text: `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
-      };
-      const info = await transporter.sendMail(mailOptions);
-      console.log("[nodemailer] sendMail response:", info);
-      res.status(200).json({ success: true, info });
+    // Validate input
+    if (!name || !email || !message) {
+      return res.status(400).json({ success: false, error: "Nombre, email y mensaje son requeridos" });
+    }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, error: "Formato de email inválido" });
+    }
+
+    try {
+      await sendContactEmail(name, email, message);
+      console.log(`[routes] ✅ Contact form submitted by ${name} <${email}>`);
+      res.status(200).json({ success: true });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error("[nodemailer] error:", errorMessage);
-      res.status(500).json({ success: false, error: errorMessage });
+      console.error(`[routes] ❌ Contact form error:`, errorMessage);
+      res.status(500).json({ success: false, error: "Error al enviar el mensaje. Por favor, inténtalo de nuevo." });
     }
   });
 
