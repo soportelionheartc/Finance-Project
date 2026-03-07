@@ -28,6 +28,7 @@ import { queryClient } from "./lib/queryClient";
 import FinanciaPlayPage from "@/pages/FinanciaPlayPage";
 import EducacionFinancieraPage from "@/pages/educacion-financiera-page";
 import VerifyEmailPage from "@/pages/verify-email-page";
+import InvestorQuestionnairePage from "@/pages/investor-questionnaire-page";
 
 
 function RouterContent() {
@@ -70,6 +71,7 @@ function RouterContent() {
         <AdminRoute path="/admin" component={AdminPage} />
         <ProtectedRoute path="/perfil" component={PerfilPage} />
         <ProtectedRoute path="/configuracion" component={ConfiguracionPage} />
+        <ProtectedRoute path="/investor-questionnaire" component={InvestorQuestionnairePage} />
         <Route path="/servicios" component={ServicesPage} />
         <Route path="/noticias" component={NoticiasPage} />
         <Route path="/nosotros" component={AboutPage} />
