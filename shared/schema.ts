@@ -8,6 +8,9 @@ export const authProviderEnum = pgEnum('auth_provider', ['local', 'google', 'app
 // Enum para el tipo de usuario
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 
+// Enum para perfil de riesgo del inversor
+export const riskProfileEnum = pgEnum('risk_profile', ['conservative', 'moderate', 'aggressive']);
+
 // User schema
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -226,6 +229,28 @@ export const insertEmailVerificationCodeSchema = createInsertSchema(emailVerific
   createdAt: true,
 });
 
+// Investor profiles schema
+export const investorProfiles = pgTable("investor_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id).unique(),
+  riskProfile: riskProfileEnum("risk_profile").notNull(),
+  totalScore: integer("total_score").notNull(),
+  answers: json("answers").notNull(), // JSONB storage for detailed question responses
+  completedAt: timestamp("completed_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertInvestorProfileSchema = createInsertSchema(investorProfiles)
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .extend({
+    totalScore: z.number().int().min(0).max(21),
+  });
+
 // Type exports
 
 export type Transaction = typeof transactions.$inferSelect;
@@ -257,3 +282,6 @@ export type InsertDecentralizedMessage = z.infer<typeof insertDecentralizedMessa
 
 export type VerificationCode = typeof emailVerificationCodes.$inferSelect;
 export type InsertVerificationCode = z.infer<typeof insertEmailVerificationCodeSchema>;
+
+export type InvestorProfile = typeof investorProfiles.$inferSelect;
+export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
