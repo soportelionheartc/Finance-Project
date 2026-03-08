@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Search, Monitor } from "lucide-react";
-import { SiBitcoin, SiEthereum, SiAmazon, SiApple, SiTesla } from "react-icons/si";
+import { TrendingUp, TrendingDown, Search, Monitor, ShoppingBag } from "lucide-react";
+import { SiBitcoin, SiEthereum, SiApple, SiTesla } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
@@ -111,7 +111,7 @@ export const AssetList = () => {
       case 'apple':
         return <SiApple className="h-4 w-4 text-gray-500" />;
       case 'amazon':
-        return <SiAmazon className="h-4 w-4 text-yellow-700" />;
+        return <ShoppingBag className="h-4 w-4 text-yellow-700" />;
       case 'microsoft':
         return <Monitor className="h-4 w-4 text-blue-500" />;
       case 'tesla':
