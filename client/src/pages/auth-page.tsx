@@ -168,10 +168,10 @@ export default function AuthPage() {
     <div className="min-h-screen bg-black">
       {/* Header fuera del container para ocupar todo el ancho */}
       <div className="w-full">
-        <div className="flex items-center gap-3 border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
+        <div className="flex items-center gap-3 border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
           <LionLogo className="h-10 w-10" />
           <div>
-            <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+            <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
               FINANCE 360°
             </h1>
             <p>Zupi Fintech</p>

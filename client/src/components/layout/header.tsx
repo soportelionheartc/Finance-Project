@@ -38,12 +38,12 @@ export function Header({ title, toggleSidebar }: HeaderProps) {
   };
 
   return (
-    <header className="border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
+    <header className="border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
       <div className="container flex h-14 items-center">
         <Link href="/" className="flex items-center space-x-2">
           <LionLogo className="h-10 w-10" />
           <div>
-              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
+              <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent" >FINANCE 360°</h1>
               <p>Zupi Fintech</p>
           </div>
         </Link>

@@ -368,7 +368,7 @@ export default function BlockchainPortfolioPage() {
         <Header />
 
         <main className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
-          <Card className="w-full max-w-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800 shadow-xl">
+          <Card className="w-full max-w-3xl bg-linear-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800 shadow-xl">
             <CardHeader className="text-center pb-2">
               <CardTitle className="text-2xl text-primary">
                 Portafolio Blockchain Avanzado
@@ -394,7 +394,7 @@ export default function BlockchainPortfolioPage() {
                 <Button
                   onClick={handleBlockchainButton}
                   disabled={isLoading}
-                  className="w-full h-20 text-xl font-bold flex items-center justify-center bg-gradient-to-br from-yellow-500 to-yellow-600 border-none text-black shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/30 hover:from-yellow-600 hover:to-yellow-700 transition-all"
+                  className="w-full h-20 text-xl font-bold flex items-center justify-center bg-linear-to-br from-yellow-500 to-yellow-600 border-none text-black shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/30 hover:from-yellow-600 hover:to-yellow-700 transition-all"
                 >
                   <Coins className="h-7 w-7 mr-3" />
                   BLOCKCHAIN
@@ -462,7 +462,7 @@ export default function BlockchainPortfolioPage() {
               <Button 
                 onClick={handleBlockchainButton}
                 disabled={isLoading}
-                className="flex items-center justify-center bg-gradient-to-br from-yellow-500 to-yellow-600 border-none h-12 text-black font-bold shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/30 hover:from-yellow-600 hover:to-yellow-700 transition-all"
+                className="flex items-center justify-center bg-linear-to-br from-yellow-500 to-yellow-600 border-none h-12 text-black font-bold shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/30 hover:from-yellow-600 hover:to-yellow-700 transition-all"
                 size="lg"
               >
                 <Coins className="h-6 w-6 mr-2" />
@@ -547,7 +547,7 @@ export default function BlockchainPortfolioPage() {
           <TabsContent value="overview" className="space-y-6">
             {/* Panel de valor */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-gradient-to-br from-zinc-900 to-black border-zinc-800 md:col-span-2">
+              <Card className="bg-linear-to-br from-zinc-900 to-black border-zinc-800 md:col-span-2">
                 <CardHeader className="pb-0">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-medium">Valor Total del Portafolio</CardTitle>
@@ -690,7 +690,7 @@ export default function BlockchainPortfolioPage() {
             </Card>
             
             {/* Insights IA */}
-            <Card className="bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800">
+            <Card className="bg-linear-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base font-medium">Insights de IA</CardTitle>
@@ -958,7 +958,7 @@ export default function BlockchainPortfolioPage() {
           
           {/* Tab IA Insights */}
           <TabsContent value="ai" className="space-y-6">
-            <Card className="bg-gradient-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800">
+            <Card className="bg-linear-to-br from-zinc-900 via-black to-zinc-900 border-zinc-800">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-medium">Análisis IA de tu Portafolio</CardTitle>
@@ -982,7 +982,7 @@ export default function BlockchainPortfolioPage() {
                   <h3 className="text-sm font-medium mb-1 text-primary">Fortalezas</h3>
                   
                   <div className="flex items-start gap-3 p-3 rounded-md bg-black/40">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                       <Sparkles className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <div>
@@ -995,7 +995,7 @@ export default function BlockchainPortfolioPage() {
                   </div>
                   
                   <div className="flex items-start gap-3 p-3 rounded-md bg-black/40">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                       <TrendingUp className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <div>
@@ -1012,7 +1012,7 @@ export default function BlockchainPortfolioPage() {
                   <h3 className="text-sm font-medium mb-1 text-primary">Oportunidades</h3>
                   
                   <div className="flex items-start gap-3 p-3 rounded-md bg-black/40">
-                    <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
                       <Zap className="h-3.5 w-3.5 text-yellow-500" />
                     </div>
                     <div>
@@ -1025,7 +1025,7 @@ export default function BlockchainPortfolioPage() {
                   </div>
                   
                   <div className="flex items-start gap-3 p-3 rounded-md bg-black/40">
-                    <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
                       <CircleDollarSign className="h-3.5 w-3.5 text-yellow-500" />
                     </div>
                     <div>
@@ -1166,7 +1166,7 @@ export default function BlockchainPortfolioPage() {
                     } else if (message.role === 'assistant') {
                       return (
                         <div key={message.id} className="flex items-start gap-2">
-                          <Avatar className="h-8 w-8 flex-shrink-0">
+                          <Avatar className="h-8 w-8 shrink-0">
                             <AvatarFallback className="bg-primary/20 text-primary text-xs">
                               AI
                             </AvatarFallback>
@@ -1180,7 +1180,7 @@ export default function BlockchainPortfolioPage() {
                     } else {
                       return (
                         <div key={message.id} className="flex items-start gap-2 flex-row-reverse">
-                          <Avatar className="h-8 w-8 flex-shrink-0">
+                          <Avatar className="h-8 w-8 shrink-0">
                             <AvatarFallback className="bg-zinc-800 text-primary text-xs">
                               {message.sender?.substring(0, 2).toUpperCase() || 'U'}
                             </AvatarFallback>

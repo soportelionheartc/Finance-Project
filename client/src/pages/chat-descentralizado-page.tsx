@@ -322,7 +322,7 @@ export default function ChatDescentralizadoPage() {
                   </CardDescription>
                 </CardHeader>
                 
-                <TabsContent value="all" className="flex-grow p-4 overflow-y-auto">
+                <TabsContent value="all" className="grow p-4 overflow-y-auto">
                   <div className="space-y-4">
                     {getFilteredMessages('all').map((msg) => (
                       <div key={msg.id} className="flex flex-col space-y-1">
@@ -350,7 +350,7 @@ export default function ChatDescentralizadoPage() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="general" className="flex-grow p-4 overflow-y-auto">
+                <TabsContent value="general" className="grow p-4 overflow-y-auto">
                   <div className="space-y-4">
                     {getFilteredMessages('general').map((msg) => (
                       <div key={msg.id} className="flex flex-col space-y-1">
@@ -378,7 +378,7 @@ export default function ChatDescentralizadoPage() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="crypto" className="flex-grow p-4 overflow-y-auto">
+                <TabsContent value="crypto" className="grow p-4 overflow-y-auto">
                   <div className="space-y-4">
                     {getFilteredMessages('crypto').map((msg) => (
                       <div key={msg.id} className="flex flex-col space-y-1">
@@ -406,7 +406,7 @@ export default function ChatDescentralizadoPage() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="stocks" className="flex-grow p-4 overflow-y-auto">
+                <TabsContent value="stocks" className="grow p-4 overflow-y-auto">
                   <div className="space-y-4">
                     {getFilteredMessages('stocks').map((msg) => (
                       <div key={msg.id} className="flex flex-col space-y-1">
@@ -434,7 +434,7 @@ export default function ChatDescentralizadoPage() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="defi" className="flex-grow p-4 overflow-y-auto">
+                <TabsContent value="defi" className="grow p-4 overflow-y-auto">
                   <div className="space-y-4">
                     {getFilteredMessages('defi').map((msg) => (
                       <div key={msg.id} className="flex flex-col space-y-1">

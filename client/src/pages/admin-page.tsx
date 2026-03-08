@@ -320,7 +320,7 @@ export default function AdminPage() {
 
       <main className="flex-1 container mx-auto px-4 py-6">
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
-          <h1 className="text-4xl font-bold text-primary text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl font-bold text-primary text-center bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Panel de Administración
           </h1>
           <p className="text-muted-foreground text-center">
@@ -449,7 +449,7 @@ export default function AdminPage() {
                             : alert.type === "warning"
                               ? "default"
                               : alert.type === "success"
-                                ? "outline"
+                                ? "outline-solid"
                                 : "secondary"
                         }
                         className="text-xs"
@@ -474,7 +474,7 @@ export default function AdminPage() {
               <div className="w-full max-w-4xl flex flex-col items-center justify-center gap-4 px-6 py-4 bg-zinc-900 rounded-xl border border-yellow-600/30 shadow-[0_2px_16px_0_rgba(255,215,0,0.10)]">
                 <div className="w-full flex flex-col lg:flex-row items-center justify-between">
                   <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                    <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+                    <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
                       Gestión de Usuarios
                     </h2>
                     <p className="text-sm text-gray-300 mb-4">
@@ -892,7 +892,7 @@ export default function AdminPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            user.status === "active" ? "outline" : "destructive"
+                            user.status === "active" ? "outline-solid" : "destructive"
                           }
                         >
                           {user.status === "active" ? "Activo" : "Inactivo"}
@@ -985,7 +985,7 @@ export default function AdminPage() {
             <div className="w-full flex flex-col items-center justify-center mb-8">
               <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                  <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+                  <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
                     Gestión del Sistema
                   </h2>
                   <p className="text-sm text-gray-300 mb-0">
@@ -1149,7 +1149,7 @@ export default function AdminPage() {
             <div className="w-full flex flex-col items-center justify-center mb-8">
               <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
                 <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                  <h2 className="text-xl font-bold text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+                  <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
                     Reportes y Análisis
                   </h2>
                   <p className="text-sm text-gray-300 mb-0">

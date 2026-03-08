@@ -130,7 +130,7 @@ export const PortfolioSummary = () => {
       <div className="flex justify-center">
         <Button
           size="sm"
-          className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow ml-5"
+          className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] rounded-lg px-4 py-2 font-semibold shadow-sm ml-5"
           onClick={() => setShowModal(true)}
         >
           <Plus className="h-4 w-4" />

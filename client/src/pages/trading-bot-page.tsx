@@ -212,7 +212,7 @@ export default function TradingBotPage() {
                     Hazme preguntas sobre el mercado, análisis técnico o estrategias de trading
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow overflow-y-auto space-y-4 pr-2">
+                <CardContent className="grow overflow-y-auto space-y-4 pr-2">
                   {chatHistory.map((msg, idx) => (
                     <div 
                       key={idx} 

@@ -46,12 +46,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-foreground flex flex-col">
       {/* Header */}
-      <header className="border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
+      <header className="border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
             <LionLogo className="h-10 w-10" />
             <div>
-              <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+              <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
                 FINANCE 360°
               </h1>
               <p>Zupi Fintech</p>
@@ -71,7 +71,7 @@ export default function LandingPage() {
       <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
         {/* Hero Section */}
         <section className="grid gap-8 items-center py-6">
-          <div className="space-y-4 flex flex-col items-center text-center bg-gradient-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
+          <div className="space-y-4 flex flex-col items-center text-center bg-linear-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
             <h2 className="text-4xl font-bold text-primary">FINANCE 360°</h2>
             <h3 className="text-xl text-white mb-2">
               FINANZAS E INVERSIONES DE ALTO IMPACTO
@@ -196,7 +196,7 @@ export default function LandingPage() {
                 <input
                   type="text"
                   placeholder="Pregunta sobre finanzas e inversiones..."
-                  className="w-full p-3 pr-12 rounded-md bg-black/50 border border-zinc-700 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full p-3 pr-12 rounded-md bg-black/50 border border-zinc-700 text-white focus:outline-hidden focus:ring-1 focus:ring-primary"
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                 />

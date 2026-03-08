@@ -1,98 +1,192 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-.blockchain-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  padding: 15px 25px;
-  font-size: 18px;
-  font-weight: bold;
-  text-transform: uppercase;
-  background: linear-gradient(to bottom right, #ffd700, #ffaa00);
-  color: black;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.3s;
-  animation: pulse 2s infinite;
-}
+@plugin 'tailwindcss-animate';
+@plugin '@tailwindcss/typography';
 
-.blockchain-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
-  background: linear-gradient(to bottom right, #ffaa00, #ff8c00);
-}
+@custom-variant dark (&:is(.dark *));
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+@theme {
+  --backdrop-blur-xs: 1px;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
 }
 
-.chat-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+@layer utilities {
+  .blockchain-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(to bottom right, #ffd700, #ffaa00);
+    color: black;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+    animation: pulse 2s infinite;
+  }
 
-.chat-message {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-  padding-bottom: 1.5rem;
-}
+  .blockchain-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    background: linear-gradient(to bottom right, #ffaa00, #ff8c00);
+  }
 
-.clearfix {
-  overflow: hidden;
-  clear: both;
-  width: 100%;
-}
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    }
+  }
 
-.message-user {
-  float: right;
-  max-width: 80%;
-  background-color: rgba(255, 215, 0, 0.8);
-  color: #000;
-  padding: 1rem;
-  border-radius: 1rem 1rem 0 1rem;
-  margin-bottom: 0.5rem;
-  word-wrap: break-word;
-}
+  .chat-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-.message-bot {
-  float: left;
-  max-width: 80%;
-  background-color: #111;
-  color: #fff;
-  border: 1px solid rgba(255, 215, 0, 0.5);
-  padding: 1rem;
-  border-radius: 1rem 1rem 1rem 0;
-  margin-bottom: 0.5rem;
-  word-wrap: break-word;
-}
+  .chat-message {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    padding-bottom: 1.5rem;
+  }
 
-.message-time {
-  font-size: 0.7rem;
-  margin-top: 0.5rem;
-  opacity: 0.7;
-  text-align: right;
+  .clearfix {
+    overflow: hidden;
+    clear: both;
+    width: 100%;
+  }
+
+  .message-user {
+    float: right;
+    max-width: 80%;
+    background-color: rgba(255, 215, 0, 0.8);
+    color: #000;
+    padding: 1rem;
+    border-radius: 1rem 1rem 0 1rem;
+    margin-bottom: 0.5rem;
+    word-wrap: break-word;
+  }
+
+  .message-bot {
+    float: left;
+    max-width: 80%;
+    background-color: #111;
+    color: #fff;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    padding: 1rem;
+    border-radius: 1rem 1rem 1rem 0;
+    margin-bottom: 0.5rem;
+    word-wrap: break-word;
+  }
+
+  .message-time {
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+    opacity: 0.7;
+    text-align: right;
+  }
 }
 
 @layer base {
@@ -111,6 +205,10 @@
   .card, .accordion-item {
     @apply bg-zinc-950 border-zinc-800;
   }
+
+button{
+  @apply cursor-pointer;
+}
 
   .button-primary {
     @apply bg-primary hover:bg-primary/90 text-black font-bold;

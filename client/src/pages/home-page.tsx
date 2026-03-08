@@ -31,17 +31,17 @@ function CarruselConsejos() {
   return (
     <div className="relative w-full mx-auto p-4 my-6 flex items-center justify-center min-h-[100px] overflow-hidden">
       <button
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow hover:bg-yellow-400 z-10"
+        className="absolute left-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow-sm hover:bg-yellow-400 z-10"
         onClick={() => setIndex((prev) => (prev - 1 + consejosFinancieros.length) % consejosFinancieros.length)}
         aria-label="Anterior"
       >
         &larr;
       </button>
-      <span className="text-yellow-50 text-center px-8 block max-w-[80%] break-words mx-auto">
+      <span className="text-yellow-50 text-center px-8 block max-w-[80%] wrap-break-word mx-auto">
         {consejosFinancieros[index]}
       </span>
       <button
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow hover:bg-yellow-400 z-10"
+        className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-500 text-black rounded-full p-2 shadow-sm hover:bg-yellow-400 z-10"
         onClick={() => setIndex((prev) => (prev + 1) % consejosFinancieros.length)}
         aria-label="Siguiente"
       >
@@ -141,7 +141,7 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-col items-center justify-center space-y-2 mb-6">
-          <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl font-bold text-center bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
             Hola, {user?.name || user?.username || "Inversionista"}
           </h1>
           <p className="text-muted-foreground text-center">
@@ -166,7 +166,7 @@ export default function HomePage() {
       <footer className="border-t py-6 text-sm text-muted-foreground">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-4">
-            <div className="w-full md:w-1/2 flex flex-col items-center p-6 rounded-lg shadow-sm">
+            <div className="w-full md:w-1/2 flex flex-col items-center p-6 rounded-lg shadow-xs">
               <p className="font-semibold text-primary mb-2 text-center">
                 Integración Blockchain
               </p>
@@ -174,7 +174,7 @@ export default function HomePage() {
                 Conecta tu wallet de Ethereum para gestionar tus activos
                 digitales y criptomonedas.
               </p>
-              <button className="mt-2 px-6 w-[150px] py-2 bg-yellow-500 break-words hover:bg-yellow-400 text-black text-sm font-semibold rounded-lg shadow transition-all">
+              <button className="mt-2 px-6 w-[150px] py-2 bg-yellow-500 wrap-break-word hover:bg-yellow-400 text-black text-sm font-semibold rounded-lg shadow-sm transition-all">
                 Iniciar Sesión con Blockchain
               </button>
             </div>

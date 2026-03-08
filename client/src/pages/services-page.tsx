@@ -8,7 +8,7 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Header con efecto de gradiente */}
-      <header className="border-b border-border/40 bg-gradient-to-r from-primary/20 to-black p-4">
+      <header className="border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/">
             <div className="flex items-center gap-3 cursor-pointer">
@@ -17,7 +17,7 @@ export default function ServicesPage() {
                 <LionLogo className="h-10 w-10" />
               </div>
               <div>
-                <h1 className="font-bold text-lg text-gradient bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">LION HEART CAPITAL</h1>
+                <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">LION HEART CAPITAL</h1>
               </div>
             </div>
           </Link>
@@ -27,7 +27,7 @@ export default function ServicesPage() {
       <main className="container mx-auto py-8 px-4 max-w-5xl">
         {/* Hero Section con animación */}
         <div className="mb-10 relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-2xl"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-transparent rounded-2xl"></div>
           <div className="relative z-10 p-6">
             <div className="flex items-center mb-6">
               <Link href="/">
@@ -36,12 +36,12 @@ export default function ServicesPage() {
                   Regresar
                 </Button>
               </Link>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Servicios Financieros</h2>
+              <h2 className="text-2xl font-bold bg-linear-to-r from-white to-gray-400 bg-clip-text text-transparent">Servicios Financieros</h2>
             </div>
             
             <div className="text-center mb-8 transform transition-all hover:scale-105 duration-300">
               <div className="inline-block p-6 bg-black/40 rounded-xl border border-yellow-600/30 shadow-lg shadow-primary/20">
-                <h2 className="text-3xl font-extrabold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-2">LION HEART CAPITAL</h2>
+                <h2 className="text-3xl font-extrabold bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-2">LION HEART CAPITAL</h2>
                 <p className="text-xl text-gray-300">FINANZAS E INVERSIONES DE ALTO IMPACTO</p>
                 <div className="flex justify-center mt-4">
                   <span className="inline-flex items-center px-3 py-1 rounded-full bg-black text-primary border border-primary/20 text-xs">
@@ -55,14 +55,14 @@ export default function ServicesPage() {
         
         <div className="mb-10">
           <h3 className="text-lg font-semibold mb-6 relative inline-block">
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Servicios Financieros Premium</span>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+            <span className="bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Servicios Financieros Premium</span>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-yellow-400 to-yellow-600"></div>
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start p-4 bg-black/40 rounded-lg border border-yellow-600/10 hover:border-yellow-600/30 transition-all group hover:transform hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 duration-300">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full blur-sm opacity-0 group-hover:opacity-60 transition-opacity"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-yellow-500 to-yellow-600 rounded-full blur-xs opacity-0 group-hover:opacity-60 transition-opacity"></div>
                 <div className="text-yellow-500 mr-4 mt-1 p-2 bg-black/40 rounded-full border border-yellow-600/20 relative z-10">
                   <DollarSign className="h-6 w-6" />
                 </div>
@@ -82,7 +82,7 @@ export default function ServicesPage() {
             
             <div className="flex items-start p-4 bg-black/40 rounded-lg border border-yellow-600/10 hover:border-yellow-600/30 transition-all group hover:transform hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 duration-300">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full blur-sm opacity-0 group-hover:opacity-60 transition-opacity"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-orange-500 to-orange-600 rounded-full blur-xs opacity-0 group-hover:opacity-60 transition-opacity"></div>
                 <div className="text-orange-500 mr-4 mt-1 p-2 bg-black/40 rounded-full border border-orange-600/20 relative z-10">
                   <Calendar className="h-6 w-6" />
                 </div>
@@ -102,7 +102,7 @@ export default function ServicesPage() {
             
             <div className="flex items-start p-4 bg-black/40 rounded-lg border border-yellow-600/10 hover:border-yellow-600/30 transition-all group hover:transform hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/10 duration-300">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur-sm opacity-0 group-hover:opacity-60 transition-opacity"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-red-500 to-red-600 rounded-full blur-xs opacity-0 group-hover:opacity-60 transition-opacity"></div>
                 <div className="text-red-500 mr-4 mt-1 p-2 bg-black/40 rounded-full border border-red-600/20 relative z-10">
                   <ShieldAlert className="h-6 w-6" />
                 </div>
@@ -124,8 +124,8 @@ export default function ServicesPage() {
         
         <div className="mb-10">
           <h3 className="text-lg font-semibold mb-6 relative inline-block">
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Servicios Contables y Tributarios</span>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+            <span className="bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Servicios Contables y Tributarios</span>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-yellow-400 to-yellow-600"></div>
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -177,7 +177,7 @@ export default function ServicesPage() {
               <p className="text-xs text-gray-400 text-center">Implementación de sistemas de punto de venta y facturación electrónica para empresas y restaurantes.</p>
             </div>
             
-            <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/20 p-5 rounded-lg border border-yellow-600/30 hover:border-yellow-500/60 transition-all group hover:transform hover:scale-[1.02] duration-300">
+            <div className="bg-linear-to-br from-yellow-500/10 to-yellow-600/20 p-5 rounded-lg border border-yellow-600/30 hover:border-yellow-500/60 transition-all group hover:transform hover:scale-[1.02] duration-300">
               <div className="h-14 w-14 mx-auto mb-3 bg-black/50 rounded-full flex items-center justify-center border border-yellow-600/40 group-hover:border-yellow-500/80 transition-all">
                 <Star className="h-7 w-7 text-yellow-400" />
               </div>
@@ -189,8 +189,8 @@ export default function ServicesPage() {
         
         <div className="mb-10">
           <h3 className="text-lg font-semibold mb-4 relative inline-block">
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Asesoría en Inversiones y Manejo</span>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+            <span className="bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Asesoría en Inversiones y Manejo</span>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-yellow-400 to-yellow-600"></div>
           </h3>
           <div className="bg-black rounded-lg p-6 border border-gray-800 mb-6 shadow-lg shadow-black/10 backdrop-blur-sm transition-all hover:border-yellow-500/20">
             <p className="text-gray-300">Ofrecemos asesoría especializada en inversiones y manejo de activos para maximizar tus rendimientos y minimizar riesgos.</p>
@@ -231,7 +231,7 @@ export default function ServicesPage() {
 
         <div className="mt-10 text-center">
           <Link href="/contacto">
-            <Button className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-medium py-3 px-6 hover:opacity-90 transition-opacity">
+            <Button className="bg-linear-to-r from-yellow-500 to-yellow-600 text-black font-medium py-3 px-6 hover:opacity-90 transition-opacity">
               <DollarSign className="mr-2 h-4 w-4" />
               Escríbenos para una asesoría gratuita
             </Button>

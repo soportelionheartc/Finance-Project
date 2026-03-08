@@ -126,7 +126,7 @@ export const AssetDistribution = () => {
           </div>
         )}
         <br />
-        <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] flex justify-center font-semibold shadow mx-auto" onClick={() => setShowInfo((v) => !v)}>
+        <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] flex justify-center font-semibold shadow-sm mx-auto" onClick={() => setShowInfo((v) => !v)}>
           {showInfo ? 'Ver menos' : 'Ver más'}
         </Button>
         {showInfo && (

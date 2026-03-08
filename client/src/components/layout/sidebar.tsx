@@ -57,7 +57,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { user } = useAuth();
   const sidebarClass = cn(
     "bg-black border-r border-zinc-800 transition-all duration-300 ease-in-out overflow-y-auto",
-    "fixed md:relative inset-y-0 left-0 z-50 w-full md:w-72 flex-shrink-0 max-w-[300px]",
+    "fixed md:relative inset-y-0 left-0 z-50 w-full md:w-72 shrink-0 max-w-[300px]",
     isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
   );
 

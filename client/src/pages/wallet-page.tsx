@@ -212,7 +212,7 @@ export default function WalletPage() {
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Badge variant={wallet.isConnected ? "default" : "outline"}>
+                            <Badge variant={wallet.isConnected ? "default" : "outline-solid"}>
                               {wallet.isConnected ? "Conectada" : "Desconectada"}
                             </Badge>
                             <p className="font-medium">${wallet.balance.toFixed(2)}</p>
@@ -301,7 +301,7 @@ export default function WalletPage() {
                     </div>
                     <Button 
                       onClick={isPhantomConnected ? disconnectPhantom : handleConnectPhantom}
-                      variant={isPhantomConnected ? "outline" : "default"}
+                      variant={isPhantomConnected ? "outline-solid" : "default"}
                     >
                       {isPhantomConnected ? "Desconectar" : "Conectar"}
                     </Button>
@@ -329,7 +329,7 @@ export default function WalletPage() {
                     </div>
                     <Button 
                       onClick={isEthereumConnected ? disconnectEthereum : handleConnectEthereum}
-                      variant={isEthereumConnected ? "outline" : "default"}
+                      variant={isEthereumConnected ? "outline-solid" : "default"}
                     >
                       {isEthereumConnected ? "Desconectar" : "Conectar"}
                     </Button>
@@ -385,7 +385,7 @@ export default function WalletPage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="font-medium">{wallet.label || `Wallet ${wallet.id}`}</p>
-                            <Badge variant={wallet.isConnected ? "default" : "outline"} className="text-xs">
+                            <Badge variant={wallet.isConnected ? "default" : "outline-solid"} className="text-xs">
                               {wallet.isConnected ? "Conectada" : "Desconectada"}
                             </Badge>
                           </div>

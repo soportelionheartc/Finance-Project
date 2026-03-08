@@ -176,7 +176,7 @@ export const AiChat = () => {
                 <div key={msg.id} className="chat-message">
                   <div className="clearfix">
                     <div className="message-user">
-                      <span className="whitespace-pre-line break-words">{msg.message}</span>
+                      <span className="whitespace-pre-line wrap-break-word">{msg.message}</span>
                       <div className="message-time">
                         {formatDate(msg.timestamp)}
                       </div>
@@ -185,7 +185,7 @@ export const AiChat = () => {
 
                   <div className="clearfix mt-8">
                     <div className="message-bot">
-                      <div className="whitespace-pre-line break-words">{msg.response}</div>
+                      <div className="whitespace-pre-line wrap-break-word">{msg.response}</div>
                       <div className="message-time">
                         {formatDate(new Date(new Date(msg.timestamp).getTime() + 1000).toISOString())}
                       </div>
@@ -218,7 +218,7 @@ export const AiChat = () => {
             />
             <Button
               size="icon"
-              className="flex-shrink-0 bg-yellow-500 hover:bg-yellow-600"
+              className="shrink-0 bg-yellow-500 hover:bg-yellow-600"
               onClick={handleSendMessage}
               disabled={isLoading || inputValue.trim() === ""}
             >

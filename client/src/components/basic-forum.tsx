@@ -174,12 +174,12 @@ const Forum: React.FC = () => {
                                 </button>
                             )}
                         </div>
-                        <div className="mb-2 break-words whitespace-pre-line text-white">{post.content}</div>
+                        <div className="mb-2 wrap-break-word whitespace-pre-line text-white">{post.content}</div>
                         <ReplySection post={post} addReply={addReply} user={user} eliminarRespuesta={eliminarRespuesta} />
                         {post.replies.length > 0 && (
                             <div className="mt-2 pl-4 border-l border-yellow-700">
                                 {post.replies.map(reply => (
-                                    <div key={reply.id} className="mb-2 break-words flex items-center justify-between">
+                                    <div key={reply.id} className="mb-2 wrap-break-word flex items-center justify-between">
                                         <span>
                                             {/* <span className="text-xs text-gray-400">ID: {reply.id}</span> */}
                                             <span className="font-semibold text-yellow-400">{reply.author}:</span> <span className="text-white">{reply.content}</span>
