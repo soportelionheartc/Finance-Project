@@ -368,7 +368,7 @@ useEffect(() => {
           {portfolios.length > 1 && (
             <div className="sticky top-0 z-20 pb-2 overflow-x-auto w-full justify-center flex">
               <Tabs value={selectedPortfolioId ? String(selectedPortfolioId) : undefined} onValueChange={val => setSelectedPortfolioId(Number(val))}>
-                <TabsList className="gap-2 justify-center gap-2">
+                <TabsList className="justify-center gap-2">
                   {[...portfolios].sort((a, b) => a.id - b.id).map((p) => (
                     <TabsTrigger key={p.id} value={String(p.id)}>{p.name}</TabsTrigger>
                   ))}
@@ -500,7 +500,7 @@ useEffect(() => {
               <div className="flex flex-col justify-center items-center relative">
                 <Button
                   onClick={() => setShowAddAssetDialog(true)}
-                  className="w-[150px] text-sm bg-primary hover:bg-primary/90 text-black mb-3"
+                  className="w-37.5 text-sm bg-primary hover:bg-primary/90 text-black mb-3"
                 >
                   <Plus className="h-3.5 w-3.5 mr-1" />
                   Añadir Activo
@@ -508,14 +508,14 @@ useEffect(() => {
                 <div className="relative mb-3">
                   <Button
                     variant="outline"
-                    className="w-[150px] text-sm"
+                    className="w-37.5 text-sm"
                     onClick={() => setShowFilterMenu(!showFilterMenu)}
                   >
                     <Filter className="h-3.5 w-3.5 mr-1" />
                     Filtrar por Tipo
                   </Button>
                   {showFilterMenu && (
-                    <div className="absolute left-0 mt-2 w-[150px] bg-zinc-900 border rounded shadow-lg z-10">
+                    <div className="absolute left-0 mt-2 w-37.5 bg-zinc-900 border rounded shadow-lg z-10">
                       <button className={`w-full text-center px-4 py-2 hover:bg-zinc-800 ${filterType === null ? 'text-primary' : ''}`} onClick={() => { setFilterType(null); setShowFilterMenu(false); }}>Todos</button>
                       <button className={`w-full text-center px-4 py-2 hover:bg-zinc-800 ${filterType === 'crypto' ? 'text-primary' : ''}`} onClick={() => { setFilterType('crypto'); setShowFilterMenu(false); }}>Criptomonedas</button>
                       <button className={`w-full text-center px-4 py-2 hover:bg-zinc-800 ${filterType === 'stock' ? 'text-primary' : ''}`} onClick={() => { setFilterType('stock'); setShowFilterMenu(false); }}>Acciones</button>
@@ -527,7 +527,7 @@ useEffect(() => {
                 </div>
                 <Button
                   variant="outline"
-                  className="w-[150px] text-sm"
+                  className="w-37.5 text-sm"
                   onClick={handleExportCSV}
                 >
                   <Download className="h-3.5 w-3.5 mr-1" />
@@ -678,7 +678,7 @@ useEffect(() => {
                 </div>
                 <Button
                   onClick={() => setShowAddAssetDialog(true)}
-                  className="bg-primary hover:bg-primary/90 text-black w-[100px]"
+                  className="bg-primary hover:bg-primary/90 text-black w-25"
                 >
                   <Plus className="h-2 w-4" />
                   Añadir
@@ -768,7 +768,7 @@ useEffect(() => {
                 <div className="flex flex-col md:flex-row items-stretch justify-between mb-4 gap-2 w-full">
                   <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
                     <Select value={filterOperation} onValueChange={setFilterOperation}>
-                      <SelectTrigger className="w-full md:w-[180px]">
+                      <SelectTrigger className="w-full md:w-45">
                         <SelectValue placeholder="Tipo de operación" />
                       </SelectTrigger>
                       <SelectContent>
@@ -779,7 +779,7 @@ useEffect(() => {
                     </Select>
 
                     <Select value={filterAsset} onValueChange={setFilterAsset}>
-                      <SelectTrigger className="w-full md:w-[180px]">
+                      <SelectTrigger className="w-full md:w-45">
                         <SelectValue placeholder="Tipo de activo" />
                       </SelectTrigger>
                       <SelectContent>
@@ -795,7 +795,7 @@ useEffect(() => {
                   <div className="flex flex-row items-center gap-2 w-full md:w-auto">
                     <Input
                       placeholder="Buscar..."
-                      className="w-full md:w-[180px] border"
+                      className="w-full md:w-45 border"
                       value={searchText}
                       onChange={e => setSearchText(e.target.value)}
                     />
@@ -803,7 +803,7 @@ useEffect(() => {
                 </div>
 
                 <div className="overflow-x-auto w-full">
-                  <Table className="min-w-[600px] w-full">
+                  <Table className="min-w-150 w-full">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Fecha</TableHead>
@@ -954,7 +954,7 @@ useEffect(() => {
           <DialogFooter>
             <div className="flex w-full justify-between">
               <Button
-                className="bg-primary hover:bg-primary/90 text-black w-[150px] mb-4"
+                className="bg-primary hover:bg-primary/90 text-black w-37.5 mb-4"
                 onClick={() => {
                   // Validar y agregar la transacción
                   if (!newTransaction.assetName || !newTransaction.symbol || !newTransaction.quantity || !newTransaction.price || !newTransaction.date) return;
@@ -987,7 +987,7 @@ useEffect(() => {
               <Button
                 variant="outline"
                 onClick={() => setShowAddTransactionDialog(false)}
-                className="hover:bg-primary/90 w-[150px] h-[42px]"
+                className="hover:bg-primary/90 w-37.5 h-10.5"
               >
                 Cancelar
               </Button>
@@ -996,7 +996,7 @@ useEffect(() => {
         </DialogContent>
       </Dialog>
       <Dialog open={showAddAssetDialog} onOpenChange={setShowAddAssetDialog}>
-        <DialogContent className="bg-zinc-900 w-[400px]">
+        <DialogContent className="bg-zinc-900 w-100">
           <DialogHeader>
             <DialogTitle className="text-2xl">Añadir Nuevo Activo</DialogTitle>
             <DialogDescription className="text-base">
@@ -1014,7 +1014,7 @@ useEffect(() => {
             <Button
               variant="outline"
               onClick={() => setShowAddAssetDialog(false)}
-              className="hover:bg-primary/90 w-[150px] h-[42px]"
+              className="hover:bg-primary/90 w-37.5 h-10.5"
             >
               Cancelar
             </Button>

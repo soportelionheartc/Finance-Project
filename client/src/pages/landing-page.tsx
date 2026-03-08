@@ -196,7 +196,7 @@ export default function LandingPage() {
                 <input
                   type="text"
                   placeholder="Pregunta sobre finanzas e inversiones..."
-                  className="w-full p-3 pr-12 rounded-md bg-black/50 border border-zinc-700 text-white focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full p-3 pr-12 rounded-md bg-black/50 border border-zinc-700 text-white focus:outline-none focus:ring-1 focus:ring-primary"
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                 />

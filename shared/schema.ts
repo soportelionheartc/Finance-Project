@@ -232,7 +232,7 @@ export const insertEmailVerificationCodeSchema = createInsertSchema(emailVerific
 // Investor profiles schema
 export const investorProfiles = pgTable("investor_profiles", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id).unique(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
   riskProfile: riskProfileEnum("risk_profile").notNull(),
   totalScore: integer("total_score").notNull(),
   answers: json("answers").notNull(), // JSONB storage for detailed question responses

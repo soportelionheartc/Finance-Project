@@ -61,12 +61,12 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="bg-zinc-900 w-[400px]">
+            <DialogContent className="bg-zinc-900 w-100">
                 <DialogHeader>
                     <DialogTitle className="text-2xl">Nuevo Portafolio</DialogTitle>
                 </DialogHeader>
                 <div className="mb-4">
-                    <label className="block mb-1 font-semibold text-center mb-4">Nombre del portafolio</label>
+                    <label className="block font-semibold text-center mb-4">Nombre del portafolio</label>
                     <Input
                         value={portfolioName}
                         onChange={e => setPortfolioName(e.target.value)}

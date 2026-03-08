@@ -35,8 +35,8 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
   });
   
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onOpenChange={(isOpen) => {
         // Only allow closing after profile is completed
         if (!isOpen && submitMutation.isSuccess) {
@@ -44,21 +44,24 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
         }
       }}
     >
-      <DialogContent 
-        className="max-w-2xl max-h-[90vh] overflow-y-auto" 
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
+        showCloseButton={false} // Disable default close button
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl">Completa tu Perfil de Inversor</DialogTitle>
+          <DialogTitle className="text-2xl">
+            Completa tu Perfil de Inversor
+          </DialogTitle>
           <DialogDescription>
-            Para ofrecerte recomendaciones personalizadas y acceder a todas las funcionalidades 
-            de la plataforma, necesitamos conocer tu perfil de riesgo como inversor. 
-            Este cuestionario solo tomará unos minutos.
+            Para ofrecerte recomendaciones personalizadas y acceder a todas las
+            funcionalidades de la plataforma, necesitamos conocer tu perfil de
+            riesgo como inversor. Este cuestionario solo tomará unos minutos.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
-          <InvestorQuestionnaire 
+          <InvestorQuestionnaire
             onComplete={submitMutation.mutate}
             isLoading={submitMutation.isPending}
           />
