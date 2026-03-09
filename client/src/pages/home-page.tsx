@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import BasicForum from "@/components/basic-forum";
 import { Button } from "@/components/ui/button";
+import { VerificationBanner } from "@/components/auth/verification-banner";
 
 
 const consejosFinancieros = [
@@ -56,6 +57,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+      
+      {/* Verification Banner for unverified users */}
+      <div className="container mx-auto px-4 pt-4">
+        <VerificationBanner />
+      </div>
+
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-white/5 backdrop-blur-xs">
           <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in relative">

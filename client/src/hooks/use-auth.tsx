@@ -37,6 +37,8 @@ type AuthContextType = {
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<User, Error, RegisterData>;
   socialLoginMutation: UseMutationResult<User, Error, string>;
+  verifyEmailMutation: UseMutationResult<User, Error, { code: string }>;
+  resendVerificationMutation: UseMutationResult<{ message: string }, Error, void>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -103,13 +105,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/register", userData);
       return await res.json();
     },
-    onSuccess: (user: User) => {
-      queryClient.setQueryData(["/api/user"], user);
-      toast({
-        title: "Registro exitoso",
-        description: `Bienvenido, ${user.name || user.username}`,
-      });
-      handleSuccessfulLogin(user);
+    onSuccess: (response: User & { needsVerification?: boolean }) => {
+      queryClient.setQueryData(["/api/user"], response);
+      
+      if (response.needsVerification) {
+        toast({
+          title: "¡Registro exitoso!",
+          description: "Por favor verifica tu correo electrónico para continuar",
+        });
+        window.location.href = "/verify-email";
+      } else {
+        toast({
+          title: "Registro exitoso",
+          description: `Bienvenido, ${response.name || response.username}`,
+        });
+        handleSuccessfulLogin(response);
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -165,6 +176,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Mutación para verificar email
+  const verifyEmailMutation = useMutation({
+    mutationFn: async ({ code }: { code: string }) => {
+      const res = await apiRequest("POST", "/api/verify-email", { code });
+      return await res.json();
+    },
+    onSuccess: (user: User) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      toast({
+        title: "¡Email verificado!",
+        description: "Tu cuenta ha sido verificada exitosamente",
+      });
+      window.location.href = "/dashboard";
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error de verificación",
+        description: error.message || "Código inválido o expirado",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutación para reenviar código de verificación
+  const resendVerificationMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/resend-verification");
+      return await res.json();
+    },
+    onSuccess: (data: { message: string }) => {
+      toast({
+        title: "Código enviado",
+        description: data.message || "Revisa tu correo electrónico",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error al enviar código",
+        description: error.message || "No se pudo enviar el código. Intenta nuevamente.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Verificar si el usuario es administrador
   const isAdmin = user?.role === 'admin';
 
@@ -179,6 +234,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logoutMutation,
         registerMutation,
         socialLoginMutation,
+        verifyEmailMutation,
+        resendVerificationMutation,
       }}
     >
       {children}

@@ -27,6 +27,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import FinanciaPlayPage from "@/pages/FinanciaPlayPage";
 import EducacionFinancieraPage from "@/pages/educacion-financiera-page";
+import VerifyEmailPage from "@/pages/verify-email-page";
 
 
 function RouterContent() {
@@ -55,6 +56,7 @@ function RouterContent() {
       <Switch>
         <Route path="/" component={LandingPage} />
         <Route path="/auth" component={AuthPage} />
+        <Route path="/verify-email" component={VerifyEmailPage} />
         <ProtectedRoute path="/dashboard" component={HomePage} />
         <ProtectedRoute path="/asistente-financiero" component={FinancialAssistantPage} />
         <ProtectedRoute path="/educacion-financiera" component={EducacionFinancieraPage} />
