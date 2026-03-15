@@ -17,11 +17,13 @@ import { useLocation } from "wouter";
 export interface InvestorQuestionnaireProps {
   onComplete: (answers: Record<number, number>) => void;
   isLoading?: boolean;
+  onClose?: () => void;
 }
 
 export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({ 
   onComplete, 
-  isLoading = false 
+  isLoading = false,
+  onClose = () => {},
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -160,7 +162,8 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
               <Button
                 variant="outline"
                 onClick={() => {
-                  setLocation("/dashboard");
+                  onClose();
+                  setTimeout(() => setLocation("/dashboard"), 0);
                 }}
                 className="w-full"
               >

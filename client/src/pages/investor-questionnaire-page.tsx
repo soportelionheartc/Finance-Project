@@ -35,11 +35,6 @@ export default function InvestorQuestionnairePage() {
           ? "Tu perfil de inversor ha sido actualizado exitosamente."
           : "Tu perfil de inversor ha sido creado exitosamente. Ahora podemos personalizar tu experiencia.",
       });
-      
-      // Redirect to dashboard after a brief delay
-      /* setTimeout(() => {
-        setLocation("/dashboard");
-      }, 1500); */
     },
     onError: (error: any) => {
       console.error("Error submitting investor profile:", error);
@@ -91,6 +86,7 @@ export default function InvestorQuestionnairePage() {
                 <InvestorQuestionnaire 
                   onComplete={submitMutation.mutate}
                   isLoading={submitMutation.isPending}
+                  onClose={()=>{}}
                 />
               )}
             </CardContent>

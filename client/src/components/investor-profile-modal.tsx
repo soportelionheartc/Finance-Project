@@ -3,6 +3,7 @@ import { InvestorQuestionnaire } from "@/components/finance/investor-questionnai
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface InvestorProfileModalProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface InvestorProfileModalProps {
 export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [isCompleted, setIsCompleted] = useState(false);
   
   const submitMutation = useMutation({
     mutationFn: async (answers: Record<number, number>) => {
@@ -23,7 +25,8 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
         title: "¡Perfil completado!",
         description: "Tu perfil de inversor ha sido guardado exitosamente",
       });
-      onClose();
+      setIsCompleted(true);
+      // NO cerrar aquí - el usuario decide cuándo
     },
     onError: (error: any) => {
       toast({
@@ -34,21 +37,24 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
     }
   });
   
+  const handleClose = () => {
+    onClose();
+  };
+  
   return (
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        // Only allow closing after profile is completed
-        if (!isOpen && submitMutation.isSuccess) {
-          onClose();
+        if (!isOpen && isCompleted) {
+          handleClose();
         }
       }}
     >
       <DialogContent
         className="max-h-[90vh] overflow-y-auto"
-        onInteractOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        showCloseButton={false} // Disable default close button
+        onInteractOutside={(e) => !isCompleted && e.preventDefault()}
+        onEscapeKeyDown={(e) => !isCompleted && e.preventDefault()}
+        showCloseButton={isCompleted}
       >
         <DialogHeader>
           <DialogTitle className="text-2xl">
@@ -64,6 +70,7 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
           <InvestorQuestionnaire
             onComplete={submitMutation.mutate}
             isLoading={submitMutation.isPending}
+            onClose={handleClose}
           />
         </div>
       </DialogContent>

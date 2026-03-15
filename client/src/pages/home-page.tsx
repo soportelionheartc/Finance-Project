@@ -72,12 +72,6 @@ export default function HomePage() {
     }
   }, [user, investorProfile, isLoadingProfile]);
   
-  useEffect(() => {
-    // Hide modal if profile gets loaded (e.g., after completion)
-    if (investorProfile && showProfileModal) {
-      setShowProfileModal(false);
-    }
-  }, [investorProfile, showProfileModal]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
