@@ -69,7 +69,7 @@ export const PortfolioSummary = () => {
   }
 
 
-  const handleSavePortfolio = async (portfolioName: string, assets: Asset[]) => {
+  const handleSavePortfolio = async (portfolioName: string, assets: Asset[], fileIds: number[] = []) => {
     try {
       // 1. Crear el portafolio
       const initialValue = assets.reduce(
@@ -92,7 +92,17 @@ export const PortfolioSummary = () => {
       if (!res.ok) throw new Error('Error al crear portafolio');
       const newPortfolio = await res.json();
 
-      // 2. Agregar los activos al portafolio
+      // 2. Asociar archivos al portafolio
+      for (const fileId of fileIds) {
+        await fetch(`/api/files/${fileId}/portfolio`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ portfolioId: newPortfolio.id })
+        });
+      }
+
+      // 3. Agregar los activos al portafolio
       for (const asset of assets) {
         const a = asset as any;
         await fetch(`/api/portfolios/${newPortfolio.id}/assets`, {
@@ -112,7 +122,7 @@ export const PortfolioSummary = () => {
         });
       }
 
-      // 3. Recargar la lista de portafolios
+      // 4. Recargar la lista de portafolios
       const updated = await fetch('/api/portfolios', { credentials: 'include' });
       if (updated.ok) {
         const data = await updated.json();

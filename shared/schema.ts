@@ -251,6 +251,24 @@ export const insertInvestorProfileSchema = createInsertSchema(investorProfiles)
     totalScore: z.number().int().min(0).max(21),
   });
 
+// Files schema for uploaded documents
+export const files = pgTable("files", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  portfolioId: integer("portfolio_id").references(() => portfolios.id, { onDelete: 'cascade' }),
+  filename: text("filename").notNull(), // stored filename (unique)
+  originalName: text("original_name").notNull(), // original filename
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(), // bytes
+  url: text("url").notNull(), // public URL path
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertFileSchema = createInsertSchema(files).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Type exports
 
 export type Transaction = typeof transactions.$inferSelect;
@@ -285,3 +303,6 @@ export type InsertVerificationCode = z.infer<typeof insertEmailVerificationCodeS
 
 export type InvestorProfile = typeof investorProfiles.$inferSelect;
 export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
+
+export type PortfolioFile = typeof files.$inferSelect;
+export type InsertFile = z.infer<typeof insertFileSchema>;

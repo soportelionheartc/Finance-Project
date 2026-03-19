@@ -11,6 +11,7 @@ import passport from 'passport';
 import { randomBytes } from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import fs from 'fs';
 
 
 
@@ -39,6 +40,13 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Ensure uploads directory exists and serve static files
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 app.use((req, res, next) => {
   // Servir archivos estáticos del frontend

@@ -13,15 +13,23 @@ interface Asset {
     purchaseDate: string;
 }
 
+interface UploadedFile {
+    id: number;
+    url: string;
+    filename: string;
+    mimeType: string;
+}
+
 interface NewPortfolioModalProps {
     open: boolean;
     onClose: () => void;
-    onSave: (portfolioName: string, assets: Asset[]) => void;
+    onSave: (portfolioName: string, assets: Asset[], fileIds: number[]) => void;
 }
 
 export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onClose, onSave }) => {
     const [portfolioName, setPortfolioName] = useState("");
     const [assets, setAssets] = useState<Asset[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [asset, setAsset] = useState<any>({
         type: "crypto",
         name: "",
@@ -51,16 +59,36 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
         setAssets(assets.filter((_, i) => i !== index));
     };
 
+    const handleFileUploaded = (file: UploadedFile) => {
+        setUploadedFiles(prev => [...prev, file]);
+    };
+
+    const handleFileRemoved = (fileId: number) => {
+        setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+    };
+
     const handleSave = () => {
         if (!portfolioName || assets.length === 0) return;
-        onSave(portfolioName, assets);
+        const fileIds = uploadedFiles.map(f => f.id);
+        onSave(portfolioName, assets, fileIds);
         setPortfolioName("");
         setAssets([]);
+        setUploadedFiles([]);
+        onClose();
+    };
+
+    const handleClose = () => {
+        // If there are uploaded files that weren't saved with a portfolio, 
+        // they will remain without portfolioId (orphaned files)
+        // In a production app, you might want to delete them here
+        setPortfolioName("");
+        setAssets([]);
+        setUploadedFiles([]);
         onClose();
     };
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="bg-zinc-900 w-100">
                 <DialogHeader>
                     <DialogTitle className="text-2xl">Nuevo Portafolio</DialogTitle>
@@ -77,7 +105,15 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
                     </div>
                     <div className="mb-2">
                         <label className="block mb-1 font-semibold text-center">Añadir Nuevo Activo</label>
-                        <AddAssetForm asset={asset} setAsset={setAsset} onSubmit={addAsset} submitLabel="Añadir Activo" />
+                        <AddAssetForm 
+                            asset={asset} 
+                            setAsset={setAsset} 
+                            onSubmit={addAsset} 
+                            submitLabel="Añadir Activo"
+                            onFileUploaded={handleFileUploaded}
+                            onFileRemoved={handleFileRemoved}
+                            uploadedFiles={uploadedFiles}
+                        />
                         <ul className="space-y-1 mt-2">
                             {assets.map((a, i) => (
                                 <li key={i} className="flex justify-between items-center bg-zinc-900 px-2 py-1 rounded">
@@ -91,7 +127,7 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
 
                 <DialogFooter>
                     <Button onClick={handleSave} className="bg-[#ffd700] text-[#1a1400] font-bold">Guardar</Button>
-                    <Button variant="outline" onClick={onClose} className="border-[#ffd700] text-[#ffd700] mb-4">Cancelar</Button>
+                    <Button variant="outline" onClick={handleClose} className="border-[#ffd700] text-[#ffd700] mb-4">Cancelar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

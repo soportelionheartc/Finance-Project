@@ -1,6 +1,6 @@
 // Importacion para obetener la informacion del .env para realizar la conexcion a la base de datos despues.
 import 'dotenv/config';
-import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes, investorProfiles } from "@shared/schema";
+import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes, investorProfiles, files } from "@shared/schema";
 import type {
   User, InsertUser,
   Portfolio, InsertPortfolio,
@@ -10,7 +10,8 @@ import type {
   Wallet, InsertWallet,
   DecentralizedMessage, InsertDecentralizedMessage,
   VerificationCode, InsertVerificationCode,
-  InvestorProfile, InsertInvestorProfile
+  InvestorProfile, InsertInvestorProfile,
+  PortfolioFile, InsertFile
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -98,6 +99,14 @@ export interface IStorage {
   createInvestorProfile(data: InsertInvestorProfile): Promise<InvestorProfile>;
   getInvestorProfileByUserId(userId: number): Promise<InvestorProfile | undefined>;
   updateInvestorProfile(userId: number, data: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined>;
+
+  // File operations
+  createFile(data: InsertFile): Promise<PortfolioFile>;
+  getFileById(id: number): Promise<PortfolioFile | undefined>;
+  getFilesByUserId(userId: number): Promise<PortfolioFile[]>;
+  getFilesByPortfolioId(portfolioId: number): Promise<PortfolioFile[]>;
+  updateFilePortfolioId(id: number, portfolioId: number): Promise<PortfolioFile | undefined>;
+  deleteFile(id: number): Promise<boolean>;
 
   // Session store
   sessionStore: any; // Using 'any' for SessionStore to avoid type errors
@@ -554,6 +563,31 @@ async createTransaction(transaction: {
   async updateInvestorProfile(_userId: number, _data: Partial<InsertInvestorProfile>): Promise<InvestorProfile | undefined> {
     throw new Error("Not implemented in MemStorage");
   }
+
+  // File operations (stubs for MemStorage)
+  async createFile(_data: InsertFile): Promise<PortfolioFile> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getFileById(_id: number): Promise<PortfolioFile | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getFilesByUserId(_userId: number): Promise<PortfolioFile[]> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async getFilesByPortfolioId(_portfolioId: number): Promise<PortfolioFile[]> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async updateFilePortfolioId(_id: number, _portfolioId: number): Promise<PortfolioFile | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async deleteFile(_id: number): Promise<boolean> {
+    throw new Error("Not implemented in MemStorage");
+  }
 }
 
 // Database Storage implementation
@@ -988,6 +1022,40 @@ async createTransaction(transaction: {
       .where(eq(investorProfiles.userId, userId))
       .returning();
     return updatedProfile;
+  }
+
+  // File operations
+  async createFile(data: InsertFile): Promise<PortfolioFile> {
+    const [file] = await db.insert(files).values(data).returning();
+    return file;
+  }
+
+  async getFileById(id: number): Promise<PortfolioFile | undefined> {
+    const [file] = await db.select().from(files).where(eq(files.id, id));
+    return file;
+  }
+
+  async getFilesByUserId(userId: number): Promise<PortfolioFile[]> {
+    return db.select().from(files).where(eq(files.userId, userId));
+  }
+
+  async getFilesByPortfolioId(portfolioId: number): Promise<PortfolioFile[]> {
+    return db.select().from(files).where(eq(files.portfolioId, portfolioId));
+  }
+
+  async updateFilePortfolioId(id: number, portfolioId: number): Promise<PortfolioFile | undefined> {
+    const [file] = await db
+      .update(files)
+      .set({ portfolioId })
+      .where(eq(files.id, id))
+      .returning();
+    return file;
+  }
+
+  async deleteFile(id: number): Promise<boolean> {
+    await db.delete(files).where(eq(files.id, id));
+    const file = await this.getFileById(id);
+    return file === undefined;
   }
 }
 

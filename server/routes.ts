@@ -7,6 +7,7 @@ import { sendContactEmail } from "./emailService";
 import financeRoutes from "./financeRoutes";
 import dotenv from "dotenv";
 import forumRoutes from "./forumRoutes";
+import fileRoutes from "./fileRoutes";
 import rateLimit from "express-rate-limit";
 
 
@@ -60,6 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.use("/api/finance", financeRoutes);
   app.use("/api/forum", forumRoutes);
+  app.use("/api/files", fileRoutes);
 
  // const router = express.Router();
 
