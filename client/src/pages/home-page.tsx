@@ -159,21 +159,7 @@ export default function HomePage() {
 
       <footer className="border-t py-6 text-sm text-muted-foreground">
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-4">
-            <div className="w-full md:w-1/2 flex flex-col items-center p-6 rounded-lg shadow-xs">
-              <p className="font-semibold text-primary mb-2 text-center">
-                Integración Blockchain
-              </p>
-              <p className="text-xs max-w-md text-center text-muted-foreground mb-3">
-                Conecta tu wallet de Ethereum para gestionar tus activos
-                digitales y criptomonedas.
-              </p>
-              <button className="mt-2 px-6 w-[150px] py-2 bg-yellow-500 wrap-break-word hover:bg-yellow-400 text-black text-sm font-semibold rounded-lg shadow-sm transition-all">
-                Iniciar Sesión con Blockchain
-              </button>
-            </div>
-
-            <div className="flex flex-col items-center md:items-end">
+            <div className="flex flex-col items-center justify-center mb-4">
               <h3 className="font-medium text-primary mb-3">Síguenos</h3>
               <div className="flex flex-wrap gap-3 mb-3">
                 <a
@@ -223,7 +209,6 @@ export default function HomePage() {
                 </a>
               </div>
             </div>
-          </div>
           <div className="text-center border-t border-gray-800 pt-4">
             © {new Date().getFullYear()} Zupi Fintech Todos los derechos
             reservados.
