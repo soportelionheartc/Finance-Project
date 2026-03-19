@@ -59,6 +59,13 @@ export const PortfolioSummary = () => {
 
 
   // Función para guardar portafolio y activos
+  interface AssetFile {
+    id: number;
+    url: string;
+    filename: string;
+    mimeType: string;
+  }
+
   interface Asset {
     type: string;
     name: string;
@@ -66,10 +73,11 @@ export const PortfolioSummary = () => {
     quantity: number;
     unitPrice: number;
     purchaseDate: string;
+    file: AssetFile | null;
   }
 
 
-  const handleSavePortfolio = async (portfolioName: string, assets: Asset[], fileIds: number[] = []) => {
+  const handleSavePortfolio = async (portfolioName: string, assets: Asset[]) => {
     try {
       // 1. Crear el portafolio
       const initialValue = assets.reduce(
@@ -92,20 +100,10 @@ export const PortfolioSummary = () => {
       if (!res.ok) throw new Error('Error al crear portafolio');
       const newPortfolio = await res.json();
 
-      // 2. Asociar archivos al portafolio
-      for (const fileId of fileIds) {
-        await fetch(`/api/files/${fileId}/portfolio`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ portfolioId: newPortfolio.id })
-        });
-      }
-
-      // 3. Agregar los activos al portafolio
+      // 2. Agregar los activos al portafolio y asociar archivos
       for (const asset of assets) {
         const a = asset as any;
-        await fetch(`/api/portfolios/${newPortfolio.id}/assets`, {
+        const assetRes = await fetch(`/api/portfolios/${newPortfolio.id}/assets`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -120,6 +118,20 @@ export const PortfolioSummary = () => {
             icon: ""
           })
         });
+
+        // 3. Si el activo tiene archivo, asociarlo con el activo creado
+        if (assetRes.ok && asset.file) {
+          const newAsset = await assetRes.json();
+          await fetch(`/api/files/${asset.file.id}/asset`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ 
+              assetId: newAsset.id,
+              portfolioId: newPortfolio.id 
+            })
+          });
+        }
       }
 
       // 4. Recargar la lista de portafolios

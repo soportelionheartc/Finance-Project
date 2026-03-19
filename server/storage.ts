@@ -105,7 +105,9 @@ export interface IStorage {
   getFileById(id: number): Promise<PortfolioFile | undefined>;
   getFilesByUserId(userId: number): Promise<PortfolioFile[]>;
   getFilesByPortfolioId(portfolioId: number): Promise<PortfolioFile[]>;
+  getFilesByAssetId(assetId: number): Promise<PortfolioFile[]>;
   updateFilePortfolioId(id: number, portfolioId: number): Promise<PortfolioFile | undefined>;
+  updateFileAssetId(id: number, assetId: number, portfolioId: number): Promise<PortfolioFile | undefined>;
   deleteFile(id: number): Promise<boolean>;
 
   // Session store
@@ -581,7 +583,15 @@ async createTransaction(transaction: {
     throw new Error("Not implemented in MemStorage");
   }
 
+  async getFilesByAssetId(_assetId: number): Promise<PortfolioFile[]> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
   async updateFilePortfolioId(_id: number, _portfolioId: number): Promise<PortfolioFile | undefined> {
+    throw new Error("Not implemented in MemStorage");
+  }
+
+  async updateFileAssetId(_id: number, _assetId: number, _portfolioId: number): Promise<PortfolioFile | undefined> {
     throw new Error("Not implemented in MemStorage");
   }
 
@@ -1043,10 +1053,23 @@ async createTransaction(transaction: {
     return db.select().from(files).where(eq(files.portfolioId, portfolioId));
   }
 
+  async getFilesByAssetId(assetId: number): Promise<PortfolioFile[]> {
+    return db.select().from(files).where(eq(files.assetId, assetId));
+  }
+
   async updateFilePortfolioId(id: number, portfolioId: number): Promise<PortfolioFile | undefined> {
     const [file] = await db
       .update(files)
       .set({ portfolioId })
+      .where(eq(files.id, id))
+      .returning();
+    return file;
+  }
+
+  async updateFileAssetId(id: number, assetId: number, portfolioId: number): Promise<PortfolioFile | undefined> {
+    const [file] = await db
+      .update(files)
+      .set({ assetId, portfolioId })
       .where(eq(files.id, id))
       .returning();
     return file;

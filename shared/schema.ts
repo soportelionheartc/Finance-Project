@@ -256,6 +256,7 @@ export const files = pgTable("files", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
   portfolioId: integer("portfolio_id").references(() => portfolios.id, { onDelete: 'cascade' }),
+  assetId: integer("asset_id").references(() => assets.id, { onDelete: 'cascade' }),
   filename: text("filename").notNull(), // stored filename (unique)
   originalName: text("original_name").notNull(), // original filename
   mimeType: text("mime_type").notNull(),

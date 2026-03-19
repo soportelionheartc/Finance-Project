@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { AddAssetForm } from "./add-asset-form";
+import { AddAssetForm, UploadedFile } from "./add-asset-form";
 import { useState } from "react";
+import { FileText, Image } from "lucide-react";
 
 interface Asset {
     type: string;
@@ -11,33 +12,29 @@ interface Asset {
     quantity: number;
     unitPrice: number;
     purchaseDate: string;
-}
-
-interface UploadedFile {
-    id: number;
-    url: string;
-    filename: string;
-    mimeType: string;
+    file: UploadedFile | null;
 }
 
 interface NewPortfolioModalProps {
     open: boolean;
     onClose: () => void;
-    onSave: (portfolioName: string, assets: Asset[], fileIds: number[]) => void;
+    onSave: (portfolioName: string, assets: Asset[]) => void;
 }
+
+const initialAssetState = {
+    type: "crypto",
+    name: "",
+    symbol: "",
+    quantity: "",
+    price: "",
+    date: "",
+    file: null
+};
 
 export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onClose, onSave }) => {
     const [portfolioName, setPortfolioName] = useState("");
     const [assets, setAssets] = useState<Asset[]>([]);
-    const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-    const [asset, setAsset] = useState<any>({
-        type: "crypto",
-        name: "",
-        symbol: "",
-        quantity: "",
-        price: "",
-        date: ""
-    });
+    const [asset, setAsset] = useState<any>(initialAssetState);
 
     const addAsset = () => {
         if (!asset.name || !asset.symbol || !asset.quantity || !asset.price || !asset.date) return;
@@ -49,43 +46,71 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
                 symbol: asset.symbol,
                 quantity: Number(asset.quantity),
                 unitPrice: Number(asset.price),
-                purchaseDate: asset.date
+                purchaseDate: asset.date,
+                file: asset.file || null
             }
         ]);
-        setAsset({ type: "crypto", name: "", symbol: "", quantity: "", price: "", date: "" });
+        // Reset form including file
+        setAsset(initialAssetState);
     };
 
-    const removeAsset = (index: number) => {
+    const removeAsset = async (index: number) => {
+        const removedAsset = assets[index];
+        // Delete associated file if exists
+        if (removedAsset.file) {
+            try {
+                await fetch(`/api/files/${removedAsset.file.id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error('Error al eliminar archivo:', error);
+            }
+        }
         setAssets(assets.filter((_, i) => i !== index));
-    };
-
-    const handleFileUploaded = (file: UploadedFile) => {
-        setUploadedFiles(prev => [...prev, file]);
-    };
-
-    const handleFileRemoved = (fileId: number) => {
-        setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
     };
 
     const handleSave = () => {
         if (!portfolioName || assets.length === 0) return;
-        const fileIds = uploadedFiles.map(f => f.id);
-        onSave(portfolioName, assets, fileIds);
+        onSave(portfolioName, assets);
         setPortfolioName("");
         setAssets([]);
-        setUploadedFiles([]);
+        setAsset(initialAssetState);
         onClose();
     };
 
-    const handleClose = () => {
-        // If there are uploaded files that weren't saved with a portfolio, 
-        // they will remain without portfolioId (orphaned files)
-        // In a production app, you might want to delete them here
+    const handleClose = async () => {
+        // Delete any files from assets that weren't saved
+        for (const a of assets) {
+            if (a.file) {
+                try {
+                    await fetch(`/api/files/${a.file.id}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                } catch (error) {
+                    console.error('Error al eliminar archivo:', error);
+                }
+            }
+        }
+        // Also delete current form file if exists
+        if (asset.file) {
+            try {
+                await fetch(`/api/files/${asset.file.id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error('Error al eliminar archivo:', error);
+            }
+        }
         setPortfolioName("");
         setAssets([]);
-        setUploadedFiles([]);
+        setAsset(initialAssetState);
         onClose();
     };
+
+    const isImage = (mimeType: string) => mimeType.startsWith('image/');
 
     return (
         <Dialog open={open} onOpenChange={handleClose}>
@@ -110,15 +135,24 @@ export const NewPortfolioModal: React.FC<NewPortfolioModalProps> = ({ open, onCl
                             setAsset={setAsset} 
                             onSubmit={addAsset} 
                             submitLabel="Añadir Activo"
-                            onFileUploaded={handleFileUploaded}
-                            onFileRemoved={handleFileRemoved}
-                            uploadedFiles={uploadedFiles}
                         />
                         <ul className="space-y-1 mt-2">
                             {assets.map((a, i) => (
-                                <li key={i} className="flex justify-between items-center bg-zinc-900 px-2 py-1 rounded">
-                                    <span>{a.type} - {a.name} ({a.symbol}) - {a.quantity} × ${a.unitPrice} - {a.purchaseDate}</span>
-                                    <Button size="sm" variant="ghost" onClick={() => removeAsset(i)} className="text-red-400">Eliminar</Button>
+                                <li key={i} className="flex flex-col bg-zinc-800 px-2 py-2 rounded">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-sm">{a.type} - {a.name} ({a.symbol}) - {a.quantity} × ${a.unitPrice}</span>
+                                        <Button size="sm" variant="ghost" onClick={() => removeAsset(i)} className="text-red-400">Eliminar</Button>
+                                    </div>
+                                    {a.file && (
+                                        <div className="flex items-center gap-2 mt-1 text-xs text-zinc-400">
+                                            {isImage(a.file.mimeType) ? (
+                                                <Image className="w-3 h-3" />
+                                            ) : (
+                                                <FileText className="w-3 h-3" />
+                                            )}
+                                            <span className="truncate">{a.file.filename}</span>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Upload, X, FileText, Image, Loader2 } from "lucide-react";
 
-interface UploadedFile {
+export interface UploadedFile {
     id: number;
     url: string;
     filename: string;
@@ -18,9 +18,6 @@ export interface AddAssetFormProps {
     onSubmit: () => void;
     submitLabel?: string;
     disabled?: boolean;
-    onFileUploaded?: (file: UploadedFile) => void;
-    onFileRemoved?: (fileId: number) => void;
-    uploadedFiles?: UploadedFile[];
 }
 
 export const AddAssetForm: React.FC<AddAssetFormProps> = ({ 
@@ -28,13 +25,13 @@ export const AddAssetForm: React.FC<AddAssetFormProps> = ({
     setAsset, 
     onSubmit, 
     submitLabel = "Añadir Activo", 
-    disabled,
-    onFileUploaded,
-    onFileRemoved,
-    uploadedFiles = []
+    disabled
 }) => {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
+
+    // Get current file from asset state
+    const currentFile: UploadedFile | null = asset.file || null;
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -72,11 +69,15 @@ export const AddAssetForm: React.FC<AddAssetFormProps> = ({
             }
 
             const uploadedFile = await response.json();
-            onFileUploaded?.({
-                id: uploadedFile.id,
-                url: uploadedFile.url,
-                filename: uploadedFile.filename,
-                mimeType: uploadedFile.mimeType
+            // Store file in asset state
+            setAsset({ 
+                ...asset, 
+                file: {
+                    id: uploadedFile.id,
+                    url: uploadedFile.url,
+                    filename: uploadedFile.filename,
+                    mimeType: uploadedFile.mimeType
+                }
             });
         } catch (error) {
             setUploadError(error instanceof Error ? error.message : 'Error al subir el archivo');
@@ -87,15 +88,18 @@ export const AddAssetForm: React.FC<AddAssetFormProps> = ({
         }
     };
 
-    const handleRemoveFile = async (fileId: number) => {
+    const handleRemoveFile = async () => {
+        if (!currentFile) return;
+
         try {
-            const response = await fetch(`/api/files/${fileId}`, {
+            const response = await fetch(`/api/files/${currentFile.id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
 
             if (response.ok) {
-                onFileRemoved?.(fileId);
+                // Remove file from asset state
+                setAsset({ ...asset, file: null });
             }
         } catch (error) {
             console.error('Error al eliminar archivo:', error);
@@ -179,67 +183,66 @@ export const AddAssetForm: React.FC<AddAssetFormProps> = ({
                 <div className="grid grid-cols-4 items-start gap-4">
                     <Label className="text-center pt-2">Documento</Label>
                     <div className="col-span-3 space-y-2">
-                        <div className="flex items-center gap-2">
-                            <Input
-                                id="asset-file"
-                                type="file"
-                                accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
-                                onChange={handleFileSelect}
-                                disabled={isUploading}
-                                className="hidden"
-                            />
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => document.getElementById('asset-file')?.click()}
-                                disabled={isUploading}
-                                className="w-full border-dashed"
-                            >
-                                {isUploading ? (
-                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Subiendo...</>
-                                ) : (
-                                    <><Upload className="w-4 h-4 mr-2" /> Adjuntar archivo</>
-                                )}
-                            </Button>
-                        </div>
-                        <p className="text-xs text-zinc-500">Máx. 5MB. Formatos: JPG, PNG, GIF, WEBP, PDF</p>
+                        {!currentFile && (
+                            <>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        id="asset-file"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+                                        onChange={handleFileSelect}
+                                        disabled={isUploading}
+                                        className="hidden"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => document.getElementById('asset-file')?.click()}
+                                        disabled={isUploading}
+                                        className="w-full border-dashed"
+                                    >
+                                        {isUploading ? (
+                                            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Subiendo...</>
+                                        ) : (
+                                            <><Upload className="w-4 h-4 mr-2" /> Adjuntar archivo</>
+                                        )}
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-zinc-500">Máx. 5MB. Formatos: JPG, PNG, GIF, WEBP, PDF</p>
+                            </>
+                        )}
                         
                         {uploadError && (
                             <p className="text-xs text-red-500">{uploadError}</p>
                         )}
 
-                        {/* Display uploaded files */}
-                        {uploadedFiles.length > 0 && (
-                            <div className="space-y-2 mt-2">
-                                {uploadedFiles.map(file => (
-                                    <div key={file.id} className="flex items-center gap-2 p-2 bg-zinc-800 rounded">
-                                        {isImage(file.mimeType) ? (
-                                            <Image className="w-4 h-4 text-blue-400" />
-                                        ) : (
-                                            <FileText className="w-4 h-4 text-orange-400" />
-                                        )}
-                                        <span className="text-sm flex-1 truncate">{file.filename}</span>
-                                        {isImage(file.mimeType) && (
-                                            <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-                                                Ver
-                                            </a>
-                                        )}
-                                        {!isImage(file.mimeType) && (
-                                            <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
-                                                Descargar
-                                            </a>
-                                        )}
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => handleRemoveFile(file.id)}
-                                            className="h-6 w-6 p-0 text-red-400 hover:text-red-500"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                ))}
+                        {/* Display current file */}
+                        {currentFile && (
+                            <div className="flex items-center gap-2 p-2 bg-zinc-800 rounded">
+                                {isImage(currentFile.mimeType) ? (
+                                    <Image className="w-4 h-4 text-blue-400" />
+                                ) : (
+                                    <FileText className="w-4 h-4 text-orange-400" />
+                                )}
+                                <span className="text-sm flex-1 truncate">{currentFile.filename}</span>
+                                {isImage(currentFile.mimeType) ? (
+                                    <a href={currentFile.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                                        Ver
+                                    </a>
+                                ) : (
+                                    <a href={currentFile.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                                        Descargar
+                                    </a>
+                                )}
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleRemoveFile}
+                                    className="h-6 w-6 p-0 text-red-400 hover:text-red-500"
+                                >
+                                    <X className="w-4 h-4" />
+                                </Button>
                             </div>
                         )}
                     </div>

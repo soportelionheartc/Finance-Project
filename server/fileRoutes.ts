@@ -113,11 +113,69 @@ router.get('/portfolio/:portfolioId', ensureAuthenticated, async (req: Request, 
       filename: file.originalName,
       mimeType: file.mimeType,
       size: file.size,
+      assetId: file.assetId,
       createdAt: file.createdAt
     })));
   } catch (error) {
     console.error("Error al obtener archivos del portafolio:", error);
     res.status(500).json({ error: "Error al obtener los archivos" });
+  }
+});
+
+// GET /api/files/asset/:assetId - Get files by asset
+router.get('/asset/:assetId', ensureAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const assetId = parseInt(req.params.assetId, 10);
+    const assetFiles = await storage.getFilesByAssetId(assetId);
+
+    // Verify user owns these files
+    const userId = req.user!.id;
+    const userFiles = assetFiles.filter(f => f.userId === userId);
+
+    res.json(userFiles.map(file => ({
+      id: file.id,
+      url: file.url,
+      filename: file.originalName,
+      mimeType: file.mimeType,
+      size: file.size,
+      createdAt: file.createdAt
+    })));
+  } catch (error) {
+    console.error("Error al obtener archivos del activo:", error);
+    res.status(500).json({ error: "Error al obtener los archivos" });
+  }
+});
+
+// PATCH /api/files/:id/asset - Associate file with an asset
+router.patch('/:id/asset', ensureAuthenticated, async (req: Request, res: Response) => {
+  try {
+    const fileId = parseInt(req.params.id, 10);
+    const { assetId, portfolioId } = req.body;
+
+    if (!assetId || !portfolioId) {
+      return res.status(400).json({ error: "Se requiere assetId y portfolioId" });
+    }
+
+    const file = await storage.getFileById(fileId);
+    if (!file) {
+      return res.status(404).json({ error: "Archivo no encontrado" });
+    }
+
+    // Only owner can update
+    if (file.userId !== req.user!.id) {
+      return res.status(403).json({ error: "No tienes permiso para modificar este archivo" });
+    }
+
+    const updatedFile = await storage.updateFileAssetId(fileId, assetId, portfolioId);
+    res.json({
+      id: updatedFile!.id,
+      url: updatedFile!.url,
+      assetId: updatedFile!.assetId,
+      portfolioId: updatedFile!.portfolioId
+    });
+  } catch (error) {
+    console.error("Error al asociar archivo con activo:", error);
+    res.status(500).json({ error: "Error al asociar el archivo" });
   }
 });
 
