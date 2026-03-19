@@ -222,6 +222,18 @@
     dialog {
     margin: auto;
   }
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      background: #ffaa00;
+      border-radius: 8px;
+    }
+  
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff8c00;
+    }
 }
 
 @layer utilities {

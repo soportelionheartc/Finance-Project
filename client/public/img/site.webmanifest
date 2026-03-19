@@ -1,0 +1,68 @@
+{
+  "name": "Zupi Fintech",
+  "short_name": "Zupi Fintech",
+  "description": "Plataforma de educación financiera, inversiones y gestión de portafolio con blockchain, análisis de mercado y asesoría personalizada",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#FFC107",
+  "background_color": "#0a0a0a",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["finance", "education", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Mi Portafolio",
+      "short_name": "Portafolio",
+      "description": "Ver tu portafolio de inversiones",
+      "url": "/finance-dashboard",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Calculadoras",
+      "short_name": "Calcular",
+      "description": "Herramientas de cálculo financiero",
+      "url": "/herramientas",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Juegos Educativos",
+      "short_name": "Juegos",
+      "description": "Aprende jugando sobre finanzas",
+      "url": "/juego",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}
