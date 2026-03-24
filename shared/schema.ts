@@ -86,14 +86,16 @@ export const insertWalletSchema = createInsertSchema(wallets).omit({
 });
 
 // Portfolio schema
-export const portfolios = pgTable("portfolios", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  name: text("name").notNull(),
-  totalValue: real("total_value").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  initial_value: real("initial_value").default(0),
+export const portfolios = pgTable('portfolios', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, {onDelete: 'cascade'}),
+  name: text('name').notNull(),
+  totalValue: real('total_value').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  initial_value: real('initial_value').default(0),
 });
 
 export const insertPortfolioSchema = createInsertSchema(portfolios).omit({
@@ -103,17 +105,19 @@ export const insertPortfolioSchema = createInsertSchema(portfolios).omit({
 });
 
 // Tabla para el historial de valores del portafolio
-export const portfolio_history = pgTable("portfolio_history", {
-  id: serial("id").primaryKey(),
-  portfolio_id: integer("portfolio_id").notNull().references(() => portfolios.id),
-  value: real("value").notNull(),
-  date: timestamp("date").notNull()
+export const portfolio_history = pgTable('portfolio_history', {
+  id: serial('id').primaryKey(),
+  portfolio_id: integer('portfolio_id')
+    .notNull()
+    .references(() => portfolios.id, {onDelete: 'cascade'}),
+  value: real('value').notNull(),
+  date: timestamp('date').notNull(),
 });
 
 // Asset schema
 export const assets = pgTable("assets", {
   id: serial("id").primaryKey(),
-  portfolioId: integer("portfolio_id").notNull().references(() => portfolios.id),
+  portfolioId: integer("portfolio_id").notNull().references(() => portfolios.id, { onDelete: 'cascade' }),
   name: text("name").notNull(),
   symbol: text("symbol").notNull(),
   type: text("type").notNull(), // stock, crypto, etf, etc
