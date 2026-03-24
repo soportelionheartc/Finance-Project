@@ -33,7 +33,6 @@ export default function AuthPage() {
     },
   });
 
-  //TODO: revisar el register form que esta funcionando todo trocado
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
