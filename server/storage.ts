@@ -1,6 +1,6 @@
 // Importacion para obetener la informacion del .env para realizar la conexcion a la base de datos despues.
 import 'dotenv/config';
-import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes, investorProfiles, files } from "@shared/schema";
+import { users, portfolios, assets, strategies, chatHistory, wallets, decentralizedMessages, emailVerificationCodes, investorProfiles, files, financiaplayProgress, financiaplayPlacement, financiaplayBadges, financiaplayXp } from "@shared/schema";
 import type {
   User, InsertUser,
   Portfolio, InsertPortfolio,
@@ -11,7 +11,11 @@ import type {
   DecentralizedMessage, InsertDecentralizedMessage,
   VerificationCode, InsertVerificationCode,
   InvestorProfile, InsertInvestorProfile,
-  PortfolioFile, InsertFile
+  PortfolioFile, InsertFile,
+  FinanciaplayProgress, InsertFinanciaplayProgress,
+  FinanciaplayPlacement, InsertFinanciaplayPlacement,
+  FinanciaplayBadge, InsertFinanciaplayBadge,
+  FinanciaplayXp, InsertFinanciaplayXp
 } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -109,6 +113,23 @@ export interface IStorage {
   updateFilePortfolioId(id: number, portfolioId: number): Promise<PortfolioFile | undefined>;
   updateFileAssetId(id: number, assetId: number, portfolioId: number): Promise<PortfolioFile | undefined>;
   deleteFile(id: number): Promise<boolean>;
+
+  // FinanciaPlay operations
+  createFinanciaplayProgress(data: InsertFinanciaplayProgress): Promise<FinanciaplayProgress>;
+  getFinanciaplayProgress(userId: number): Promise<FinanciaplayProgress[]>;
+  getFinanciaplayProgressByGame(userId: number, gameId: string): Promise<FinanciaplayProgress | undefined>;
+
+  createFinanciaplayPlacement(data: InsertFinanciaplayPlacement): Promise<FinanciaplayPlacement>;
+  getFinanciaplayPlacement(userId: number): Promise<FinanciaplayPlacement | undefined>;
+  updateFinanciaplayPlacement(userId: number, data: Partial<InsertFinanciaplayPlacement>): Promise<FinanciaplayPlacement | undefined>;
+
+  createFinanciaplayBadge(data: InsertFinanciaplayBadge): Promise<FinanciaplayBadge>;
+  getFinanciaplayBadges(userId: number): Promise<FinanciaplayBadge[]>;
+  hasFinanciaplayBadge(userId: number, badgeId: string): Promise<boolean>;
+
+  getFinanciaplayXp(userId: number): Promise<FinanciaplayXp | undefined>;
+  upsertFinanciaplayXp(userId: number, xpToAdd: number): Promise<FinanciaplayXp>;
+  getFinanciaplayLeaderboard(limit: number): Promise<{ userId: number; totalXp: number; username: string | null }[]>;
 
   // Session store
   sessionStore: any; // Using 'any' for SessionStore to avoid type errors
@@ -598,6 +619,20 @@ async createTransaction(transaction: {
   async deleteFile(_id: number): Promise<boolean> {
     throw new Error("Not implemented in MemStorage");
   }
+
+  // FinanciaPlay stubs
+  async createFinanciaplayProgress(_data: InsertFinanciaplayProgress): Promise<FinanciaplayProgress> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayProgress(_userId: number): Promise<FinanciaplayProgress[]> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayProgressByGame(_userId: number, _gameId: string): Promise<FinanciaplayProgress | undefined> { throw new Error("Not implemented in MemStorage"); }
+  async createFinanciaplayPlacement(_data: InsertFinanciaplayPlacement): Promise<FinanciaplayPlacement> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayPlacement(_userId: number): Promise<FinanciaplayPlacement | undefined> { throw new Error("Not implemented in MemStorage"); }
+  async updateFinanciaplayPlacement(_userId: number, _data: Partial<InsertFinanciaplayPlacement>): Promise<FinanciaplayPlacement | undefined> { throw new Error("Not implemented in MemStorage"); }
+  async createFinanciaplayBadge(_data: InsertFinanciaplayBadge): Promise<FinanciaplayBadge> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayBadges(_userId: number): Promise<FinanciaplayBadge[]> { throw new Error("Not implemented in MemStorage"); }
+  async hasFinanciaplayBadge(_userId: number, _badgeId: string): Promise<boolean> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayXp(_userId: number): Promise<FinanciaplayXp | undefined> { throw new Error("Not implemented in MemStorage"); }
+  async upsertFinanciaplayXp(_userId: number, _xpToAdd: number): Promise<FinanciaplayXp> { throw new Error("Not implemented in MemStorage"); }
+  async getFinanciaplayLeaderboard(_limit: number): Promise<{ userId: number; totalXp: number; username: string | null }[]> { throw new Error("Not implemented in MemStorage"); }
 }
 
 // Database Storage implementation
@@ -1079,6 +1114,88 @@ async createTransaction(transaction: {
     await db.delete(files).where(eq(files.id, id));
     const file = await this.getFileById(id);
     return file === undefined;
+  }
+
+  // FinanciaPlay operations
+  async createFinanciaplayProgress(data: InsertFinanciaplayProgress): Promise<FinanciaplayProgress> {
+    const [progress] = await db.insert(financiaplayProgress).values(data).returning();
+    return progress;
+  }
+
+  async getFinanciaplayProgress(userId: number): Promise<FinanciaplayProgress[]> {
+    return db.select().from(financiaplayProgress).where(eq(financiaplayProgress.userId, userId));
+  }
+
+  async getFinanciaplayProgressByGame(userId: number, gameId: string): Promise<FinanciaplayProgress | undefined> {
+    const [progress] = await db.select().from(financiaplayProgress)
+      .where(and(eq(financiaplayProgress.userId, userId), eq(financiaplayProgress.gameId, gameId)));
+    return progress;
+  }
+
+  async createFinanciaplayPlacement(data: InsertFinanciaplayPlacement): Promise<FinanciaplayPlacement> {
+    const [placement] = await db.insert(financiaplayPlacement).values(data).returning();
+    return placement;
+  }
+
+  async getFinanciaplayPlacement(userId: number): Promise<FinanciaplayPlacement | undefined> {
+    const [placement] = await db.select().from(financiaplayPlacement)
+      .where(eq(financiaplayPlacement.userId, userId));
+    return placement;
+  }
+
+  async updateFinanciaplayPlacement(userId: number, data: Partial<InsertFinanciaplayPlacement>): Promise<FinanciaplayPlacement | undefined> {
+    const [updated] = await db.update(financiaplayPlacement)
+      .set({ ...data, completedAt: new Date() })
+      .where(eq(financiaplayPlacement.userId, userId))
+      .returning();
+    return updated;
+  }
+
+  async createFinanciaplayBadge(data: InsertFinanciaplayBadge): Promise<FinanciaplayBadge> {
+    const [badge] = await db.insert(financiaplayBadges).values(data).returning();
+    return badge;
+  }
+
+  async getFinanciaplayBadges(userId: number): Promise<FinanciaplayBadge[]> {
+    return db.select().from(financiaplayBadges).where(eq(financiaplayBadges.userId, userId));
+  }
+
+  async hasFinanciaplayBadge(userId: number, badgeId: string): Promise<boolean> {
+    const [badge] = await db.select().from(financiaplayBadges)
+      .where(and(eq(financiaplayBadges.userId, userId), eq(financiaplayBadges.badgeId, badgeId)));
+    return !!badge;
+  }
+
+  async getFinanciaplayXp(userId: number): Promise<FinanciaplayXp | undefined> {
+    const [xp] = await db.select().from(financiaplayXp).where(eq(financiaplayXp.userId, userId));
+    return xp;
+  }
+
+  async upsertFinanciaplayXp(userId: number, xpToAdd: number): Promise<FinanciaplayXp> {
+    const existing = await this.getFinanciaplayXp(userId);
+    if (existing) {
+      const [updated] = await db.update(financiaplayXp)
+        .set({ totalXp: existing.totalXp + xpToAdd, updatedAt: new Date() })
+        .where(eq(financiaplayXp.userId, userId))
+        .returning();
+      return updated;
+    }
+    const [created] = await db.insert(financiaplayXp)
+      .values({ userId, totalXp: xpToAdd })
+      .returning();
+    return created;
+  }
+
+  async getFinanciaplayLeaderboard(limit: number): Promise<{ userId: number; totalXp: number; username: string | null }[]> {
+    return db.select({
+      userId: financiaplayXp.userId,
+      totalXp: financiaplayXp.totalXp,
+      username: users.username,
+    })
+      .from(financiaplayXp)
+      .leftJoin(users, eq(financiaplayXp.userId, users.id))
+      .orderBy(desc(financiaplayXp.totalXp))
+      .limit(limit);
   }
 }
 

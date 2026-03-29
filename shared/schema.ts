@@ -274,6 +274,64 @@ export const insertFileSchema = createInsertSchema(files).omit({
   createdAt: true,
 });
 
+// FinanciaPlay — Progreso por juego
+export const financiaplayProgress = pgTable("financiaplay_progress", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  gameId: text("game_id").notNull(),
+  levelId: text("level_id").notNull(),
+  score: integer("score").notNull(),
+  maxScore: integer("max_score").notNull(),
+  xpGained: integer("xp_gained").notNull(),
+  timeRemainingPct: real("time_remaining_pct").default(0),
+  completedAt: timestamp("completed_at").defaultNow(),
+});
+
+export const insertFinanciaplayProgressSchema = createInsertSchema(financiaplayProgress).omit({
+  id: true,
+  completedAt: true,
+});
+
+// FinanciaPlay — Resultado del test diagnóstico
+export const financiaplayPlacement = pgTable("financiaplay_placement", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  unlockedLevel: integer("unlocked_level").notNull(),
+  score: json("score").notNull(),
+  completedAt: timestamp("completed_at").defaultNow(),
+});
+
+export const insertFinanciaplayPlacementSchema = createInsertSchema(financiaplayPlacement).omit({
+  id: true,
+  completedAt: true,
+});
+
+// FinanciaPlay — Insignias obtenidas
+export const financiaplayBadges = pgTable("financiaplay_badges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  badgeId: text("badge_id").notNull(),
+  awardedAt: timestamp("awarded_at").defaultNow(),
+});
+
+export const insertFinanciaplayBadgeSchema = createInsertSchema(financiaplayBadges).omit({
+  id: true,
+  awardedAt: true,
+});
+
+// FinanciaPlay — XP acumulado
+export const financiaplayXp = pgTable("financiaplay_xp", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  totalXp: integer("total_xp").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertFinanciaplayXpSchema = createInsertSchema(financiaplayXp).omit({
+  id: true,
+  updatedAt: true,
+});
+
 // Type exports
 
 export type Transaction = typeof transactions.$inferSelect;
@@ -311,3 +369,15 @@ export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
 
 export type PortfolioFile = typeof files.$inferSelect;
 export type InsertFile = z.infer<typeof insertFileSchema>;
+
+export type FinanciaplayProgress = typeof financiaplayProgress.$inferSelect;
+export type InsertFinanciaplayProgress = z.infer<typeof insertFinanciaplayProgressSchema>;
+
+export type FinanciaplayPlacement = typeof financiaplayPlacement.$inferSelect;
+export type InsertFinanciaplayPlacement = z.infer<typeof insertFinanciaplayPlacementSchema>;
+
+export type FinanciaplayBadge = typeof financiaplayBadges.$inferSelect;
+export type InsertFinanciaplayBadge = z.infer<typeof insertFinanciaplayBadgeSchema>;
+
+export type FinanciaplayXp = typeof financiaplayXp.$inferSelect;
+export type InsertFinanciaplayXp = z.infer<typeof insertFinanciaplayXpSchema>;

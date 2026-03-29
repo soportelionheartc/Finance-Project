@@ -62,7 +62,7 @@ function RouterContent() {
         <ProtectedRoute path="/asistente-financiero" component={FinancialAssistantPage} />
         <ProtectedRoute path="/educacion-financiera" component={EducacionFinancieraPage} />
         <ProtectedRoute path="/finanzas-personales" component={FinanzasPersonalesPage} />
-        <ProtectedRoute path="/educacion-financiera" component={FinanciaPlayPage} />
+        <ProtectedRoute path="/financiaplay" component={FinanciaPlayPage} />
         <ProtectedRoute path="/portafolio" component={PortfolioPage} />
         <ProtectedRoute path="/trading-bot" component={TradingBotPage} />
         <ProtectedRoute path="/wallet" component={WalletPage} />

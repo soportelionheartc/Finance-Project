@@ -8,6 +8,7 @@ import financeRoutes from "./financeRoutes";
 import dotenv from "dotenv";
 import forumRoutes from "./forumRoutes";
 import fileRoutes from "./fileRoutes";
+import financiaplayRoutes from "./financiaplayRoutes";
 import rateLimit from "express-rate-limit";
 
 
@@ -62,6 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/finance", financeRoutes);
   app.use("/api/forum", forumRoutes);
   app.use("/api/files", fileRoutes);
+  app.use("/api/financiaplay", financiaplayRoutes);
 
  // const router = express.Router();
 
