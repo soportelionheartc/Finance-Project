@@ -128,9 +128,9 @@ export default function HomePage() {
             className="w-full bg-black border border-yellow-500 text-yellow-500 
                hover:bg-yellow-600 hover:text-black transition-all duration-200 
                font-semibold rounded-xl shadow-md"
-            onClick={() => setLocation("/educacion-financiera")}
+            onClick={() => setLocation("/financiaplay")}
           >
-            🎮 Educación Financiera
+            🎮 FinanciaPlay
           </Button>
         </div>
 

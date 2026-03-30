@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Lightbulb, X } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Lightbulb, X } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 interface AiLessonProps {
   topicId: string;
@@ -104,25 +104,25 @@ export default function AiLesson({
           </p>
 
           {/* Concept */}
-          <div className="text-sm leading-relaxed">{lesson.concept}</div>
+          <div className="text-sm leading-relaxed"><ReactMarkdown>{lesson.concept}</ReactMarkdown></div>
 
           {/* Example */}
           <div className="rounded-lg border border-[#FFC107]/30 bg-[#FFC107]/5 p-4">
             <p className="text-sm font-medium mb-1 text-[#FFC107]">Ejemplo</p>
-            <p className="text-sm">{lesson.example}</p>
+            <div className="text-sm"><ReactMarkdown>{lesson.example}</ReactMarkdown></div>
           </div>
 
           {/* Key Fact */}
           <div className="flex items-start gap-3 text-sm">
             <Lightbulb className="h-5 w-5 text-[#FFC107] shrink-0 mt-0.5" />
-            <p>{lesson.keyFact}</p>
+            <div className="text-sm leading-relaxed"><ReactMarkdown>{lesson.keyFact}</ReactMarkdown></div>
           </div>
 
           {/* Challenge */}
           <Card className="bg-muted/50">
             <CardContent className="p-4">
               <p className="text-sm font-medium mb-1">🎯 Desafío</p>
-              <p className="text-sm text-muted-foreground">{lesson.challenge}</p>
+              <div className="text-sm text-muted-foreground"><ReactMarkdown>{lesson.challenge}</ReactMarkdown></div>
             </CardContent>
           </Card>
 

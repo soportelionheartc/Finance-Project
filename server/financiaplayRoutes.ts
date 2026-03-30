@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
 import Anthropic from "@anthropic-ai/sdk";
 import dotenv from "dotenv";
+import { ai } from "./ai";
 
 dotenv.config();
 
@@ -205,10 +206,10 @@ router.post("/lesson", ensureAuthenticated, async (req, res) => {
       levelId === "L3"
         ? " Nivel L3: usa terminología técnica con referencias a CFA/GARP/Basilea."
         : "";
+    const systemPrompt = `Eres un educador financiero experto. El usuario está aprendiendo sobre '${topicName}' (${topicDesc}) en el nivel '${levelName}'.${levelNote} `;
+    const prompt = `Genera una mini-lección educativa BREVE, DINÁMICA y GAMIFICADA en español con este formato JSON exacto: { "emoji": "...", "title": "...", "hook": "...", "concept": "...", "example": "...", "keyFact": "...", "challenge": "..." }. Responde SOLO con el JSON, sin texto adicional.`;
 
-    const prompt = `Eres un educador financiero experto. El usuario está aprendiendo sobre '${topicName}' (${topicDesc}) en el nivel '${levelName}'.${levelNote} Genera una mini-lección educativa BREVE, DINÁMICA y GAMIFICADA en español con este formato JSON exacto: { "emoji": "...", "title": "...", "hook": "...", "concept": "...", "example": "...", "keyFact": "...", "challenge": "..." }. Responde SOLO con el JSON, sin texto adicional.`;
-
-    if (!anthropic) {
+    if (!ai) {
       return res.json({
         emoji: "📚",
         title: topicName,
@@ -219,19 +220,12 @@ router.post("/lesson", ensureAuthenticated, async (req, res) => {
         challenge: "¿Puedes aplicar este concepto en tu vida financiera?",
       });
     }
+    const message = await ai.chat([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: prompt }
+    ]);
 
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const textContent = message.content.find((c) => c.type === "text");
-    if (!textContent || textContent.type !== "text") {
-      throw new Error("No se recibió respuesta del modelo");
-    }
-
-    const parsed = JSON.parse(textContent.text);
+    const parsed = JSON.parse(message);
     res.json(parsed);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Error desconocido";

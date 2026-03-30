@@ -60,7 +60,6 @@ function RouterContent() {
         <Route path="/verify-email" component={VerifyEmailPage} />
         <ProtectedRoute path="/dashboard" component={HomePage} />
         <ProtectedRoute path="/asistente-financiero" component={FinancialAssistantPage} />
-        <ProtectedRoute path="/educacion-financiera" component={EducacionFinancieraPage} />
         <ProtectedRoute path="/finanzas-personales" component={FinanzasPersonalesPage} />
         <ProtectedRoute path="/financiaplay" component={FinanciaPlayPage} />
         <ProtectedRoute path="/portafolio" component={PortfolioPage} />
