@@ -178,7 +178,7 @@ export default function HomePage() {
                   className="w-8 h-8 rounded-full bg-black border border-primary/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-all"
                   aria-label="TikTok"
                 >
-                  <SiTiktok className="h-4 w-4" />
+                  <SiTiktok size={4} />
                 </a>
                 <a
                   href="https://instagram.com/lionheartcapital"
