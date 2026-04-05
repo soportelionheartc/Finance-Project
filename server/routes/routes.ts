@@ -141,7 +141,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       let chatMessages: AIMessage[];
-
       if (
         Array.isArray(conversationHistory) &&
         conversationHistory.length > 0
