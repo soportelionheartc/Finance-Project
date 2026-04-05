@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Mail, Loader2 } from "lucide-react";
 
@@ -16,7 +26,7 @@ export default function VerifyEmailPage() {
 
   // Obtener email de localStorage
   useEffect(() => {
-    const pendingEmail = localStorage.getItem('pendingVerificationEmail');
+    const pendingEmail = localStorage.getItem("pendingVerificationEmail");
     if (!pendingEmail) {
       // Si no hay email pendiente, redirigir a auth
       setLocation("/auth");
@@ -58,21 +68,21 @@ export default function VerifyEmailPage() {
   const isResending = resendVerificationMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black p-4">
       <div className="w-full max-w-md">
         <Card className="border-zinc-800 bg-zinc-900">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto bg-primary/20 rounded-full p-4 w-fit">
-              <Mail className="h-8 w-8 text-primary" />
+          <CardHeader className="space-y-4 text-center">
+            <div className="bg-primary/20 mx-auto w-fit rounded-full p-4">
+              <Mail className="text-primary h-8 w-8" />
             </div>
             <div>
               <CardTitle className="text-2xl text-white">
                 Verifica tu correo electrónico
               </CardTitle>
-              <CardDescription className="text-gray-400 mt-2">
+              <CardDescription className="mt-2 text-gray-400">
                 Hemos enviado un código de 6 dígitos a
               </CardDescription>
-              <p className="text-primary font-medium mt-1">{email}</p>
+              <p className="text-primary mt-1 font-medium">{email}</p>
             </div>
           </CardHeader>
 
@@ -86,25 +96,47 @@ export default function VerifyEmailPage() {
                 disabled={isVerifying}
               >
                 <InputOTPGroup>
-                  <InputOTPSlot index={0} className="border-zinc-700 bg-zinc-800 text-white" />
-                  <InputOTPSlot index={1} className="border-zinc-700 bg-zinc-800 text-white" />
-                  <InputOTPSlot index={2} className="border-zinc-700 bg-zinc-800 text-white" />
-                  <InputOTPSlot index={3} className="border-zinc-700 bg-zinc-800 text-white" />
-                  <InputOTPSlot index={4} className="border-zinc-700 bg-zinc-800 text-white" />
-                  <InputOTPSlot index={5} className="border-zinc-700 bg-zinc-800 text-white" />
+                  <InputOTPSlot
+                    index={0}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
+                  <InputOTPSlot
+                    index={1}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
+                  <InputOTPSlot
+                    index={2}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
+                  <InputOTPSlot
+                    index={3}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
+                  <InputOTPSlot
+                    index={4}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
+                  <InputOTPSlot
+                    index={5}
+                    className="border-zinc-700 bg-zinc-800 text-white"
+                  />
                 </InputOTPGroup>
               </InputOTP>
 
-              <p className="text-sm text-gray-400 text-center">
+              <p className="text-center text-sm text-gray-400">
                 Ingresa el código de 6 dígitos que recibiste
               </p>
             </div>
 
             {/* Error message */}
             {verifyEmailMutation.isError && (
-              <Alert variant="destructive" className="bg-red-950/50 border-red-900">
+              <Alert
+                variant="destructive"
+                className="border-red-900 bg-red-950/50"
+              >
                 <AlertDescription>
-                  {verifyEmailMutation.error?.message || "Código inválido o expirado"}
+                  {verifyEmailMutation.error?.message ||
+                    "Código inválido o expirado"}
                 </AlertDescription>
               </Alert>
             )}
@@ -113,7 +145,7 @@ export default function VerifyEmailPage() {
             <Button
               onClick={handleVerify}
               disabled={!isCodeComplete || isVerifying}
-              className="w-full bg-primary hover:bg-primary/90 text-black font-semibold"
+              className="bg-primary hover:bg-primary/90 w-full font-semibold text-black"
             >
               {isVerifying ? (
                 <>
@@ -126,10 +158,8 @@ export default function VerifyEmailPage() {
             </Button>
 
             {/* Botón de reenviar */}
-            <div className="text-center space-y-2">
-              <p className="text-sm text-gray-400">
-                ¿No recibiste el código?
-              </p>
+            <div className="space-y-2 text-center">
+              <p className="text-sm text-gray-400">¿No recibiste el código?</p>
               <Button
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || isResending}
@@ -150,9 +180,10 @@ export default function VerifyEmailPage() {
             </div>
 
             {/* Mensaje informativo */}
-            <Alert className="bg-zinc-800 border-zinc-700">
-              <AlertDescription className="text-gray-400 text-sm">
-                El código expira en 15 minutos. Si no lo encuentras, revisa tu carpeta de spam.
+            <Alert className="border-zinc-700 bg-zinc-800">
+              <AlertDescription className="text-sm text-gray-400">
+                El código expira en 15 minutos. Si no lo encuentras, revisa tu
+                carpeta de spam.
               </AlertDescription>
             </Alert>
           </CardContent>

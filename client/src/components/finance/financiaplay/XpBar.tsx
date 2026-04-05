@@ -18,7 +18,7 @@ export default function XpBar({ currentXp, className = "" }: XpBarProps) {
       >
         {currentXp}
       </motion.span>
-      <span className="text-sm text-muted-foreground">XP</span>
+      <span className="text-muted-foreground text-sm">XP</span>
     </div>
   );
 }

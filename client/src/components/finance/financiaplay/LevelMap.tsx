@@ -2,7 +2,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { CURRICULUM, GAMES_BY_LEVEL, type Game } from "@/data/financiaplayData";
-import { Lock, ChevronDown, ChevronUp, Check, BookOpen, Gamepad2 } from "lucide-react";
+import {
+  Lock,
+  ChevronDown,
+  ChevronUp,
+  Check,
+  BookOpen,
+  Gamepad2,
+} from "lucide-react";
 
 interface CompletedGame {
   gameId: string;
@@ -19,7 +26,11 @@ interface LevelMapProps {
 }
 
 const LEVEL_KEYS = ["level1", "level2", "level3"] as const;
-const LEVEL_NUMBERS: Record<string, number> = { level1: 1, level2: 2, level3: 3 };
+const LEVEL_NUMBERS: Record<string, number> = {
+  level1: 1,
+  level2: 2,
+  level3: 3,
+};
 const LEVEL_BORDER_COLORS: Record<string, string> = {
   level1: "border-green-500/60",
   level2: "border-blue-500/60",
@@ -40,9 +51,8 @@ export default function LevelMap({
 
   function getCompletedCount(levelId: string) {
     const games = GAMES_BY_LEVEL[levelId] ?? [];
-    return games.filter((g) =>
-      completedGames.some((c) => c.gameId === g.id),
-    ).length;
+    return games.filter((g) => completedGames.some((c) => c.gameId === g.id))
+      .length;
   }
 
   function isGameCompleted(gameId: string) {
@@ -68,7 +78,9 @@ export default function LevelMap({
           <div key={levelKey}>
             <Card
               className={`transition-all ${LEVEL_BORDER_COLORS[levelKey]} border-2 ${
-                unlocked ? "cursor-pointer hover:shadow-md" : "opacity-50 cursor-not-allowed"
+                unlocked
+                  ? "cursor-pointer hover:shadow-md"
+                  : "cursor-not-allowed opacity-50"
               }`}
               onClick={() => toggleLevel(levelKey)}
             >
@@ -77,24 +89,24 @@ export default function LevelMap({
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{level.badge}</span>
                     <div>
-                      <h3 className="font-semibold text-base">{level.name}</h3>
-                      <p className="text-xs text-muted-foreground">
+                      <h3 className="text-base font-semibold">{level.name}</h3>
+                      <p className="text-muted-foreground text-xs">
                         {level.description}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    <span className="text-muted-foreground text-xs whitespace-nowrap">
                       {completed}/{total} juegos completados
                     </span>
                     {unlocked ? (
                       expanded ? (
-                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        <ChevronUp className="text-muted-foreground h-4 w-4" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="text-muted-foreground h-4 w-4" />
                       )
                     ) : (
-                      <Lock className="h-4 w-4 text-muted-foreground" />
+                      <Lock className="text-muted-foreground h-4 w-4" />
                     )}
                   </div>
                 </div>
@@ -110,10 +122,10 @@ export default function LevelMap({
                   transition={{ duration: 0.25 }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-3 pl-4 space-y-4">
+                  <div className="space-y-4 pt-3 pl-4">
                     {/* Topics */}
                     <div>
-                      <h4 className="text-sm font-medium flex items-center gap-1.5 mb-2">
+                      <h4 className="mb-2 flex items-center gap-1.5 text-sm font-medium">
                         <BookOpen className="h-4 w-4" /> Temas
                       </h4>
                       <div className="grid gap-1.5">
@@ -124,7 +136,7 @@ export default function LevelMap({
                               e.stopPropagation();
                               onSelectTopic(topic.id, level.id);
                             }}
-                            className="flex items-center gap-2 rounded-md border px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors"
+                            className="hover:bg-muted/50 flex items-center gap-2 rounded-md border px-3 py-2 text-left text-sm transition-colors"
                           >
                             <span>{topic.icon}</span>
                             <span>{topic.name}</span>
@@ -135,7 +147,7 @@ export default function LevelMap({
 
                     {/* Games */}
                     <div>
-                      <h4 className="text-sm font-medium flex items-center gap-1.5 mb-2">
+                      <h4 className="mb-2 flex items-center gap-1.5 text-sm font-medium">
                         <Gamepad2 className="h-4 w-4" /> Juegos
                       </h4>
                       <div className="grid gap-1.5">
@@ -144,19 +156,19 @@ export default function LevelMap({
                           return (
                             <Card
                               key={game.id}
-                              className="cursor-pointer hover:shadow-sm transition-shadow"
+                              className="cursor-pointer transition-shadow hover:shadow-sm"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 onSelectGame(game);
                               }}
                             >
-                              <CardContent className="p-3 flex items-center justify-between">
+                              <CardContent className="flex items-center justify-between p-3">
                                 <div className="flex items-center gap-2">
                                   <span>{game.icon}</span>
                                   <span className="text-sm font-medium">
                                     {game.title}
                                   </span>
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="text-muted-foreground text-xs">
                                     {game.points} pts
                                   </span>
                                 </div>

@@ -13,16 +13,25 @@ interface CategorizeProps {
   onBack: () => void;
 }
 
-export default function Categorize({ game, onFinish, onBack }: CategorizeProps) {
+export default function Categorize({
+  game,
+  onFinish,
+  onBack,
+}: CategorizeProps) {
   const categories = game.categories ?? [];
   const items = game.items ?? [];
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [results, setResults] = useState<Array<{ correct: boolean; chosen: string }>>([]);
+  const [results, setResults] = useState<
+    Array<{ correct: boolean; chosen: string }>
+  >([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(game.timeSec);
   const [finished, setFinished] = useState(false);
-  const [lastAnswer, setLastAnswer] = useState<{ correct: boolean; chosenLabel: string } | null>(null);
+  const [lastAnswer, setLastAnswer] = useState<{
+    correct: boolean;
+    chosenLabel: string;
+  } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopTimer = useCallback(() => {
@@ -57,13 +66,17 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
     if (lastAnswer !== null) return;
     const item = items[currentIdx];
     const isCorrect = item.cat === catKey;
-    const chosenLabel = categories.find((c) => c.key === catKey)?.label ?? catKey;
+    const chosenLabel =
+      categories.find((c) => c.key === catKey)?.label ?? catKey;
 
     if (isCorrect) {
       setScore((s) => s + 1);
     }
 
-    setResults((prev) => [...prev, { correct: isCorrect, chosen: chosenLabel }]);
+    setResults((prev) => [
+      ...prev,
+      { correct: isCorrect, chosen: chosenLabel },
+    ]);
     setLastAnswer({ correct: isCorrect, chosenLabel });
   };
 
@@ -84,15 +97,21 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
 
   const timePct = (timeLeft / game.timeSec) * 100;
   const currentItem = items[currentIdx];
-  const correctCatLabel = categories.find((c) => c.key === currentItem.cat)?.label ?? currentItem.cat;
+  const correctCatLabel =
+    categories.find((c) => c.key === currentItem.cat)?.label ?? currentItem.cat;
 
   if (finished && timeLeft > 0) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-[#FFC107]/30 bg-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-card border-[#FFC107]/30">
           <CardHeader className="text-center">
             <Trophy className="mx-auto mb-2 size-12 text-[#FFC107]" />
-            <CardTitle className="text-2xl">¡Categorización completada!</CardTitle>
+            <CardTitle className="text-2xl">
+              ¡Categorización completada!
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
             <p className="text-4xl font-bold text-[#FFC107]">
@@ -123,7 +142,7 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
                     <XCircle className="size-4 shrink-0" />
                   )}
                   <span className="font-medium">{item.label}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">
+                  <span className="text-muted-foreground ml-auto text-xs">
                     {categories.find((c) => c.key === item.cat)?.label}
                   </span>
                 </div>
@@ -156,7 +175,7 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
 
       <Progress value={timePct} className="h-2" />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Elemento {currentIdx + 1} de {items.length}
       </p>
 
@@ -180,8 +199,12 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
               let extraClass = "";
               if (lastAnswer !== null) {
                 if (cat.key === currentItem.cat) {
-                  extraClass = "border-green-500 bg-green-500/20 text-green-300";
-                } else if (lastAnswer.chosenLabel === cat.label && !lastAnswer.correct) {
+                  extraClass =
+                    "border-green-500 bg-green-500/20 text-green-300";
+                } else if (
+                  lastAnswer.chosenLabel === cat.label &&
+                  !lastAnswer.correct
+                ) {
                   extraClass = "border-red-500 bg-red-500/20 text-red-300";
                 }
               }
@@ -190,7 +213,7 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
                 <Button
                   key={cat.key}
                   variant="outline"
-                  className={`h-auto whitespace-normal py-3 px-4 text-sm font-semibold ${extraClass}`}
+                  className={`h-auto px-4 py-3 text-sm font-semibold whitespace-normal ${extraClass}`}
                   onClick={() => handleCategorySelect(cat.key)}
                   disabled={lastAnswer !== null}
                 >
@@ -211,7 +234,9 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
               }`}
             >
               {lastAnswer.correct ? (
-                <p>✅ ¡Correcto! Pertenece a <strong>{correctCatLabel}</strong></p>
+                <p>
+                  ✅ ¡Correcto! Pertenece a <strong>{correctCatLabel}</strong>
+                </p>
               ) : (
                 <p>
                   ❌ Incorrecto. La categoría correcta es{" "}
@@ -229,7 +254,7 @@ export default function Categorize({ game, onFinish, onBack }: CategorizeProps) 
         </CardContent>
       </Card>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Puntaje: <span className="font-bold text-[#FFC107]">{score}</span> /{" "}
         {items.length}
       </p>

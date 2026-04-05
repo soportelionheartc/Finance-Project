@@ -18,7 +18,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   BarChart,
-  LineChart
+  LineChart,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -41,8 +41,8 @@ const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
     <Link href={href}>
       <a
         className={cn(
-          "flex items-center px-4 py-2.5 md:py-3 text-gray-300 hover:bg-black hover:text-primary transition-colors duration-200",
-          isActive && "text-primary border-l-2 border-primary"
+          "hover:text-primary flex items-center px-4 py-2.5 text-gray-300 transition-colors duration-200 hover:bg-black md:py-3",
+          isActive && "text-primary border-primary border-l-2",
         )}
         onClick={onClick}
       >
@@ -58,7 +58,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const sidebarClass = cn(
     "bg-black border-r border-zinc-800 transition-all duration-300 ease-in-out overflow-y-auto",
     "fixed md:relative inset-y-0 left-0 z-50 w-full md:w-72 shrink-0 max-w-[300px]",
-    isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+    isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
   );
 
   // Si el usuario no ha iniciado sesión, mostramos un sidebar mínimo
@@ -68,30 +68,30 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         {/* Overlay for mobile */}
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
             onClick={onClose}
           ></div>
         )}
 
         <aside className={sidebarClass}>
-          <div className="p-3 md:p-4 border-b border-zinc-800">
+          <div className="border-b border-zinc-800 p-3 md:p-4">
             <div className="flex flex-col items-center">
-              <LionLogo className="w-12 h-12 md:w-16 md:h-16 mb-1 md:mb-2" />
-              <h2 className="text-base md:text-lg font-bold text-primary text-center">
+              <LionLogo className="mb-1 h-12 w-12 md:mb-2 md:h-16 md:w-16" />
+              <h2 className="text-primary text-center text-base font-bold md:text-lg">
                 ZUPI FINTECH
               </h2>
-              <p className="text-xs md:text-sm text-gray-400 text-center">
+              <p className="text-center text-xs text-gray-400 md:text-sm">
                 CONSULTORA FINANCIERA Y DE INVERSIÓN
               </p>
             </div>
           </div>
 
-          <div className="py-2 md:py-4 px-3 md:px-4">
+          <div className="px-3 py-2 md:px-4 md:py-4">
             <div className="flex flex-col items-center justify-center">
               <p className="text-sm text-gray-300">Juan Pablo Arango</p>
-              <p className="text-xs text-primary mb-1">CEO & Founder</p>
-              <p className="text-xs text-gray-400 truncate">+57 3163581762</p>
-              <p className="text-xs text-gray-400 truncate">
+              <p className="text-primary mb-1 text-xs">CEO & Founder</p>
+              <p className="truncate text-xs text-gray-400">+57 3163581762</p>
+              <p className="truncate text-xs text-gray-400">
                 lionheartcapital1303@gmail.com
               </p>
             </div>
@@ -100,7 +100,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <nav className="py-2">
             <SidebarLink
               href="/"
-              icon={<Home className="h-5 w-5 text-primary" />}
+              icon={<Home className="text-primary h-5 w-5" />}
               onClick={onClose}
             >
               Inicio
@@ -108,7 +108,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
             <SidebarLink
               href="/servicios"
-              icon={<DollarSign className="h-5 w-5 text-primary" />}
+              icon={<DollarSign className="text-primary h-5 w-5" />}
               onClick={onClose}
             >
               Servicios Financieros
@@ -116,26 +116,26 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
             <SidebarLink
               href="/contacto"
-              icon={<Mail className="h-5 w-5 text-primary" />}
+              icon={<Mail className="text-primary h-5 w-5" />}
               onClick={onClose}
             >
               Contacto
             </SidebarLink>
           </nav>
 
-          <div className="p-3 md:p-4 mt-auto border-t border-zinc-800 bg-zinc-900">
+          <div className="mt-auto border-t border-zinc-800 bg-zinc-900 p-3 md:p-4">
             <div className="text-center">
-              <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">
+              <h4 className="text-primary mb-1 text-sm font-medium md:mb-2 md:text-base">
                 Integración Blockchain
               </h4>
-              <p className="text-xs text-gray-300 mb-2 text-xs">
+              <p className="mb-2 text-xs text-gray-300">
                 Conecta tu wallet para gestionar tus activos digitales.
               </p>
               <Button
-                className="w-full bg-primary text-black hover:bg-primary/90 transition-colors text-xs md:text-sm"
+                className="bg-primary hover:bg-primary/90 w-full text-xs text-black transition-colors md:text-sm"
                 onClick={() => (window.location.href = "/auth")}
               >
-                <LogIn className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
+                <LogIn className="mr-1 h-4 w-4 md:mr-2 md:h-5 md:w-5" />
                 Iniciar Sesión para Acceder
               </Button>
             </div>
@@ -151,30 +151,30 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
           onClick={onClose}
         ></div>
       )}
 
       <aside className={sidebarClass}>
-        <div className="p-3 md:p-4 border-b border-zinc-800">
+        <div className="border-b border-zinc-800 p-3 md:p-4">
           <div className="flex flex-col items-center">
-            <LionLogo className="w-12 h-12 md:w-16 md:h-16 mb-1 md:mb-2" />
-            <h2 className="text-base md:text-lg font-bold text-primary text-center">
+            <LionLogo className="mb-1 h-12 w-12 md:mb-2 md:h-16 md:w-16" />
+            <h2 className="text-primary text-center text-base font-bold md:text-lg">
               ZUPI FINTECH
             </h2>
-            <p className="text-xs md:text-sm text-gray-400 text-center">
+            <p className="text-center text-xs text-gray-400 md:text-sm">
               CONSULTORA FINANCIERA Y DE INVERSIÓN
             </p>
           </div>
         </div>
 
-        <div className="py-2 md:py-4 px-3 md:px-4">
+        <div className="px-3 py-2 md:px-4 md:py-4">
           <div className="flex flex-col items-center justify-center">
             <p className="text-sm text-gray-300">Juan Pablo Arango</p>
-            <p className="text-xs text-primary mb-1">CEO & Founder</p>
-            <p className="text-xs text-gray-400 truncate">+57 3163581762</p>
-            <p className="text-xs text-gray-400 truncate">
+            <p className="text-primary mb-1 text-xs">CEO & Founder</p>
+            <p className="truncate text-xs text-gray-400">+57 3163581762</p>
+            <p className="truncate text-xs text-gray-400">
               lionheartcapital1303@gmail.com
             </p>
           </div>
@@ -183,7 +183,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <nav className="py-2">
           <SidebarLink
             href="/"
-            icon={<Home className="h-5 w-5 text-primary" />}
+            icon={<Home className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Inicio
@@ -191,7 +191,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/dashboard"
-            icon={<LayoutDashboard className="h-5 w-5 text-primary" />}
+            icon={<LayoutDashboard className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Dashboard
@@ -199,7 +199,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/finanzas-personales"
-            icon={<DollarSign className="h-5 w-5 text-primary" />}
+            icon={<DollarSign className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Finanzas Personales
@@ -207,7 +207,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/portafolio"
-            icon={<ChartPie className="h-5 w-5 text-primary" />}
+            icon={<ChartPie className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Mi Portafolio
@@ -215,7 +215,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/trading-bot"
-            icon={<LineChart className="h-5 w-5 text-primary" />}
+            icon={<LineChart className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Trading Bot
@@ -223,7 +223,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/wallet"
-            icon={<Wallet className="h-5 w-5 text-primary" />}
+            icon={<Wallet className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Wallets
@@ -231,7 +231,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/chat-descentralizado"
-            icon={<MessageSquare className="h-5 w-5 text-primary" />}
+            icon={<MessageSquare className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Chat Descentralizado
@@ -239,7 +239,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/servicios"
-            icon={<Info className="h-5 w-5 text-primary" />}
+            icon={<Info className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Servicios
@@ -247,26 +247,26 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           <SidebarLink
             href="/contacto"
-            icon={<Mail className="h-5 w-5 text-primary" />}
+            icon={<Mail className="text-primary h-5 w-5" />}
             onClick={onClose}
           >
             Contacto
           </SidebarLink>
         </nav>
 
-        <div className="p-3 md:p-4 mt-auto border-t border-zinc-800 bg-zinc-900">
+        <div className="mt-auto border-t border-zinc-800 bg-zinc-900 p-3 md:p-4">
           <div className="text-center">
-            <h4 className="text-sm md:text-base font-medium text-primary mb-1 md:mb-2">
+            <h4 className="text-primary mb-1 text-sm font-medium md:mb-2 md:text-base">
               Integración Blockchain
             </h4>
-            <p className="text-xs text-gray-300 mb-2 text-xs">
+            <p className="mb-2 text-xs text-gray-300">
               Conecta tu wallet para gestionar tus activos digitales.
             </p>
             <Button
-              className="w-full bg-primary text-black hover:bg-primary/90 transition-colors text-xs md:text-sm"
+              className="bg-primary hover:bg-primary/90 w-full text-xs text-black transition-colors md:text-sm"
               onClick={() => (window.location.href = "/wallet")}
             >
-              <Wallet className="mr-1 md:mr-2 h-4 md:h-5 w-4 md:w-5" />
+              <Wallet className="mr-1 h-4 w-4 md:mr-2 md:h-5 md:w-5" />
               Conectar Wallet
             </Button>
           </div>

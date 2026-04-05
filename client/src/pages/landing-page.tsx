@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, DollarSign, BarChart, Zap, Send, MessageCircle, Newspaper } from "lucide-react";
+import {
+  ArrowRight,
+  DollarSign,
+  BarChart,
+  Zap,
+  Send,
+  MessageCircle,
+  Newspaper,
+} from "lucide-react";
 import { Link } from "wouter";
 import { LionLogo } from "@/components/ui/lion-logo";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,42 +24,57 @@ export default function LandingPage() {
 
   // Datos de mercados globales
   const usaMarketData = [
-    { name: 'S&P 500', value: '4.779,05', change: '+0.71%', isPositive: true },
-    { name: 'Dow Jones', value: '38.635,06', change: '+0.54%', isPositive: true },
-    { name: 'Nasdaq', value: '16.201,83', change: '+0.93%', isPositive: true },
-    { name: 'Russell 2000', value: '2.051,14', change: '+0.61%', isPositive: true },
+    { name: "S&P 500", value: "4.779,05", change: "+0.71%", isPositive: true },
+    {
+      name: "Dow Jones",
+      value: "38.635,06",
+      change: "+0.54%",
+      isPositive: true,
+    },
+    { name: "Nasdaq", value: "16.201,83", change: "+0.93%", isPositive: true },
+    {
+      name: "Russell 2000",
+      value: "2.051,14",
+      change: "+0.61%",
+      isPositive: true,
+    },
   ];
 
   const bvcMarketData = [
-    { name: 'COLCAP', value: '1.095,43', change: '+0.62%', isPositive: true },
-    { name: 'Ecopetrol', value: '2.845,00', change: '+1.2%', isPositive: true },
-    { name: 'Bancolombia', value: '34.200,00', change: '+0.85%', isPositive: true },
-    { name: 'Grupo Aval', value: '671,00', change: '-0.3%', isPositive: false },
+    { name: "COLCAP", value: "1.095,43", change: "+0.62%", isPositive: true },
+    { name: "Ecopetrol", value: "2.845,00", change: "+1.2%", isPositive: true },
+    {
+      name: "Bancolombia",
+      value: "34.200,00",
+      change: "+0.85%",
+      isPositive: true,
+    },
+    { name: "Grupo Aval", value: "671,00", change: "-0.3%", isPositive: false },
   ];
 
   const cryptoMarketData = [
-    { name: 'BTC/USD', value: '42.406,66', change: '+2.08%', isPositive: true },
-    { name: 'ETH/USD', value: '2.591,31', change: '+1.40%', isPositive: true },
-    { name: 'SOL/USD', value: '163,85', change: '+3.27%', isPositive: true },
-    { name: 'XRP/USD', value: '0,5081', change: '-0.92%', isPositive: false },
+    { name: "BTC/USD", value: "42.406,66", change: "+2.08%", isPositive: true },
+    { name: "ETH/USD", value: "2.591,31", change: "+1.40%", isPositive: true },
+    { name: "SOL/USD", value: "163,85", change: "+3.27%", isPositive: true },
+    { name: "XRP/USD", value: "0,5081", change: "-0.92%", isPositive: false },
   ];
 
   const forexData = [
-    { name: 'EUR/USD', value: '1,0916', change: '-0.36%', isPositive: false },
-    { name: 'USD/COP', value: '3.876,42', change: '-0.52%', isPositive: false },
-    { name: 'GBP/USD', value: '1,2703', change: '+0.14%', isPositive: true },
-    { name: 'USD/JPY', value: '147,93', change: '+0.28%', isPositive: true },
+    { name: "EUR/USD", value: "1,0916", change: "-0.36%", isPositive: false },
+    { name: "USD/COP", value: "3.876,42", change: "-0.52%", isPositive: false },
+    { name: "GBP/USD", value: "1,2703", change: "+0.14%", isPositive: true },
+    { name: "USD/JPY", value: "147,93", change: "+0.28%", isPositive: true },
   ];
 
   return (
-    <div className="min-h-screen bg-black text-foreground flex flex-col">
+    <div className="text-foreground flex min-h-screen flex-col bg-black">
       {/* Header */}
-      <header className="border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="border-border/40 from-primary/20 border-b bg-linear-to-r to-black p-4">
+        <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LionLogo className="h-10 w-10" />
             <div>
-              <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+              <h1 className="text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-lg font-bold text-transparent">
                 FINANCE 360°
               </h1>
               <p>Zupi Fintech</p>
@@ -68,15 +91,15 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-6 space-y-8">
+      <main className="container mx-auto flex-1 space-y-8 px-4 py-6">
         {/* Hero Section */}
-        <section className="grid gap-8 items-center py-6">
-          <div className="space-y-4 flex flex-col items-center text-center bg-linear-to-br from-primary/20 to-transparent rounded-xl shadow-[0_2px_16px_0_rgba(255,215,0,0.10)] px-8 py-10">
-            <h2 className="text-4xl font-bold text-primary">FINANCE 360°</h2>
-            <h3 className="text-xl text-white mb-2">
+        <section className="grid items-center gap-8 py-6">
+          <div className="from-primary/20 flex flex-col items-center space-y-4 rounded-xl bg-linear-to-br to-transparent px-8 py-10 text-center shadow-[0_2px_16px_0_rgba(255,215,0,0.10)]">
+            <h2 className="text-primary text-4xl font-bold">FINANCE 360°</h2>
+            <h3 className="mb-2 text-xl text-white">
               FINANZAS E INVERSIONES DE ALTO IMPACTO
             </h3>
-            <p className="text-gray-300 text-lg mb-6">
+            <p className="mb-6 text-lg text-gray-300">
               Soluciones financieras inteligentes impulsadas por IA para
               optimizar tus inversiones y estrategias de trading.
             </p>
@@ -96,7 +119,7 @@ export default function LandingPage() {
 
         {/* Mercados Globales con datos en tiempo real */}
         <section className="space-y-6">
-          <h3 className="font-bold text-xl text-primary uppercase">
+          <h3 className="text-primary text-xl font-bold uppercase">
             Mercados Globales
           </h3>
           <MarketOverview />
@@ -231,13 +254,13 @@ export default function LandingPage() {
       <footer className="border-t border-zinc-800 p-6 text-center text-sm text-gray-400">
         <div className="container mx-auto">
           <div className="text-center">
-            <p className="font-medium text-primary">Zupi Fintech S.A.S.</p>
+            <p className="text-primary font-medium">Zupi Fintech S.A.S.</p>
             <p className="mt-2">Contacto: lionheartcapital1303@gmail.com</p>
           </div>
 
           <div className="mt-8">
             <p>¡Próximamente en App Store y Google Play!</p>
-            <p className="text-xs mt-1">
+            <p className="mt-1 text-xs">
               Descarga nuestra aplicación móvil para acceder a todas las
               funcionalidades desde tu dispositivo.
             </p>

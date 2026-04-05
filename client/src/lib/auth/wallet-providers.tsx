@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 import { ethers } from "ethers";
 
 // Types for wallet interfaces
@@ -35,7 +41,9 @@ interface PhantomWalletContextType {
   disconnectPhantom: () => Promise<void>;
 }
 
-const PhantomWalletContext = createContext<PhantomWalletContextType | null>(null);
+const PhantomWalletContext = createContext<PhantomWalletContextType | null>(
+  null,
+);
 
 export function PhantomWalletProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -45,25 +53,25 @@ export function PhantomWalletProvider({ children }: { children: ReactNode }) {
   const connectPhantom = useCallback(async (): Promise<WalletInfo | null> => {
     try {
       if (!window.phantom?.solana) {
-        window.open('https://phantom.app/', '_blank');
+        window.open("https://phantom.app/", "_blank");
         return null;
       }
 
       const provider = window.phantom?.solana;
-      
+
       if (!provider) {
         throw new Error("Phantom wallet provider not found");
       }
-      
+
       const response = await provider.connect();
       const address = response.publicKey.toString();
-      
+
       setWalletAddress(address);
       setIsConnected(true);
-      
+
       return {
         address,
-        type: 'solana'
+        type: "solana",
       };
     } catch (error) {
       console.error("Error connecting to Phantom wallet:", error);
@@ -101,7 +109,9 @@ export function PhantomWalletProvider({ children }: { children: ReactNode }) {
 export function usePhantomWallet() {
   const context = useContext(PhantomWalletContext);
   if (!context) {
-    throw new Error("usePhantomWallet must be used within a PhantomWalletProvider");
+    throw new Error(
+      "usePhantomWallet must be used within a PhantomWalletProvider",
+    );
   }
   return context;
 }
@@ -114,7 +124,9 @@ interface EthereumWalletContextType {
   disconnectEthereum: () => Promise<void>;
 }
 
-const EthereumWalletContext = createContext<EthereumWalletContextType | null>(null);
+const EthereumWalletContext = createContext<EthereumWalletContextType | null>(
+  null,
+);
 
 export function EthereumWalletProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -124,26 +136,26 @@ export function EthereumWalletProvider({ children }: { children: ReactNode }) {
   const connectEthereum = useCallback(async (): Promise<WalletInfo | null> => {
     try {
       if (!window.ethereum) {
-        window.open('https://metamask.io/download/', '_blank');
+        window.open("https://metamask.io/download/", "_blank");
         return null;
       }
 
       // @ts-ignore - ethers types are not fully updated
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
+      await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      
+
       // Get the current network
       const network = await provider.getNetwork();
       const chainId = network.chainId.toString();
-      
+
       setWalletAddress(address);
       setIsConnected(true);
-      
+
       return {
         address,
-        type: 'ethereum',
+        type: "ethereum",
       };
     } catch (error) {
       console.error("Error connecting to Ethereum wallet:", error);
@@ -176,7 +188,9 @@ export function EthereumWalletProvider({ children }: { children: ReactNode }) {
 export function useEthereumWallet() {
   const context = useContext(EthereumWalletContext);
   if (!context) {
-    throw new Error("useEthereumWallet must be used within an EthereumWalletProvider");
+    throw new Error(
+      "useEthereumWallet must be used within an EthereumWalletProvider",
+    );
   }
   return context;
 }
@@ -185,9 +199,7 @@ export function useEthereumWallet() {
 export function WalletProviders({ children }: { children: ReactNode }) {
   return (
     <PhantomWalletProvider>
-      <EthereumWalletProvider>
-        {children}
-      </EthereumWalletProvider>
+      <EthereumWalletProvider>{children}</EthereumWalletProvider>
     </PhantomWalletProvider>
   );
 }

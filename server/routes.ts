@@ -11,7 +11,6 @@ import fileRoutes from "./fileRoutes";
 import financiaplayRoutes from "./financiaplayRoutes";
 import rateLimit from "express-rate-limit";
 
-
 dotenv.config(); // asegura cargar .env
 
 const openai = process.env.OPENAI_API_KEY
@@ -22,7 +21,10 @@ const openai = process.env.OPENAI_API_KEY
 const contactRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 10, // 10 requests per hour per IP
-  message: { error: "Demasiados mensajes de contacto. Por favor, inténtalo de nuevo en 1 hora." },
+  message: {
+    error:
+      "Demasiados mensajes de contacto. Por favor, inténtalo de nuevo en 1 hora.",
+  },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -34,7 +36,10 @@ function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
 }
 
 // Helper function to calculate investor profile based on questionnaire answers
-function calculateInvestorProfile(answers: Record<number, number>): { riskProfile: string; totalScore: number } {
+function calculateInvestorProfile(answers: Record<number, number>): {
+  riskProfile: string;
+  totalScore: number;
+} {
   // Sum points from questions 1-6
   const totalScore = Object.entries(answers)
     .filter(([questionId]) => {
@@ -47,11 +52,11 @@ function calculateInvestorProfile(answers: Record<number, number>): { riskProfil
   // Conservative: 0-7, Moderate: 8-14, Aggressive: 15-21
   let riskProfile: string;
   if (totalScore <= 7) {
-    riskProfile = 'conservative';
+    riskProfile = "conservative";
   } else if (totalScore <= 14) {
-    riskProfile = 'moderate';
+    riskProfile = "moderate";
   } else {
-    riskProfile = 'aggressive';
+    riskProfile = "aggressive";
   }
 
   return { riskProfile, totalScore };
@@ -65,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/files", fileRoutes);
   app.use("/api/financiaplay", financiaplayRoutes);
 
- // const router = express.Router();
+  // const router = express.Router();
 
   // Contact form (with rate limiting and SendGrid)
   app.post("/api/contact", contactRateLimiter, async (req, res) => {
@@ -73,13 +78,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Validate input
     if (!name || !email || !message) {
-      return res.status(400).json({ success: false, error: "Nombre, email y mensaje son requeridos" });
+      return res.status(400).json({
+        success: false,
+        error: "Nombre, email y mensaje son requeridos",
+      });
     }
 
     // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ success: false, error: "Formato de email inválido" });
+      return res
+        .status(400)
+        .json({ success: false, error: "Formato de email inválido" });
     }
 
     try {
@@ -89,7 +99,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error(`[routes] ❌ Contact form error:`, errorMessage);
-      res.status(500).json({ success: false, error: "Error al enviar el mensaje. Por favor, inténtalo de nuevo." });
+      res.status(500).json({
+        success: false,
+        error: "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+      });
     }
   });
 
@@ -103,10 +116,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI financial advice
- app.post("/api/ai/financial-advice", async (req, res) => {
+  app.post("/api/ai/financial-advice", async (req, res) => {
     try {
       const { message } = req.body;
-      if (!message) return res.status(400).json({ error: "Se requiere un mensaje" });
+      if (!message)
+        return res.status(400).json({ error: "Se requiere un mensaje" });
 
       if (!openai) {
         console.error("❌ OpenAI no está inicializado");
@@ -119,48 +133,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: "Eres un asesor financiero profesional, claro y responsable. No prometas rendimientos, da consejos realistas." },
+          {
+            role: "system",
+            content:
+              "Eres un asesor financiero profesional, claro y responsable. No prometas rendimientos, da consejos realistas.",
+          },
           { role: "user", content: message },
         ],
       });
 
-      const aiResponse = completion.choices[0]?.message?.content || "No se recibió respuesta del modelo.";
+      const aiResponse =
+        completion.choices[0]?.message?.content ||
+        "No se recibió respuesta del modelo.";
       console.log("💬 Respuesta de OpenAI:", aiResponse);
 
       res.json({ response: aiResponse });
     } catch (error: any) {
-      console.error("❌ Error al procesar solicitud de IA:", error.response?.data || error.message || error);
-      res.status(500).json({ error: "Error interno del servidor", response: "Ocurrió un error al obtener la respuesta de IA." });
+      console.error(
+        "❌ Error al procesar solicitud de IA:",
+        error.response?.data || error.message || error,
+      );
+      res.status(500).json({
+        error: "Error interno del servidor",
+        response: "Ocurrió un error al obtener la respuesta de IA.",
+      });
     }
   });
 
   // Analyze portfolio
-app.post("/api/ai/analyze-portfolio", ensureAuthenticated, async (req, res) => {
-    try {
-      console.log("req.user:", req.user);
-      const { portfolioId } = req.body;
-      const userId = req.user?.id;
-      if (!userId) return res.status(401).json({ error: "Usuario no autenticado" });
-      if (!portfolioId) return res.status(400).json({ error: "Se requiere el ID del portafolio" });
+  app.post(
+    "/api/ai/analyze-portfolio",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        console.log("req.user:", req.user);
+        const { portfolioId } = req.body;
+        const userId = req.user?.id;
+        if (!userId)
+          return res.status(401).json({ error: "Usuario no autenticado" });
+        if (!portfolioId)
+          return res
+            .status(400)
+            .json({ error: "Se requiere el ID del portafolio" });
 
-      const assets = await storage.getAssets(portfolioId);
-      if (!assets || assets.length === 0) {
-        return res.json({ analysis: "Este portafolio no tiene assets todavía." });
+        const assets = await storage.getAssets(portfolioId);
+        if (!assets || assets.length === 0) {
+          return res.json({
+            analysis: "Este portafolio no tiene assets todavía.",
+          });
+        }
+
+        const totalValue = assets.reduce((sum, a) => sum + (a.value || 0), 0);
+        const assetBreakdown = assets.map((a) => ({
+          name: a.name,
+          value: a.value,
+          percentage: totalValue
+            ? ((a.value / totalValue) * 100).toFixed(2) + "%"
+            : "0%",
+        }));
+
+        res.json({
+          analysis: {
+            totalValue,
+            assets: assetBreakdown,
+            message: "Análisis generado con datos reales del portafolio.",
+          },
+        });
+      } catch (err) {
+        console.error("Error al analizar el portafolio:", err);
+        res.status(500).json({
+          error: "Error interno del servidor",
+          analysis:
+            "Ocurrió un error al analizar tu portafolio. Intenta nuevamente.",
+        });
       }
-
-      const totalValue = assets.reduce((sum, a) => sum + (a.value || 0), 0);
-      const assetBreakdown = assets.map(a => ({
-        name: a.name,
-        value: a.value,
-        percentage: totalValue ? ((a.value / totalValue) * 100).toFixed(2) + "%" : "0%"
-      }));
-
-      res.json({ analysis: { totalValue, assets: assetBreakdown, message: "Análisis generado con datos reales del portafolio." } });
-    } catch (err) {
-      console.error("Error al analizar el portafolio:", err);
-      res.status(500).json({ error: "Error interno del servidor", analysis: "Ocurrió un error al analizar tu portafolio. Intenta nuevamente." });
-    }
-  });
+    },
+  );
 
   // Portfolios
   app.get("/api/portfolios", ensureAuthenticated, async (req, res) => {
@@ -185,82 +233,113 @@ app.post("/api/ai/analyze-portfolio", ensureAuthenticated, async (req, res) => {
     }
   });
 
-  app.get("/api/portfolios/:id/assets", ensureAuthenticated, async (req, res) => {
-    try {
-      const userId = req.user!.id;
-      const portfolioId = parseInt(req.params.id, 10);
-      const assets = await storage.getAssets(portfolioId);
-      res.json(assets);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Error al obtener los assets" });
-    }
-  });
+  app.get(
+    "/api/portfolios/:id/assets",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        const userId = req.user!.id;
+        const portfolioId = parseInt(req.params.id, 10);
+        const assets = await storage.getAssets(portfolioId);
+        res.json(assets);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error al obtener los assets" });
+      }
+    },
+  );
 
-  app.post("/api/portfolios/:id/assets", ensureAuthenticated, async (req, res) => {
-    try {
-      const userId = req.user!.id;
-      const portfolioId = parseInt(req.params.id, 10);
-      const assetData = req.body;
-      const newAsset = await storage.createAsset({ ...assetData, portfolioId });
-      res.json(newAsset);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Error al agregar el asset" });
-    }
-  });
+  app.post(
+    "/api/portfolios/:id/assets",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        const userId = req.user!.id;
+        const portfolioId = parseInt(req.params.id, 10);
+        const assetData = req.body;
+        const newAsset = await storage.createAsset({
+          ...assetData,
+          portfolioId,
+        });
+        res.json(newAsset);
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error al agregar el asset" });
+      }
+    },
+  );
 
-  app.delete("/api/portfolios/:id/assets/:assetId", ensureAuthenticated, async (req, res) => {
-    try {
-      const userId = req.user!.id;
-      const assetId = parseInt(req.params.assetId, 10);
-      const success = await storage.deleteAsset(assetId);
-      res.json({ success });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Error al eliminar el asset" });
-    }
-  });
-// Transactions
-app.get("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, res) => {
-  try {
-    const portfolioId = parseInt(req.params.id, 10);
-    const transactions = await storage.getTransactions(portfolioId);
-    res.json(transactions);
-  } catch (err) {
-    console.error("Error obteniendo transacciones:", err);
-    res.status(500).json({ error: "Error al obtener las transacciones" });
-  }
-});
+  app.delete(
+    "/api/portfolios/:id/assets/:assetId",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        const userId = req.user!.id;
+        const assetId = parseInt(req.params.assetId, 10);
+        const success = await storage.deleteAsset(assetId);
+        res.json({ success });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error al eliminar el asset" });
+      }
+    },
+  );
+  // Transactions
+  app.get(
+    "/api/portfolios/:id/transactions",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        const portfolioId = parseInt(req.params.id, 10);
+        const transactions = await storage.getTransactions(portfolioId);
+        res.json(transactions);
+      } catch (err) {
+        console.error("Error obteniendo transacciones:", err);
+        res.status(500).json({ error: "Error al obtener las transacciones" });
+      }
+    },
+  );
 
-app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, res) => {
-  try {
-    const portfolioId = parseInt(req.params.id, 10);
-    const txData = req.body;
-    const newTx = await storage.createTransaction({ ...txData, portfolioId });
-    res.json(newTx);
-  } catch (err) {
-    console.error("Error creando transacción:", err);
-    res.status(500).json({ error: "Error al crear la transacción" });
-  }
-});
+  app.post(
+    "/api/portfolios/:id/transactions",
+    ensureAuthenticated,
+    async (req, res) => {
+      try {
+        const portfolioId = parseInt(req.params.id, 10);
+        const txData = req.body;
+        const newTx = await storage.createTransaction({
+          ...txData,
+          portfolioId,
+        });
+        res.json(newTx);
+      } catch (err) {
+        console.error("Error creando transacción:", err);
+        res.status(500).json({ error: "Error al crear la transacción" });
+      }
+    },
+  );
 
   // Investor Profile Routes
-  
+
   // POST /api/investor-profile - Create/Submit questionnaire
   app.post("/api/investor-profile", ensureAuthenticated, async (req, res) => {
     try {
       const userId = req.user!.id;
       const { answers } = req.body;
 
-      if (!answers || typeof answers !== 'object') {
-        return res.status(400).json({ error: "Se requieren respuestas al cuestionario" });
+      if (!answers || typeof answers !== "object") {
+        return res
+          .status(400)
+          .json({ error: "Se requieren respuestas al cuestionario" });
       }
 
       // Check if user already has a profile
       const existingProfile = await storage.getInvestorProfileByUserId(userId);
       if (existingProfile) {
-        return res.status(409).json({ error: "El usuario ya tiene un perfil de inversor. Usa PUT para actualizar." });
+        return res.status(409).json({
+          error:
+            "El usuario ya tiene un perfil de inversor. Usa PUT para actualizar.",
+        });
       }
 
       // Calculate risk profile and total score
@@ -289,7 +368,9 @@ app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, re
       const profile = await storage.getInvestorProfileByUserId(userId);
 
       if (!profile) {
-        return res.status(404).json({ error: "No se encontró un perfil de inversor para este usuario" });
+        return res.status(404).json({
+          error: "No se encontró un perfil de inversor para este usuario",
+        });
       }
 
       res.json(profile);
@@ -305,14 +386,19 @@ app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, re
       const userId = req.user!.id;
       const { answers } = req.body;
 
-      if (!answers || typeof answers !== 'object') {
-        return res.status(400).json({ error: "Se requieren respuestas al cuestionario" });
+      if (!answers || typeof answers !== "object") {
+        return res
+          .status(400)
+          .json({ error: "Se requieren respuestas al cuestionario" });
       }
 
       // Check if profile exists
       const existingProfile = await storage.getInvestorProfileByUserId(userId);
       if (!existingProfile) {
-        return res.status(404).json({ error: "No se encontró un perfil de inversor. Usa POST para crear uno." });
+        return res.status(404).json({
+          error:
+            "No se encontró un perfil de inversor. Usa POST para crear uno.",
+        });
       }
 
       // Recalculate risk profile and total score
@@ -329,7 +415,9 @@ app.post("/api/portfolios/:id/transactions", ensureAuthenticated, async (req, re
       res.json(updatedProfile);
     } catch (err) {
       console.error("Error al actualizar perfil de inversor:", err);
-      res.status(500).json({ error: "Error al actualizar el perfil de inversor" });
+      res
+        .status(500)
+        .json({ error: "Error al actualizar el perfil de inversor" });
     }
   });
 

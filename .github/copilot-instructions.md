@@ -36,15 +36,21 @@ npm run check        # TypeScript type checking
 - Migrations in `/migrations` folder, push changes via `npm run db:push`
 
 Example pattern for new entity:
+
 ```typescript
 // shared/schema.ts
 export const myTable = pgTable("my_table", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   // fields...
   createdAt: timestamp("created_at").defaultNow(),
 });
-export const insertMyTableSchema = createInsertSchema(myTable).omit({ id: true, createdAt: true });
+export const insertMyTableSchema = createInsertSchema(myTable).omit({
+  id: true,
+  createdAt: true,
+});
 ```
 
 ## API Patterns
@@ -55,6 +61,7 @@ export const insertMyTableSchema = createInsertSchema(myTable).omit({ id: true, 
 - Finance routes in `server/financeRoutes.ts`, forum in `server/forumRoutes.ts`
 
 Client-side API calls:
+
 ```typescript
 // Use apiRequest for mutations (handles JSON + credentials)
 import { apiRequest } from "@/lib/queryClient";
@@ -80,6 +87,7 @@ const { data } = useQuery({ queryKey: ["/api/endpoint"] });
 - Styling: Tailwind CSS with CSS variables for theming (see `theme.json`)
 
 Component pattern:
+
 ```tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

@@ -17,12 +17,16 @@ const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
-const registerSchema = insertUserSchema.extend({
-  passwordConfirm: z.string().min(1, "La confirmación de contraseña es obligatoria")
-}).refine(data => data.password === data.passwordConfirm, {
-  message: "Las contraseñas no coinciden",
-  path: ["passwordConfirm"],
-});
+const registerSchema = insertUserSchema
+  .extend({
+    passwordConfirm: z
+      .string()
+      .min(1, "La confirmación de contraseña es obligatoria"),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Las contraseñas no coinciden",
+    path: ["passwordConfirm"],
+  });
 
 type LoginData = z.infer<typeof loginSchema>;
 type RegisterData = z.infer<typeof registerSchema>;
@@ -35,10 +39,22 @@ type AuthContextType = {
   isAdmin: boolean;
   loginMutation: UseMutationResult<User, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
-  registerMutation: UseMutationResult<{ email: string; message: string }, Error, RegisterData>;
+  registerMutation: UseMutationResult<
+    { email: string; message: string },
+    Error,
+    RegisterData
+  >;
   socialLoginMutation: UseMutationResult<User, Error, string>;
-  verifyEmailMutation: UseMutationResult<{ success: boolean; message: string }, Error, { code: string }>;
-  resendVerificationMutation: UseMutationResult<{ message: string }, Error, void>;
+  verifyEmailMutation: UseMutationResult<
+    { success: boolean; message: string },
+    Error,
+    { code: string }
+  >;
+  resendVerificationMutation: UseMutationResult<
+    { message: string },
+    Error,
+    void
+  >;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -46,10 +62,10 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // Función para manejar la redirección según el rol
   const handleSuccessfulLogin = (user: User) => {
-    if (user.role === 'admin') {
+    if (user.role === "admin") {
       window.location.href = "/admin";
     } else {
       window.location.href = "/dashboard";
@@ -97,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
   });
-  
+
   // Mutación para registro
   const registerMutation = useMutation({
     mutationFn: async (credentials: RegisterData) => {
@@ -107,13 +123,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (response: { email: string; message: string }) => {
       // Guardar email en localStorage para la página de verificación
-      localStorage.setItem('pendingVerificationEmail', response.email);
-      
+      localStorage.setItem("pendingVerificationEmail", response.email);
+
       toast({
         title: "¡Registro exitoso!",
         description: "Por favor verifica tu correo electrónico para continuar",
       });
-      
+
       // Redirigir a la página de verificación
       // Usar replace para evitar que el usuario pueda volver atrás
       window.location.replace("/verify-email");
@@ -144,7 +160,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       toast({
         title: "Error de inicio de sesión",
-        description: "No se pudo conectar con el proveedor social. Intente nuevamente.",
+        description:
+          "No se pudo conectar con el proveedor social. Intente nuevamente.",
         variant: "destructive",
       });
     },
@@ -175,22 +192,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Mutación para verificar email
   const verifyEmailMutation = useMutation({
     mutationFn: async ({ code }: { code: string }) => {
-      const email = localStorage.getItem('pendingVerificationEmail');
+      const email = localStorage.getItem("pendingVerificationEmail");
       if (!email) {
-        throw new Error('No se encontró el correo electrónico pendiente de verificación');
+        throw new Error(
+          "No se encontró el correo electrónico pendiente de verificación",
+        );
       }
-      const res = await apiRequest("POST", "/api/verify-email", { email, code });
+      const res = await apiRequest("POST", "/api/verify-email", {
+        email,
+        code,
+      });
       return await res.json();
     },
     onSuccess: (data: { success: boolean; message: string }) => {
       // Limpiar email de localStorage
-      localStorage.removeItem('pendingVerificationEmail');
-      
+      localStorage.removeItem("pendingVerificationEmail");
+
       toast({
         title: "¡Email verificado!",
         description: "Ahora puedes iniciar sesión con tu cuenta",
       });
-      
+
       // Redirigir a la página de login (NO al dashboard)
       // Usar replace para evitar que el usuario pueda volver atrás
       window.location.replace("/auth");
@@ -207,11 +229,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Mutación para reenviar código de verificación
   const resendVerificationMutation = useMutation({
     mutationFn: async () => {
-      const email = localStorage.getItem('pendingVerificationEmail');
+      const email = localStorage.getItem("pendingVerificationEmail");
       if (!email) {
-        throw new Error('No se encontró el correo electrónico pendiente de verificación');
+        throw new Error(
+          "No se encontró el correo electrónico pendiente de verificación",
+        );
       }
-      const res = await apiRequest("POST", "/api/resend-verification", { email });
+      const res = await apiRequest("POST", "/api/resend-verification", {
+        email,
+      });
       return await res.json();
     },
     onSuccess: (data: { message: string }) => {
@@ -223,14 +249,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       toast({
         title: "Error al enviar código",
-        description: error.message || "No se pudo enviar el código. Intenta nuevamente.",
+        description:
+          error.message || "No se pudo enviar el código. Intenta nuevamente.",
         variant: "destructive",
       });
     },
   });
 
   // Verificar si el usuario es administrador
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   return (
     <AuthContext.Provider

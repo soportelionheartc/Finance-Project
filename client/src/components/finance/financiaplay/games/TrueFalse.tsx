@@ -86,8 +86,11 @@ export default function TrueFalse({ game, onFinish, onBack }: TrueFalseProps) {
 
   if (finished) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-[#FFC107]/30 bg-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-card border-[#FFC107]/30">
           <CardHeader className="text-center">
             <Trophy className="mx-auto mb-2 size-12 text-[#FFC107]" />
             <CardTitle className="text-2xl">¡Juego completado!</CardTitle>
@@ -129,7 +132,7 @@ export default function TrueFalse({ game, onFinish, onBack }: TrueFalseProps) {
 
       <Progress value={timePct} className="h-2" />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Afirmación {currentIdx + 1} de {statements.length}
       </p>
 
@@ -200,13 +203,15 @@ export default function TrueFalse({ game, onFinish, onBack }: TrueFalseProps) {
                   className="rounded-lg border border-[#FFC107]/30 bg-[#FFC107]/10 p-4 text-sm"
                 >
                   <p className="font-semibold text-[#FFC107]">Explicación:</p>
-                  <p className="mt-1 text-muted-foreground">{stmt.explain}</p>
+                  <p className="text-muted-foreground mt-1">{stmt.explain}</p>
                 </motion.div>
               )}
 
               {answered !== null && (
                 <Button onClick={handleNext} className="w-full">
-                  {currentIdx + 1 < statements.length ? "Siguiente" : "Ver resultado"}
+                  {currentIdx + 1 < statements.length
+                    ? "Siguiente"
+                    : "Ver resultado"}
                 </Button>
               )}
             </CardContent>
@@ -214,7 +219,7 @@ export default function TrueFalse({ game, onFinish, onBack }: TrueFalseProps) {
         </motion.div>
       </AnimatePresence>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Puntaje: <span className="font-bold text-[#FFC107]">{score}</span> /{" "}
         {statements.length}
       </p>

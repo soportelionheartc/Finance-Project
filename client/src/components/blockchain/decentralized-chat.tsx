@@ -10,8 +10,21 @@ import { SendHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 // Type de los mensajes descentralizados
@@ -36,7 +49,7 @@ const TOPICS = [
   { value: "trading", label: "Trading" },
   { value: "defi", label: "DeFi" },
   { value: "nft", label: "NFTs" },
-  { value: "colombia", label: "Colombia" }
+  { value: "colombia", label: "Colombia" },
 ];
 
 // Función para acortar direcciones de wallet
@@ -60,10 +73,16 @@ export function DecentralizedChat() {
   const walletType = phantomAddress ? "solana" : "ethereum";
 
   // Consulta para obtener los mensajes del tema seleccionado
-  const { data: messages, isLoading, refetch } = useQuery<DecentralizedMessage[]>({
+  const {
+    data: messages,
+    isLoading,
+    refetch,
+  } = useQuery<DecentralizedMessage[]>({
     queryKey: ["/api/decentralized-messages", selectedTopic],
     queryFn: async () => {
-      const response = await fetch(`/api/decentralized-messages?topic=${selectedTopic}`);
+      const response = await fetch(
+        `/api/decentralized-messages?topic=${selectedTopic}`,
+      );
       if (!response.ok) {
         throw new Error("Error al cargar los mensajes");
       }
@@ -80,13 +99,19 @@ export function DecentralizedChat() {
       topic: string;
       chainId: string;
     }) => {
-      const res = await apiRequest("POST", "/api/decentralized-messages", messageData);
+      const res = await apiRequest(
+        "POST",
+        "/api/decentralized-messages",
+        messageData,
+      );
       return await res.json();
     },
     onSuccess: () => {
       // Actualizar la lista de mensajes
-      queryClient.invalidateQueries({ queryKey: ["/api/decentralized-messages", selectedTopic] });
-      
+      queryClient.invalidateQueries({
+        queryKey: ["/api/decentralized-messages", selectedTopic],
+      });
+
       // Limpiar el campo de mensaje
       setMessage("");
     },
@@ -110,7 +135,7 @@ export function DecentralizedChat() {
       });
       return;
     }
-    
+
     if (!activeWalletAddress) {
       toast({
         title: "Conecta tu wallet",
@@ -126,15 +151,26 @@ export function DecentralizedChat() {
       topic: selectedTopic,
       chainId: walletType === "solana" ? "1" : "1", // Mainnets (Solana: 1, Ethereum: 1)
     });
-  }, [message, user, activeWalletAddress, selectedTopic, walletType, sendMessageMutation, toast]);
+  }, [
+    message,
+    user,
+    activeWalletAddress,
+    selectedTopic,
+    walletType,
+    sendMessageMutation,
+    toast,
+  ]);
 
   // Manejar envío con Enter
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  }, [handleSendMessage]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [handleSendMessage],
+  );
 
   // Scroll automático al último mensaje
   useEffect(() => {
@@ -142,17 +178,14 @@ export function DecentralizedChat() {
   }, [messages]);
 
   return (
-    <Card className="shadow-lg border-zinc-800 bg-zinc-900">
+    <Card className="border-zinc-800 bg-zinc-900 shadow-lg">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl font-bold">Chat Blockchain</CardTitle>
         <CardDescription>
           Habla con otros usuarios sobre temas financieros y blockchain
         </CardDescription>
-        <div className="flex mt-2">
-          <Select 
-            value={selectedTopic} 
-            onValueChange={setSelectedTopic}
-          >
+        <div className="mt-2 flex">
+          <Select value={selectedTopic} onValueChange={setSelectedTopic}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Selecciona un tema" />
             </SelectTrigger>
@@ -167,18 +200,18 @@ export function DecentralizedChat() {
         </div>
       </CardHeader>
       <CardContent className="pb-2">
-        <div className="h-[300px] overflow-y-auto pr-2 space-y-4 mb-4">
+        <div className="mb-4 h-[300px] space-y-4 overflow-y-auto pr-2">
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
+            <div className="flex h-full items-center justify-center">
               <p className="text-gray-400">Cargando mensajes...</p>
             </div>
           ) : messages && messages.length > 0 ? (
             messages.map((msg) => (
-              <div 
-                key={msg.id} 
+              <div
+                key={msg.id}
                 className={`flex items-start gap-3 ${
-                  msg.senderAddress === activeWalletAddress 
-                    ? "justify-end" 
+                  msg.senderAddress === activeWalletAddress
+                    ? "justify-end"
                     : "justify-start"
                 }`}
               >
@@ -189,29 +222,31 @@ export function DecentralizedChat() {
                     </AvatarFallback>
                   </Avatar>
                 )}
-                <div 
-                  className={`flex flex-col max-w-[75%] ${
-                    msg.senderAddress === activeWalletAddress 
-                      ? "items-end" 
+                <div
+                  className={`flex max-w-[75%] flex-col ${
+                    msg.senderAddress === activeWalletAddress
+                      ? "items-end"
                       : "items-start"
                   }`}
                 >
-                  <div 
-                    className={`px-3 py-2 rounded-lg ${
-                      msg.senderAddress === activeWalletAddress 
-                        ? "bg-primary text-primary-foreground" 
+                  <div
+                    className={`rounded-lg px-3 py-2 ${
+                      msg.senderAddress === activeWalletAddress
+                        ? "bg-primary text-primary-foreground"
                         : "bg-zinc-800 text-zinc-100"
                     }`}
                   >
                     <p className="text-sm">{msg.content}</p>
                   </div>
-                  <div className="flex gap-2 text-xs text-gray-400 mt-1">
+                  <div className="mt-1 flex gap-2 text-xs text-gray-400">
                     <span>{shortenAddress(msg.senderAddress)}</span>
                     <span>•</span>
                     <span>
-                      {msg.timestamp ? format(new Date(msg.timestamp), "HH:mm", {
-                        locale: es
-                      }) : ""}
+                      {msg.timestamp
+                        ? format(new Date(msg.timestamp), "HH:mm", {
+                            locale: es,
+                          })
+                        : ""}
                     </span>
                   </div>
                 </div>
@@ -225,8 +260,10 @@ export function DecentralizedChat() {
               </div>
             ))
           ) : (
-            <div className="flex justify-center items-center h-full">
-              <p className="text-gray-400">No hay mensajes en este canal. ¡Sé el primero en enviar uno!</p>
+            <div className="flex h-full items-center justify-center">
+              <p className="text-gray-400">
+                No hay mensajes en este canal. ¡Sé el primero en enviar uno!
+              </p>
             </div>
           )}
           <div ref={messagesEndRef} />
@@ -239,15 +276,22 @@ export function DecentralizedChat() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={!user || !activeWalletAddress || sendMessageMutation.isPending}
-            className="pr-10 bg-zinc-950 border-zinc-700"
+            disabled={
+              !user || !activeWalletAddress || sendMessageMutation.isPending
+            }
+            className="border-zinc-700 bg-zinc-950 pr-10"
           />
           <Button
             size="sm"
             variant="ghost"
-            className="absolute right-0 top-0 h-full px-2 text-primary hover:bg-primary/10"
+            className="text-primary hover:bg-primary/10 absolute top-0 right-0 h-full px-2"
             onClick={handleSendMessage}
-            disabled={!message.trim() || !user || !activeWalletAddress || sendMessageMutation.isPending}
+            disabled={
+              !message.trim() ||
+              !user ||
+              !activeWalletAddress ||
+              sendMessageMutation.isPending
+            }
           >
             <SendHorizontal className="h-5 w-5" />
           </Button>

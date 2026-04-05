@@ -61,8 +61,10 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
     });
 
     let unlockedLevel = 1;
-    const l3Pct = byLevel[3].total > 0 ? byLevel[3].correct / byLevel[3].total : 0;
-    const l2Pct = byLevel[2].total > 0 ? byLevel[2].correct / byLevel[2].total : 0;
+    const l3Pct =
+      byLevel[3].total > 0 ? byLevel[3].correct / byLevel[3].total : 0;
+    const l2Pct =
+      byLevel[2].total > 0 ? byLevel[2].correct / byLevel[2].total : 0;
 
     if (l3Pct >= 0.6) {
       unlockedLevel = 3;
@@ -105,19 +107,17 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="max-w-lg mx-auto">
+        <Card className="mx-auto max-w-lg">
           <CardHeader className="text-center">
-            <div className="text-5xl mb-3">{info.badge}</div>
+            <div className="mb-3 text-5xl">{info.badge}</div>
             <CardTitle className="text-2xl">¡Evaluación completa!</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-muted-foreground">
-              Tu nivel inicial es:
-            </p>
+            <p className="text-muted-foreground">Tu nivel inicial es:</p>
             <p className="text-xl font-bold text-[#FFC107]">
               Nivel {result.unlockedLevel} — {info.name}
             </p>
-            <div className="text-sm text-muted-foreground space-y-1">
+            <div className="text-muted-foreground space-y-1 text-sm">
               <p>Nivel 1: {result.score.level1} correctas</p>
               <p>Nivel 2: {result.score.level2} correctas</p>
               <p>Nivel 3: {result.score.level3} correctas</p>
@@ -136,11 +136,11 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
   }
 
   return (
-    <Card className="max-w-lg mx-auto">
+    <Card className="mx-auto max-w-lg">
       <CardHeader>
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <CardTitle className="text-lg">Evaluación Inicial</CardTitle>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {currentIndex + 1}/{total}
           </span>
         </div>
@@ -156,7 +156,7 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
             transition={{ duration: 0.25 }}
             className="space-y-4"
           >
-            <p className="font-medium text-base">{question.q}</p>
+            <p className="text-base font-medium">{question.q}</p>
             <div className="grid gap-2">
               {question.opts.map((opt, i) => (
                 <Button
@@ -164,8 +164,8 @@ export default function PlacementTest({ onComplete }: PlacementTestProps) {
                   variant={selected === i ? "default" : "outline"}
                   className={
                     selected === i
-                      ? "bg-[#FFC107] text-black hover:bg-[#FFD54F] justify-start text-left h-auto py-3 whitespace-normal"
-                      : "justify-start text-left h-auto py-3 whitespace-normal"
+                      ? "h-auto justify-start bg-[#FFC107] py-3 text-left whitespace-normal text-black hover:bg-[#FFD54F]"
+                      : "h-auto justify-start py-3 text-left whitespace-normal"
                   }
                   onClick={() => handleSelect(i)}
                 >

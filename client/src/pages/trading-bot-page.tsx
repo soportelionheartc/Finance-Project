@@ -1,15 +1,39 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Header } from "@/components/layout/header";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Bot, Send, BookOpen, LineChart, BarChart2, ArrowDownUp, Settings, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import {
+  Bot,
+  Send,
+  BookOpen,
+  LineChart,
+  BarChart2,
+  ArrowDownUp,
+  Settings,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 
 export default function TradingBotPage() {
   const { user } = useAuth();
@@ -17,29 +41,31 @@ export default function TradingBotPage() {
   const [message, setMessage] = useState("");
   const [riskLevel, setRiskLevel] = useState(50);
   const [autoTrading, setAutoTrading] = useState(false);
-  
+
   // Datos de ejemplo - Historial de mensajes
   const [chatHistory, setChatHistory] = useState([
-    { 
-      role: "user", 
+    {
+      role: "user",
       content: "¿Cómo se está comportando el mercado de criptomonedas hoy?",
-      timestamp: new Date(Date.now() - 3600000).toISOString() 
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
     },
-    { 
-      role: "bot", 
-      content: "El mercado de criptomonedas ha mostrado una tendencia alcista en las últimas 24 horas. Bitcoin ha aumentado un 3.2%, mientras que Ethereum ha subido un 4.5%. El volumen general del mercado ha crecido un 15% respecto a ayer. Los indicadores técnicos sugieren que esta tendencia podría continuar a corto plazo.",
-      timestamp: new Date(Date.now() - 3590000).toISOString() 
+    {
+      role: "bot",
+      content:
+        "El mercado de criptomonedas ha mostrado una tendencia alcista en las últimas 24 horas. Bitcoin ha aumentado un 3.2%, mientras que Ethereum ha subido un 4.5%. El volumen general del mercado ha crecido un 15% respecto a ayer. Los indicadores técnicos sugieren que esta tendencia podría continuar a corto plazo.",
+      timestamp: new Date(Date.now() - 3590000).toISOString(),
     },
-    { 
-      role: "user", 
+    {
+      role: "user",
       content: "¿Qué estrategia recomiendas para Bitcoin en este momento?",
-      timestamp: new Date(Date.now() - 2400000).toISOString() 
+      timestamp: new Date(Date.now() - 2400000).toISOString(),
     },
-    { 
-      role: "bot", 
-      content: "Basado en los indicadores actuales, Bitcoin está mostrando un RSI de 62, lo que indica que aún no ha entrado en territorio de sobrecompra. El MACD también muestra una señal positiva y el volumen está aumentando. Una estrategia prudente sería considerar una posición de compra con un stop loss del 5% por debajo del precio actual y un objetivo de beneficio inicial del 10%. Sin embargo, recomendaría monitorear de cerca los niveles de resistencia alrededor de los $68,500 ya que podría haber cierta resistencia en ese punto.",
-      timestamp: new Date(Date.now() - 2390000).toISOString() 
-    }
+    {
+      role: "bot",
+      content:
+        "Basado en los indicadores actuales, Bitcoin está mostrando un RSI de 62, lo que indica que aún no ha entrado en territorio de sobrecompra. El MACD también muestra una señal positiva y el volumen está aumentando. Una estrategia prudente sería considerar una posición de compra con un stop loss del 5% por debajo del precio actual y un objetivo de beneficio inicial del 10%. Sin embargo, recomendaría monitorear de cerca los niveles de resistencia alrededor de los $68,500 ya que podría haber cierta resistencia en ese punto.",
+      timestamp: new Date(Date.now() - 2390000).toISOString(),
+    },
   ]);
 
   // Ejemplo de estrategias predefinidas
@@ -47,15 +73,16 @@ export default function TradingBotPage() {
     {
       id: 1,
       name: "Momentum Media Móvil",
-      description: "Estrategia basada en el cruce de medias móviles de 50 y 200 períodos",
+      description:
+        "Estrategia basada en el cruce de medias móviles de 50 y 200 períodos",
       risk: "Medio",
       timeframe: "Diario",
       assets: ["BTC", "ETH", "S&P 500"],
       active: true,
       performance: {
         month: "+8.2%",
-        year: "+32.5%"
-      }
+        year: "+32.5%",
+      },
     },
     {
       id: 2,
@@ -67,22 +94,23 @@ export default function TradingBotPage() {
       active: false,
       performance: {
         month: "+12.4%",
-        year: "+45.1%"
-      }
+        year: "+45.1%",
+      },
     },
     {
       id: 3,
       name: "Escalonamiento de Fibonacci",
-      description: "Usa retrocesos de Fibonacci para determinar niveles de entrada y salida",
+      description:
+        "Usa retrocesos de Fibonacci para determinar niveles de entrada y salida",
       risk: "Bajo",
       timeframe: "Semanal",
       assets: ["S&P 500", "NASDAQ", "DJI", "BTC"],
       active: true,
       performance: {
         month: "+4.7%",
-        year: "+18.3%"
-      }
-    }
+        year: "+18.3%",
+      },
+    },
   ];
 
   // Ejemplo de señales recientes
@@ -95,7 +123,7 @@ export default function TradingBotPage() {
       timestamp: new Date(Date.now() - 3600000).toISOString(),
       strategy: "Momentum Media Móvil",
       status: "ejecutada",
-      result: "ganancia"
+      result: "ganancia",
     },
     {
       id: 2,
@@ -105,7 +133,7 @@ export default function TradingBotPage() {
       timestamp: new Date(Date.now() - 86400000).toISOString(),
       strategy: "Momentum Media Móvil",
       status: "ejecutada",
-      result: "ganancia"
+      result: "ganancia",
     },
     {
       id: 3,
@@ -115,7 +143,7 @@ export default function TradingBotPage() {
       timestamp: new Date(Date.now() - 172800000).toISOString(),
       strategy: "RSI Sobrecompra/Sobreventa",
       status: "ejecutada",
-      result: "pérdida"
+      result: "pérdida",
     },
     {
       id: 4,
@@ -125,7 +153,7 @@ export default function TradingBotPage() {
       timestamp: new Date(Date.now() - 259200000).toISOString(),
       strategy: "Escalonamiento de Fibonacci",
       status: "ejecutada",
-      result: "ganancia"
+      result: "ganancia",
     },
     {
       id: 5,
@@ -135,8 +163,8 @@ export default function TradingBotPage() {
       timestamp: new Date().toISOString(),
       strategy: "RSI Sobrecompra/Sobreventa",
       status: "pendiente",
-      result: null
-    }
+      result: null,
+    },
   ];
 
   const handleSendMessage = () => {
@@ -147,23 +175,24 @@ export default function TradingBotPage() {
         {
           role: "user",
           content: message,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ]);
-      
+
       // En producción, aquí se enviaría la solicitud a la API de OpenAI
       // Simulamos una respuesta después de 1 segundo
       setTimeout(() => {
-        setChatHistory(prev => [
+        setChatHistory((prev) => [
           ...prev,
           {
             role: "bot",
-            content: "Esta es una respuesta de ejemplo del chatbot de trading. En producción, este mensaje sería generado por OpenAI basándose en tu consulta y datos del mercado en tiempo real. La respuesta incluiría análisis de mercado, recomendaciones y posibles estrategias de trading personalizadas a tu perfil de riesgo.",
-            timestamp: new Date().toISOString()
-          }
+            content:
+              "Esta es una respuesta de ejemplo del chatbot de trading. En producción, este mensaje sería generado por OpenAI basándose en tu consulta y datos del mercado en tiempo real. La respuesta incluiría análisis de mercado, recomendaciones y posibles estrategias de trading personalizadas a tu perfil de riesgo.",
+            timestamp: new Date().toISOString(),
+          },
         ]);
       }, 1000);
-      
+
       // Limpiar el campo de mensaje
       setMessage("");
     }
@@ -171,62 +200,71 @@ export default function TradingBotPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('es-CO', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true
+    return date.toLocaleTimeString("es-CO", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-6">
-        <div className="flex flex-col space-y-2 mb-6">
+        <div className="mb-6 flex flex-col space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">
             Trading Bot & Asistente IA
           </h1>
           <p className="text-muted-foreground">
-            Recibe recomendaciones de trading personalizadas y automatiza tus operaciones
+            Recibe recomendaciones de trading personalizadas y automatiza tus
+            operaciones
           </p>
         </div>
 
-        <Tabs defaultValue="chatbot" value={activeTab} onValueChange={setActiveTab} className="mt-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-6">
+        <Tabs
+          defaultValue="chatbot"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="mt-6"
+        >
+          <TabsList className="mb-6 grid grid-cols-2 md:grid-cols-4">
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger value="strategies">Estrategias</TabsTrigger>
             <TabsTrigger value="signals">Señales</TabsTrigger>
             <TabsTrigger value="settings">Configuración</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="chatbot">
             <div className="grid grid-cols-1 gap-4">
-              <Card className="bg-zinc-900 border-zinc-800 h-[600px] flex flex-col">
+              <Card className="flex h-[600px] flex-col border-zinc-800 bg-zinc-900">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Bot className="mr-2 h-5 w-5 text-primary" />
+                    <Bot className="text-primary mr-2 h-5 w-5" />
                     Asistente de Trading IA
                   </CardTitle>
                   <CardDescription>
-                    Hazme preguntas sobre el mercado, análisis técnico o estrategias de trading
+                    Hazme preguntas sobre el mercado, análisis técnico o
+                    estrategias de trading
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grow overflow-y-auto space-y-4 pr-2">
+                <CardContent className="grow space-y-4 overflow-y-auto pr-2">
                   {chatHistory.map((msg, idx) => (
-                    <div 
-                      key={idx} 
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    <div
+                      key={idx}
+                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                     >
-                      <div 
+                      <div
                         className={`max-w-[80%] rounded-lg p-3 ${
-                          msg.role === 'user' 
-                            ? 'bg-primary/30 text-white' 
-                            : 'bg-gray-800 text-white border border-zinc-700'
+                          msg.role === "user"
+                            ? "bg-primary/30 text-white"
+                            : "border border-zinc-700 bg-gray-800 text-white"
                         }`}
                       >
-                        <p className="text-sm mb-1">{msg.content}</p>
-                        <p className="text-xs text-gray-400 text-right">{formatDate(msg.timestamp)}</p>
+                        <p className="mb-1 text-sm">{msg.content}</p>
+                        <p className="text-right text-xs text-gray-400">
+                          {formatDate(msg.timestamp)}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -237,10 +275,12 @@ export default function TradingBotPage() {
                       placeholder="Escribe tu pregunta sobre trading..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && handleSendMessage()
+                      }
                       className="border-zinc-700 bg-zinc-800"
                     />
-                    <Button 
+                    <Button
                       onClick={handleSendMessage}
                       className="bg-primary hover:bg-primary/90 text-black"
                     >
@@ -254,10 +294,10 @@ export default function TradingBotPage() {
 
           <TabsContent value="strategies">
             <div className="grid grid-cols-1 gap-4">
-              <Card className="bg-zinc-900 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <LineChart className="mr-2 h-5 w-5 text-primary" />
+                    <LineChart className="text-primary mr-2 h-5 w-5" />
                     Estrategias Automatizadas
                   </CardTitle>
                   <CardDescription>
@@ -266,24 +306,28 @@ export default function TradingBotPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {strategies.map((strategy) => (
-                    <div 
-                      key={strategy.id} 
-                      className="border border-zinc-800 rounded-lg p-4 space-y-3"
+                    <div
+                      key={strategy.id}
+                      className="space-y-3 rounded-lg border border-zinc-800 p-4"
                     >
-                      <div className="flex justify-between items-start">
+                      <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-medium text-primary">{strategy.name}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{strategy.description}</p>
+                          <h3 className="text-primary font-medium">
+                            {strategy.name}
+                          </h3>
+                          <p className="text-muted-foreground mt-1 text-sm">
+                            {strategy.description}
+                          </p>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             {strategy.active ? "Activa" : "Inactiva"}
                           </span>
                           <Switch checked={strategy.active} />
                         </div>
                       </div>
-                      
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+
+                      <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                         <div>
                           <p className="text-muted-foreground">Riesgo</p>
                           <p className="font-medium">{strategy.risk}</p>
@@ -293,47 +337,57 @@ export default function TradingBotPage() {
                           <p className="font-medium">{strategy.timeframe}</p>
                         </div>
                         <div>
-                          <p className="text-muted-foreground">Rendimiento (Mes)</p>
-                          <p className={`font-medium ${
-                            strategy.performance.month.startsWith('+') 
-                              ? 'text-green-500' 
-                              : 'text-red-500'
-                          }`}>
+                          <p className="text-muted-foreground">
+                            Rendimiento (Mes)
+                          </p>
+                          <p
+                            className={`font-medium ${
+                              strategy.performance.month.startsWith("+")
+                                ? "text-green-500"
+                                : "text-red-500"
+                            }`}
+                          >
                             {strategy.performance.month}
                           </p>
                         </div>
                         <div>
-                          <p className="text-muted-foreground">Rendimiento (Año)</p>
-                          <p className={`font-medium ${
-                            strategy.performance.year.startsWith('+') 
-                              ? 'text-green-500' 
-                              : 'text-red-500'
-                          }`}>
+                          <p className="text-muted-foreground">
+                            Rendimiento (Año)
+                          </p>
+                          <p
+                            className={`font-medium ${
+                              strategy.performance.year.startsWith("+")
+                                ? "text-green-500"
+                                : "text-red-500"
+                            }`}
+                          >
                             {strategy.performance.year}
                           </p>
                         </div>
                       </div>
-                      
+
                       <div>
-                        <p className="text-sm text-muted-foreground mb-2">Activos</p>
+                        <p className="text-muted-foreground mb-2 text-sm">
+                          Activos
+                        </p>
                         <div className="flex flex-wrap gap-2">
                           {strategy.assets.map((asset) => (
-                            <span 
-                              key={asset} 
-                              className="px-2 py-1 text-xs bg-zinc-800 text-primary rounded"
+                            <span
+                              key={asset}
+                              className="text-primary rounded bg-zinc-800 px-2 py-1 text-xs"
                             >
                               {asset}
                             </span>
                           ))}
                         </div>
                       </div>
-                      
+
                       <div className="flex justify-end space-x-2 pt-2">
                         <Button variant="outline" size="sm">
                           Editar
                         </Button>
-                        <Button 
-                          className="bg-primary hover:bg-primary/90 text-black" 
+                        <Button
+                          className="bg-primary hover:bg-primary/90 text-black"
                           size="sm"
                         >
                           Ver detalles
@@ -342,10 +396,8 @@ export default function TradingBotPage() {
                     </div>
                   ))}
                 </CardContent>
-                <CardFooter className="border-t border-zinc-800 pt-4 flex justify-between">
-                  <Button variant="outline">
-                    Importar Estrategia
-                  </Button>
+                <CardFooter className="flex justify-between border-t border-zinc-800 pt-4">
+                  <Button variant="outline">Importar Estrategia</Button>
                   <Button className="bg-primary hover:bg-primary/90 text-black">
                     Crear Nueva Estrategia
                   </Button>
@@ -356,10 +408,10 @@ export default function TradingBotPage() {
 
           <TabsContent value="signals">
             <div className="grid grid-cols-1 gap-4">
-              <Card className="bg-zinc-900 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <ArrowDownUp className="mr-2 h-5 w-5 text-primary" />
+                    <ArrowDownUp className="text-primary mr-2 h-5 w-5" />
                     Señales de Trading
                   </CardTitle>
                   <CardDescription>
@@ -368,7 +420,7 @@ export default function TradingBotPage() {
                 </CardHeader>
                 <CardContent className="">
                   <div className="rounded-md border border-zinc-800">
-                    <div className="grid grid-cols-7 gap-4 p-4 font-medium border-b border-zinc-800 text-muted-foreground">
+                    <div className="text-muted-foreground grid grid-cols-7 gap-4 border-b border-zinc-800 p-4 font-medium">
                       <div>Activo</div>
                       <div>Tipo</div>
                       <div>Precio</div>
@@ -378,27 +430,39 @@ export default function TradingBotPage() {
                       <div>Resultado</div>
                     </div>
                     {signals.map((signal) => (
-                      <div 
-                        key={signal.id} 
-                        className="grid grid-cols-7 gap-4 p-4 border-b border-zinc-800 items-center text-sm"
+                      <div
+                        key={signal.id}
+                        className="grid grid-cols-7 items-center gap-4 border-b border-zinc-800 p-4 text-sm"
                       >
                         <div className="font-medium">{signal.asset}</div>
-                        <div className={`font-medium ${
-                          signal.type === 'COMPRA' ? 'text-green-500' : 'text-red-500'
-                        }`}>
+                        <div
+                          className={`font-medium ${
+                            signal.type === "COMPRA"
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }`}
+                        >
                           {signal.type}
                         </div>
-                        <div>{signal.price.toLocaleString('es-CO', {maximumFractionDigits: 2})}</div>
-                        <div>{new Date(signal.timestamp).toLocaleDateString('es-CO')}</div>
+                        <div>
+                          {signal.price.toLocaleString("es-CO", {
+                            maximumFractionDigits: 2,
+                          })}
+                        </div>
+                        <div>
+                          {new Date(signal.timestamp).toLocaleDateString(
+                            "es-CO",
+                          )}
+                        </div>
                         <div>{signal.strategy}</div>
                         <div>
-                          {signal.status === 'ejecutada' ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-500/20 text-green-500">
+                          {signal.status === "ejecutada" ? (
+                            <span className="inline-flex items-center rounded bg-green-500/20 px-2 py-1 text-xs font-medium text-green-500">
                               <CheckCircle className="mr-1 h-3 w-3" />
                               Ejecutada
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-500/20 text-yellow-500">
+                            <span className="inline-flex items-center rounded bg-yellow-500/20 px-2 py-1 text-xs font-medium text-yellow-500">
                               <AlertTriangle className="mr-1 h-3 w-3" />
                               Pendiente
                             </span>
@@ -406,10 +470,14 @@ export default function TradingBotPage() {
                         </div>
                         <div>
                           {signal.result ? (
-                            signal.result === 'ganancia' ? (
-                              <span className="text-green-500 font-medium">Ganancia</span>
+                            signal.result === "ganancia" ? (
+                              <span className="font-medium text-green-500">
+                                Ganancia
+                              </span>
                             ) : (
-                              <span className="text-red-500 font-medium">Pérdida</span>
+                              <span className="font-medium text-red-500">
+                                Pérdida
+                              </span>
                             )
                           ) : (
                             <span className="text-gray-500">—</span>
@@ -420,20 +488,18 @@ export default function TradingBotPage() {
                   </div>
                 </CardContent>
                 <CardFooter className="border-t border-zinc-800 pt-4">
-                  <Button variant="outline">
-                    Ver historial completo
-                  </Button>
+                  <Button variant="outline">Ver historial completo</Button>
                 </CardFooter>
               </Card>
             </div>
           </TabsContent>
 
           <TabsContent value="settings">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-zinc-900 border-zinc-800">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Settings className="mr-2 h-5 w-5 text-primary" />
+                    <Settings className="text-primary mr-2 h-5 w-5" />
                     Configuración General
                   </CardTitle>
                   <CardDescription>
@@ -444,37 +510,38 @@ export default function TradingBotPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="autotrading">Trading Automático</Label>
-                      <Switch 
-                        id="autotrading" 
-                        checked={autoTrading} 
-                        onCheckedChange={setAutoTrading} 
+                      <Switch
+                        id="autotrading"
+                        checked={autoTrading}
+                        onCheckedChange={setAutoTrading}
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Habilita o deshabilita la ejecución automática de operaciones
+                    <p className="text-muted-foreground text-xs">
+                      Habilita o deshabilita la ejecución automática de
+                      operaciones
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="risk-level">Nivel de Riesgo</Label>
                     <div className="flex items-center space-x-2">
                       <p className="text-sm">Conservador</p>
-                      <Slider 
+                      <Slider
                         id="risk-level"
-                        value={[riskLevel]} 
-                        min={0} 
-                        max={100} 
-                        step={1} 
-                        onValueChange={(vals) => setRiskLevel(vals[0])} 
+                        value={[riskLevel]}
+                        min={0}
+                        max={100}
+                        step={1}
+                        onValueChange={(vals) => setRiskLevel(vals[0])}
                         className="flex-1"
                       />
                       <p className="text-sm">Agresivo</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       Define cuánto riesgo estás dispuesto a asumir
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="market-select">Mercados</Label>
                     <Select defaultValue="all">
@@ -483,15 +550,19 @@ export default function TradingBotPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Todos los mercados</SelectItem>
-                        <SelectItem value="crypto">Solo criptomonedas</SelectItem>
+                        <SelectItem value="crypto">
+                          Solo criptomonedas
+                        </SelectItem>
                         <SelectItem value="stocks">Solo acciones</SelectItem>
                         <SelectItem value="forex">Solo Forex</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="account-size">Tamaño de posición (% de la cuenta)</Label>
+                    <Label htmlFor="account-size">
+                      Tamaño de posición (% de la cuenta)
+                    </Label>
                     <Select defaultValue="5">
                       <SelectTrigger id="account-size">
                         <SelectValue placeholder="Seleccionar tamaño" />
@@ -504,9 +575,11 @@ export default function TradingBotPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="max-trades">Operaciones simultáneas máximas</Label>
+                    <Label htmlFor="max-trades">
+                      Operaciones simultáneas máximas
+                    </Label>
                     <Select defaultValue="5">
                       <SelectTrigger id="max-trades">
                         <SelectValue placeholder="Seleccionar máximo" />
@@ -520,20 +593,18 @@ export default function TradingBotPage() {
                     </Select>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t border-zinc-800 pt-4 flex justify-between">
-                  <Button variant="outline">
-                    Restablecer valores
-                  </Button>
+                <CardFooter className="flex justify-between border-t border-zinc-800 pt-4">
+                  <Button variant="outline">Restablecer valores</Button>
                   <Button className="bg-primary hover:bg-primary/90 text-black">
                     Guardar cambios
                   </Button>
                 </CardFooter>
               </Card>
-              
-              <Card className="bg-zinc-900 border-zinc-800">
+
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Bot className="mr-2 h-5 w-5 text-primary" />
+                    <Bot className="text-primary mr-2 h-5 w-5" />
                     Configuración del Asistente IA
                   </CardTitle>
                   <CardDescription>
@@ -542,24 +613,33 @@ export default function TradingBotPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="ai-personality">Personalidad del Asistente</Label>
+                    <Label htmlFor="ai-personality">
+                      Personalidad del Asistente
+                    </Label>
                     <Select defaultValue="balanced">
                       <SelectTrigger id="ai-personality">
                         <SelectValue placeholder="Seleccionar personalidad" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="conservative">Conservadora</SelectItem>
+                        <SelectItem value="conservative">
+                          Conservadora
+                        </SelectItem>
                         <SelectItem value="balanced">Equilibrada</SelectItem>
                         <SelectItem value="aggressive">Agresiva</SelectItem>
-                        <SelectItem value="technical">Centrada en análisis técnico</SelectItem>
-                        <SelectItem value="fundamental">Centrada en análisis fundamental</SelectItem>
+                        <SelectItem value="technical">
+                          Centrada en análisis técnico
+                        </SelectItem>
+                        <SelectItem value="fundamental">
+                          Centrada en análisis fundamental
+                        </SelectItem>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-muted-foreground">
-                      Define el enfoque general que tomará el asistente en sus recomendaciones
+                    <p className="text-muted-foreground text-xs">
+                      Define el enfoque general que tomará el asistente en sus
+                      recomendaciones
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="ai-language">Idioma preferido</Label>
                     <Select defaultValue="es">
@@ -572,32 +652,42 @@ export default function TradingBotPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="ai-notifications">Notificaciones del Asistente</Label>
+                      <Label htmlFor="ai-notifications">
+                        Notificaciones del Asistente
+                      </Label>
                       <Switch id="ai-notifications" defaultChecked />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Recibe notificaciones cuando el asistente detecte oportunidades de mercado
+                    <p className="text-muted-foreground text-xs">
+                      Recibe notificaciones cuando el asistente detecte
+                      oportunidades de mercado
                     </p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="ai-suggestions">Sugerencias Proactivas</Label>
+                      <Label htmlFor="ai-suggestions">
+                        Sugerencias Proactivas
+                      </Label>
                       <Switch id="ai-suggestions" defaultChecked />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Permite que el asistente envíe sugerencias sin que las solicites
+                    <p className="text-muted-foreground text-xs">
+                      Permite que el asistente envíe sugerencias sin que las
+                      solicites
                     </p>
                   </div>
-                  
+
                   <div className="border-t border-zinc-800 pt-4">
-                    <h4 className="text-sm font-medium mb-2">Fuentes de Datos</h4>
+                    <h4 className="mb-2 text-sm font-medium">
+                      Fuentes de Datos
+                    </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="data-technicals">Indicadores Técnicos</Label>
+                        <Label htmlFor="data-technicals">
+                          Indicadores Técnicos
+                        </Label>
                         <Switch id="data-technicals" defaultChecked />
                       </div>
                       <div className="flex items-center justify-between">
@@ -609,16 +699,16 @@ export default function TradingBotPage() {
                         <Switch id="data-social" defaultChecked />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="data-macro">Datos Macroeconómicos</Label>
+                        <Label htmlFor="data-macro">
+                          Datos Macroeconómicos
+                        </Label>
                         <Switch id="data-macro" defaultChecked />
                       </div>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="border-t border-zinc-800 pt-4 flex justify-between">
-                  <Button variant="outline">
-                    Restablecer valores
-                  </Button>
+                <CardFooter className="flex justify-between border-t border-zinc-800 pt-4">
+                  <Button variant="outline">Restablecer valores</Button>
                   <Button className="bg-primary hover:bg-primary/90 text-black">
                     Guardar cambios
                   </Button>

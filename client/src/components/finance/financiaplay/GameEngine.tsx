@@ -11,7 +11,11 @@ interface GameEngineProps {
   onBack: () => void;
 }
 
-export default function GameEngine({ game, onFinish, onBack }: GameEngineProps) {
+export default function GameEngine({
+  game,
+  onFinish,
+  onBack,
+}: GameEngineProps) {
   switch (game.type) {
     case "quiz_mc":
       return <QuizMC game={game} onFinish={onFinish} onBack={onBack} />;
@@ -25,7 +29,7 @@ export default function GameEngine({ game, onFinish, onBack }: GameEngineProps) 
       return <Categorize game={game} onFinish={onFinish} onBack={onBack} />;
     default:
       return (
-        <div className="p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground p-8 text-center">
           Tipo de juego no soportado
         </div>
       );

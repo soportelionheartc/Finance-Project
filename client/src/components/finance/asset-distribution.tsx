@@ -1,6 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 import { useState, useEffect } from "react";
 
 type AssetCategory = {
@@ -24,7 +42,7 @@ const ASSET_COLORS: Record<string, string> = {
   etf: "#FF7847",
   bond: "#14389bff",
   cash: "#0fc52dff",
-}
+};
 
 export const AssetDistribution = () => {
   const [assetData, setAssetData] = useState<AssetCategory[]>([]);
@@ -43,7 +61,9 @@ export const AssetDistribution = () => {
         // 2. Obtener los activos de cada portafolio
         let allAssets: any[] = [];
         for (const portfolio of portfolios) {
-          const assetsRes = await fetch(`/api/portfolios/${portfolio.id}/assets`);
+          const assetsRes = await fetch(
+            `/api/portfolios/${portfolio.id}/assets`,
+          );
           if (assetsRes.ok) {
             const assets = await assetsRes.json();
             allAssets = allAssets.concat(assets);
@@ -51,18 +71,23 @@ export const AssetDistribution = () => {
         }
 
         // 3. Agrupar por tipo y calcular porcentajes
-        const totalValue = allAssets.reduce((sum, asset) => sum + (asset.value || 0), 0);
+        const totalValue = allAssets.reduce(
+          (sum, asset) => sum + (asset.value || 0),
+          0,
+        );
         const grouped: Record<string, number> = {};
         for (const asset of allAssets) {
           // Asume que asset.type existe, si no, clasifica como "Otro"
           const type = asset.type || "Otro";
           grouped[type] = (grouped[type] || 0) + (asset.value || 0);
         }
-        const data: AssetCategory[] = Object.entries(grouped).map(([type, value]) => ({
-          type,
-          percentage: totalValue ? Math.round((value / totalValue) * 100) : 0,
-          color: ASSET_COLORS[type] || ASSET_COLORS["Otro"]
-        }));
+        const data: AssetCategory[] = Object.entries(grouped).map(
+          ([type, value]) => ({
+            type,
+            percentage: totalValue ? Math.round((value / totalValue) * 100) : 0,
+            color: ASSET_COLORS[type] || ASSET_COLORS["Otro"],
+          }),
+        );
         setAssetData(data);
         setLoading(false);
       } catch (err: any) {
@@ -76,8 +101,12 @@ export const AssetDistribution = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-center w-full">Distribución de Activos</CardTitle>
-        <CardDescription className="text-center w-full">Análisis porcentual de tu portafolio</CardDescription>
+        <CardTitle className="w-full text-center">
+          Distribución de Activos
+        </CardTitle>
+        <CardDescription className="w-full text-center">
+          Análisis porcentual de tu portafolio
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -110,15 +139,17 @@ export const AssetDistribution = () => {
                     if (payload && payload.length > 0) {
                       return payload[0].payload.type;
                     }
-                    return '';
+                    return "";
                   }}
                 />
                 <Legend
                   payload={assetData.map((item, index) => ({
                     id: item.type,
                     type: "square",
-                    value: ASSET_LABELS[item.type] || item.type.charAt(0).toUpperCase() + item.type.slice(1),
-                    color: item.color
+                    value:
+                      ASSET_LABELS[item.type] ||
+                      item.type.charAt(0).toUpperCase() + item.type.slice(1),
+                    color: item.color,
                   }))}
                 />
               </PieChart>
@@ -126,22 +157,37 @@ export const AssetDistribution = () => {
           </div>
         )}
         <br />
-        <Button size="sm" className="bg-[#ffd700] hover:bg-[#ffe066] text-[#1a1400] flex justify-center font-semibold shadow-sm mx-auto" onClick={() => setShowInfo((v) => !v)}>
-          {showInfo ? 'Ver menos' : 'Ver más'}
+        <Button
+          size="sm"
+          className="mx-auto flex justify-center bg-[#ffd700] font-semibold text-[#1a1400] shadow-sm hover:bg-[#ffe066]"
+          onClick={() => setShowInfo((v) => !v)}
+        >
+          {showInfo ? "Ver menos" : "Ver más"}
         </Button>
         {showInfo && (
           <>
-            <div className="w-full flex flex-col items-center gap-8">
-              <h2 className="text-center mt-3">Más gráficos</h2>
+            <div className="flex w-full flex-col items-center gap-8">
+              <h2 className="mt-3 text-center">Más gráficos</h2>
               {/* Gráfico de barras: Rendimiento individual por activo */}
               {assetData.length > 0 && (
-                <div className="mx-auto max-w-[350px] w-[350px] mr-4">
-                  <BarChart width={300} height={300} data={assetData.map(a => ({
-                    activo: ASSET_LABELS[a.type] || a.type,
-                    rendimiento: a.percentage
-                  }))}>
+                <div className="mx-auto mr-4 w-[350px] max-w-[350px]">
+                  <BarChart
+                    width={300}
+                    height={300}
+                    data={assetData.map((a) => ({
+                      activo: ASSET_LABELS[a.type] || a.type,
+                      rendimiento: a.percentage,
+                    }))}
+                  >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="activo" angle={70} textAnchor="start" interval={0} height={80} tick={{ fontSize: 15 }} />
+                    <XAxis
+                      dataKey="activo"
+                      angle={70}
+                      textAnchor="start"
+                      interval={0}
+                      height={80}
+                      tick={{ fontSize: 15 }}
+                    />
                     <YAxis />
                     <Bar dataKey="rendimiento">
                       {assetData.map((entry, index) => (
@@ -152,10 +198,9 @@ export const AssetDistribution = () => {
                 </div>
               )}
             </div>
-            
           </>
         )}
       </CardContent>
     </Card>
   );
-}
+};

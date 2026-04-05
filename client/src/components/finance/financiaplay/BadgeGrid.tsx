@@ -6,10 +6,13 @@ interface BadgeGridProps {
   className?: string;
 }
 
-export default function BadgeGrid({ earnedBadges, className = "" }: BadgeGridProps) {
+export default function BadgeGrid({
+  earnedBadges,
+  className = "",
+}: BadgeGridProps) {
   return (
     <div
-      className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 ${className}`}
+      className={`grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 ${className}`}
     >
       {BADGES.map((badge) => {
         const earned = earnedBadges.includes(badge.id);
@@ -24,10 +27,10 @@ export default function BadgeGrid({ earnedBadges, className = "" }: BadgeGridPro
             }`}
           >
             {!earned && (
-              <Lock className="absolute top-2 right-2 h-3.5 w-3.5 text-muted-foreground" />
+              <Lock className="text-muted-foreground absolute top-2 right-2 h-3.5 w-3.5" />
             )}
             <span className="text-2xl">{badge.title.split(" ").pop()}</span>
-            <span className="text-xs font-medium leading-tight">
+            <span className="text-xs leading-tight font-medium">
               {badge.title.replace(/\s\S+$/, "")}
             </span>
           </div>

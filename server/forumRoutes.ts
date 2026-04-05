@@ -33,7 +33,8 @@ router.get("/posts", (req, res) => {
 // Crear un post nuevo
 router.post("/posts", (req, res) => {
   const { author, content } = req.body;
-  if (!author || !content) return res.status(400).json({ error: "Faltan datos" });
+  if (!author || !content)
+    return res.status(400).json({ error: "Faltan datos" });
 
   const newPost: Post = {
     id: Date.now(),
@@ -49,9 +50,10 @@ router.post("/posts", (req, res) => {
 router.post("/posts/:postId/replies", (req, res) => {
   const { postId } = req.params;
   const { author, content } = req.body;
-  const post = posts.find(p => p.id === Number(postId));
+  const post = posts.find((p) => p.id === Number(postId));
   if (!post) return res.status(404).json({ error: "Post no encontrado" });
-  if (!author || !content) return res.status(400).json({ error: "Faltan datos" });
+  if (!author || !content)
+    return res.status(400).json({ error: "Faltan datos" });
 
   const newReply: Reply = {
     id: Date.now(),

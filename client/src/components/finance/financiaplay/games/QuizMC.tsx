@@ -87,8 +87,11 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
 
   if (finished) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-[#FFC107]/30 bg-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-card border-[#FFC107]/30">
           <CardHeader className="text-center">
             <Trophy className="mx-auto mb-2 size-12 text-[#FFC107]" />
             <CardTitle className="text-2xl">¡Quiz completado!</CardTitle>
@@ -132,7 +135,7 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
       <Progress value={timePct} className="h-2" />
 
       {/* Progress */}
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Pregunta {currentIdx + 1} de {questions.length}
       </p>
 
@@ -159,7 +162,8 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
                 if (selected !== null) {
                   if (idx === question.correct) {
                     variant = "default";
-                    extraClass = "border-green-500 bg-green-500/20 text-green-300 hover:bg-green-500/20";
+                    extraClass =
+                      "border-green-500 bg-green-500/20 text-green-300 hover:bg-green-500/20";
                   } else if (idx === selected && idx !== question.correct) {
                     variant = "destructive";
                     extraClass = "border-red-500 bg-red-500/20";
@@ -170,11 +174,11 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
                   <Button
                     key={idx}
                     variant={variant}
-                    className={`w-full justify-start whitespace-normal text-left h-auto py-3 px-4 ${extraClass}`}
+                    className={`h-auto w-full justify-start px-4 py-3 text-left whitespace-normal ${extraClass}`}
                     onClick={() => handleSelect(idx)}
                     disabled={selected !== null}
                   >
-                    <span className="mr-3 font-bold text-muted-foreground">
+                    <span className="text-muted-foreground mr-3 font-bold">
                       {String.fromCharCode(65 + idx)}.
                     </span>
                     {opt}
@@ -196,14 +200,18 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
                   className="mt-4 rounded-lg border border-[#FFC107]/30 bg-[#FFC107]/10 p-4 text-sm"
                 >
                   <p className="font-semibold text-[#FFC107]">Explicación:</p>
-                  <p className="mt-1 text-muted-foreground">{question.explain}</p>
+                  <p className="text-muted-foreground mt-1">
+                    {question.explain}
+                  </p>
                 </motion.div>
               )}
 
               {/* Next button */}
               {selected !== null && (
                 <Button onClick={handleNext} className="mt-4 w-full">
-                  {currentIdx + 1 < questions.length ? "Siguiente" : "Ver resultado"}
+                  {currentIdx + 1 < questions.length
+                    ? "Siguiente"
+                    : "Ver resultado"}
                 </Button>
               )}
             </CardContent>
@@ -212,7 +220,7 @@ export default function QuizMC({ game, onFinish, onBack }: QuizMCProps) {
       </AnimatePresence>
 
       {/* Score indicator */}
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Puntaje: <span className="font-bold text-[#FFC107]">{score}</span> /{" "}
         {questions.length}
       </p>

@@ -11,12 +11,12 @@ interface InvestorProfileGuardProps {
 export function InvestorProfileGuard({ children }: InvestorProfileGuardProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  
+
   const { data: profile, isLoading } = useQuery({
     queryKey: ["/api/investor-profile"],
     retry: false,
   });
-  
+
   useEffect(() => {
     if (!isLoading && !profile) {
       toast({
@@ -27,21 +27,21 @@ export function InvestorProfileGuard({ children }: InvestorProfileGuardProps) {
       setLocation("/investor-questionnaire");
     }
   }, [isLoading, profile, setLocation, toast]);
-  
+
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
           <p className="text-muted-foreground">Verificando perfil...</p>
         </div>
       </div>
     );
   }
-  
+
   if (!profile) {
     return null; // Will redirect via useEffect
   }
-  
+
   return <>{children}</>;
 }

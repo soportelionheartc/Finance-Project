@@ -1,13 +1,13 @@
-export interface AIMessage{
-    role: "system" | "user" | "assistant";
-    content: string;
+export interface AIMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
 }
 
-export interface AIOptions{
-    temperature?: number;
-    maxTokens?: number;
+export interface AIOptions {
+  temperature?: number;
+  maxTokens?: number;
 }
 
-export interface AIProvider{
-    chat: (messages: AIMessage[], options?: AIOptions) => Promise<string>;
+export interface AIProvider {
+  chat: (messages: AIMessage[], options?: AIOptions) => Promise<string>;
 }

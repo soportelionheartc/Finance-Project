@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { InvestorProfileGuard } from "@/lib/investor-profile-guard";
 
 export default function FinancialAssistantPage() {
-    return (
-        <InvestorProfileGuard>
-            <div className="min-h-screen bg-background flex flex-col">
-                <Header />
+  return (
+    <InvestorProfileGuard>
+      <div className="bg-background flex min-h-screen flex-col">
+        <Header />
 
-                 <Button
+        <Button
           variant="outline"
           onClick={() => window.history.back()}
           className="mb-4 w-fit"
@@ -17,19 +17,21 @@ export default function FinancialAssistantPage() {
           ← Volver
         </Button>
 
-                <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center">
-                    <div className="max-w-xl w-full text-center mb-8">
-                        <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">Asistente Financiero Inteligente</h1>
-                        <p className="text-muted-foreground mb-4">
-                            Haz preguntas sobre tu portafolio, inversiones, finanzas personales o mercados. El asistente te responde con IA.
-                        </p>
-                    </div>
-                    <div className="w-full max-w-xl">
-                        <AiChat />
-                        
-                    </div>
-                </main>
-            </div>
-        </InvestorProfileGuard>
-    );
+        <main className="container mx-auto flex flex-1 flex-col items-center justify-center px-4 py-8">
+          <div className="mb-8 w-full max-w-xl text-center">
+            <h1 className="text-primary mb-2 text-3xl font-bold md:text-4xl">
+              Asistente Financiero Inteligente
+            </h1>
+            <p className="text-muted-foreground mb-4">
+              Haz preguntas sobre tu portafolio, inversiones, finanzas
+              personales o mercados. El asistente te responde con IA.
+            </p>
+          </div>
+          <div className="w-full max-w-xl">
+            <AiChat />
+          </div>
+        </main>
+      </div>
+    </InvestorProfileGuard>
+  );
 }

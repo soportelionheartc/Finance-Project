@@ -10,7 +10,9 @@ if (USE_SENDGRID) {
   sgMail.setApiKey(SENDGRID_API_KEY);
   console.log("[emailService] ✅ SendGrid initialized");
 } else {
-  console.log("[emailService] ⚠️ SENDGRID_API_KEY not found, using Gmail fallback");
+  console.log(
+    "[emailService] ⚠️ SENDGRID_API_KEY not found, using Gmail fallback",
+  );
 }
 
 // Constants for retry logic
@@ -59,14 +61,16 @@ export function createEmailTransporter(): Transporter {
     },
     // Explicit timeouts to prevent hanging in cloud environments (Render, etc.)
     connectionTimeout: 10000, // 10 seconds to establish connection
-    greetingTimeout: 5000,    // 5 seconds for server greeting
-    socketTimeout: 15000,     // 15 seconds for socket inactivity
+    greetingTimeout: 5000, // 5 seconds for server greeting
+    socketTimeout: 15000, // 15 seconds for socket inactivity
     // Additional settings for better reliability
-    pool: false,              // Disable connection pooling
-    maxConnections: 1,        // Limit concurrent connections
+    pool: false, // Disable connection pooling
+    maxConnections: 1, // Limit concurrent connections
   } as nodemailer.TransportOptions;
 
-  console.log(`[emailService] Creating Gmail transporter with user: ${process.env.EMAIL_USER}`);
+  console.log(
+    `[emailService] Creating Gmail transporter with user: ${process.env.EMAIL_USER}`,
+  );
   return nodemailer.createTransport(config);
 }
 
@@ -83,7 +87,7 @@ export function getVerificationEmailTemplate(
   code: string,
   name: string,
   language: "es" | "en" = "es",
-  verificationToken?: string
+  verificationToken?: string,
 ): { subject: string; html: string } {
   const isSpanish = language === "es";
 
@@ -185,19 +189,23 @@ export function getVerificationEmailTemplate(
                 ${instruction}
               </p>
 
-              ${verificationToken ? `
+              ${
+                verificationToken
+                  ? `
               <!-- One-Click Verification Section -->
               <p style="color: #b8b8b8; font-size: 14px; margin: 0 0 15px 0; text-align: center;">
                 ${orText}
               </p>
               
               <div style="text-align: center; margin: 0 0 25px 0;">
-                <a href="${process.env.BASE_URL || 'http://localhost:5000'}/verify-email-token/${verificationToken}" 
+                <a href="${process.env.BASE_URL || "http://localhost:5000"}/verify-email-token/${verificationToken}" 
                    style="display: inline-block; background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%); color: #1a1a2e; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);">
                   ${verifyButtonText}
                 </a>
               </div>
-              ` : ''}
+              `
+                  : ""
+              }
 
               <hr style="border: none; border-top: 1px solid #2a2a4a; margin: 30px 0;">
 
@@ -246,9 +254,14 @@ export async function sendVerificationEmail(
   code: string,
   name: string,
   verificationToken?: string,
-  language: "es" | "en" = "es"
+  language: "es" | "en" = "es",
 ): Promise<void> {
-  const { subject, html } = getVerificationEmailTemplate(code, name, language, verificationToken);
+  const { subject, html } = getVerificationEmailTemplate(
+    code,
+    name,
+    language,
+    verificationToken,
+  );
 
   let lastError: Error | null = null;
 
@@ -258,7 +271,9 @@ export async function sendVerificationEmail(
     try {
       if (USE_SENDGRID) {
         // Use SendGrid (production)
-        console.log(`[emailService] [SendGrid] Attempt ${attempt}/${MAX_RETRIES}: Sending verification email to ${email}...`);
+        console.log(
+          `[emailService] [SendGrid] Attempt ${attempt}/${MAX_RETRIES}: Sending verification email to ${email}...`,
+        );
 
         await sgMail.send({
           to: email,
@@ -272,12 +287,14 @@ export async function sendVerificationEmail(
 
         const duration = Date.now() - startTime;
         console.log(
-          `[emailService] ✅ [SendGrid] Verification email sent successfully to ${email} in ${duration}ms`
+          `[emailService] ✅ [SendGrid] Verification email sent successfully to ${email} in ${duration}ms`,
         );
         return; // Success!
       } else {
         // Use Gmail (local development fallback)
-        console.log(`[emailService] [Gmail] Attempt ${attempt}/${MAX_RETRIES}: Sending verification email to ${email}...`);
+        console.log(
+          `[emailService] [Gmail] Attempt ${attempt}/${MAX_RETRIES}: Sending verification email to ${email}...`,
+        );
 
         const transporter = createEmailTransporter();
         const mailOptions = {
@@ -290,18 +307,22 @@ export async function sendVerificationEmail(
         const info = await transporter.sendMail(mailOptions);
         const duration = Date.now() - startTime;
         console.log(
-          `[emailService] ✅ [Gmail] Verification email sent successfully to ${email} in ${duration}ms. MessageId: ${info.messageId}`
+          `[emailService] ✅ [Gmail] Verification email sent successfully to ${email} in ${duration}ms. MessageId: ${info.messageId}`,
         );
         return; // Success!
       }
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorCode = error instanceof Error && "code" in error ? (error as any).code : "UNKNOWN";
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorCode =
+        error instanceof Error && "code" in error
+          ? (error as any).code
+          : "UNKNOWN";
 
       console.error(
         `[emailService] ❌ Attempt ${attempt}/${MAX_RETRIES} failed to send verification email to ${email} after ${duration}ms:`,
-        `Error Code: ${errorCode}, Message: ${errorMessage}`
+        `Error Code: ${errorCode}, Message: ${errorMessage}`,
       );
 
       lastError = error instanceof Error ? error : new Error(errorMessage);
@@ -313,14 +334,18 @@ export async function sendVerificationEmail(
         await sleep(delayMs);
       } else if (!isTransientError(error)) {
         // Non-transient error, don't retry
-        console.error(`[emailService] ❌ Non-transient error, aborting retries`);
+        console.error(
+          `[emailService] ❌ Non-transient error, aborting retries`,
+        );
         break;
       }
     }
   }
 
   // All retries exhausted
-  throw new Error(`Failed to send verification email after ${MAX_RETRIES} attempts: ${lastError?.message}`);
+  throw new Error(
+    `Failed to send verification email after ${MAX_RETRIES} attempts: ${lastError?.message}`,
+  );
 }
 
 /**
@@ -333,7 +358,7 @@ export async function sendVerificationEmail(
 export async function sendContactEmail(
   name: string,
   email: string,
-  message: string
+  message: string,
 ): Promise<void> {
   const subject = `Nuevo mensaje de contacto de ${name} <${email}>`;
   const textContent = `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`;
@@ -362,11 +387,14 @@ export async function sendContactEmail(
   `.trim();
 
   const startTime = Date.now();
-  const recipientEmail = process.env.EMAIL_USER || "soportelionheartc@gmail.com";
+  const recipientEmail =
+    process.env.EMAIL_USER || "soportelionheartc@gmail.com";
 
   try {
     if (USE_SENDGRID) {
-      console.log(`[emailService] [SendGrid] Sending contact email from ${email}...`);
+      console.log(
+        `[emailService] [SendGrid] Sending contact email from ${email}...`,
+      );
 
       await sgMail.send({
         to: recipientEmail,
@@ -381,9 +409,13 @@ export async function sendContactEmail(
       });
 
       const duration = Date.now() - startTime;
-      console.log(`[emailService] ✅ [SendGrid] Contact email sent in ${duration}ms`);
+      console.log(
+        `[emailService] ✅ [SendGrid] Contact email sent in ${duration}ms`,
+      );
     } else {
-      console.log(`[emailService] [Gmail] Sending contact email from ${email}...`);
+      console.log(
+        `[emailService] [Gmail] Sending contact email from ${email}...`,
+      );
 
       const transporter = createEmailTransporter();
       await transporter.sendMail({
@@ -396,12 +428,16 @@ export async function sendContactEmail(
       });
 
       const duration = Date.now() - startTime;
-      console.log(`[emailService] ✅ [Gmail] Contact email sent in ${duration}ms`);
+      console.log(
+        `[emailService] ✅ [Gmail] Contact email sent in ${duration}ms`,
+      );
     }
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`[emailService] ❌ Failed to send contact email after ${duration}ms: ${errorMessage}`);
+    console.error(
+      `[emailService] ❌ Failed to send contact email after ${duration}ms: ${errorMessage}`,
+    );
     throw new Error(`Failed to send contact email: ${errorMessage}`);
   }
 }

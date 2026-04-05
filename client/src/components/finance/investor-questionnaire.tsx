@@ -5,11 +5,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  INVESTOR_QUESTIONS, 
-  INVESTOR_PROFILES, 
+import {
+  INVESTOR_QUESTIONS,
+  INVESTOR_PROFILES,
   calculateInvestorProfile,
-  type InvestorProfileType 
+  type InvestorProfileType,
 } from "@/lib/investor-questions";
 import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
@@ -20,17 +20,18 @@ export interface InvestorQuestionnaireProps {
   onClose?: () => void;
 }
 
-export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({ 
-  onComplete, 
+export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
+  onComplete,
   isLoading = false,
   onClose = () => {},
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [showResult, setShowResult] = useState(false);
-  const [profileType, setProfileType] = useState<InvestorProfileType | null>(null);
+  const [profileType, setProfileType] = useState<InvestorProfileType | null>(
+    null,
+  );
   const [, setLocation] = useLocation();
-
 
   const totalQuestions = INVESTOR_QUESTIONS.length;
   const currentQuestion = INVESTOR_QUESTIONS[currentStep];
@@ -39,7 +40,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
   const handleAnswerChange = (optionId: string) => {
     setAnswers({
       ...answers,
-      [currentQuestion.id]: optionId
+      [currentQuestion.id]: optionId,
     });
   };
 
@@ -49,14 +50,14 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
     } else {
       // Calculate final score and show result
       const pointAnswers: Record<number, number> = {};
-      INVESTOR_QUESTIONS.forEach(question => {
+      INVESTOR_QUESTIONS.forEach((question) => {
         const optionId = answers[question.id];
-        const option = question.options.find(opt => opt.id === optionId);
+        const option = question.options.find((opt) => opt.id === optionId);
         if (option) {
           pointAnswers[question.id] = option.points;
         }
       });
-      
+
       const calculatedProfile = calculateInvestorProfile(pointAnswers);
       setProfileType(calculatedProfile);
       setShowResult(true);
@@ -76,11 +77,11 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
   // Result screen
   if (showResult && profileType) {
     const profile = INVESTOR_PROFILES[profileType];
-    
+
     return (
-      <div className="w-full max-w-3xl mx-auto space-y-6 animate-in fade-in duration-500">
-        <div className="text-center space-y-2">
-          <CheckCircle2 className="w-16 h-16 mx-auto text-green-500 mb-4" />
+      <div className="animate-in fade-in mx-auto w-full max-w-3xl space-y-6 duration-500">
+        <div className="space-y-2 text-center">
+          <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-500" />
           <h2 className="text-3xl font-bold">¡Cuestionario Completado!</h2>
           <p className="text-muted-foreground">
             Hemos identificado tu perfil de inversión
@@ -88,11 +89,11 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
         </div>
 
         <Card className="border-2" style={{ borderColor: profile.color }}>
-          <CardHeader className="text-center pb-4">
-            <div className="flex items-center justify-center gap-3 mb-2">
+          <CardHeader className="pb-4 text-center">
+            <div className="mb-2 flex items-center justify-center gap-3">
               <Badge
                 style={{ backgroundColor: profile.color, color: "#000" }}
-                className="text-lg px-4 py-1.5"
+                className="px-4 py-1.5 text-lg"
               >
                 {profile.label}
               </Badge>
@@ -102,7 +103,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
           <CardContent className="space-y-6">
             {/* Characteristics */}
             <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                 <span className="text-xl">📊</span>
                 Características de tu perfil
               </h3>
@@ -120,7 +121,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
 
             {/* Recommendations */}
             <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold">
                 <span className="text-xl">💡</span>
                 Recomendaciones de distribución
               </h3>
@@ -137,7 +138,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
             </div>
 
             {/* Review Frequency */}
-            <div className="pt-4 border-t border-border">
+            <div className="border-border border-t pt-4">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-xl">⏰</span>
                 <span className="font-semibold">Frecuencia de revisión:</span>
@@ -148,8 +149,8 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
             </div>
 
             {/* Educational Note */}
-            <div className="bg-muted/50 rounded-lg p-4 mt-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-muted/50 mt-4 rounded-lg p-4">
+              <p className="text-muted-foreground text-sm">
                 <strong>Nota:</strong> Este perfil es una guía inicial basada en
                 tus respuestas. Tu estrategia de inversión puede evolucionar con
                 el tiempo según tus objetivos y circunstancias. Consulta con un
@@ -158,7 +159,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
             </div>
 
             {/* Home Button */}
-            <div className="pt-4 border-t border-border">
+            <div className="border-border border-t pt-4">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -178,10 +179,10 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
 
   // Questionnaire screen
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto w-full max-w-2xl space-y-6">
       {/* Progress Section */}
       <div className="space-y-2">
-        <div className="flex justify-between items-center text-sm">
+        <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
             Paso {currentStep + 1} de {totalQuestions}
           </span>
@@ -195,7 +196,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
       {/* Question Card */}
       <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle className="text-xl md:text-2xl text-center">
+          <CardTitle className="text-center text-xl md:text-2xl">
             {currentQuestion.title}
           </CardTitle>
         </CardHeader>
@@ -208,10 +209,10 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
             {currentQuestion.options.map((option) => (
               <div
                 key={option.id}
-                className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all cursor-pointer hover:border-primary/50 ${
+                className={`hover:border-primary/50 flex cursor-pointer items-center space-x-3 rounded-lg border-2 p-4 transition-all ${
                   answers[currentQuestion.id] === option.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border'
+                    ? "border-primary bg-primary/5"
+                    : "border-border"
                 }`}
                 onClick={() => handleAnswerChange(option.id)}
               >
@@ -220,7 +221,9 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
                   htmlFor={`option-${option.id}`}
                   className="flex-1 cursor-pointer text-base"
                 >
-                  <span className="font-semibold text-primary mr-2">{option.id}.</span>
+                  <span className="text-primary mr-2 font-semibold">
+                    {option.id}.
+                  </span>
                   {option.text}
                 </Label>
               </div>
@@ -247,7 +250,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
         >
           {currentStep === totalQuestions - 1 ? (
             <>
-              {isLoading ? 'Guardando...' : 'Ver Resultado'}
+              {isLoading ? "Guardando..." : "Ver Resultado"}
               <CheckCircle2 className="ml-2 h-4 w-4" />
             </>
           ) : (
@@ -260,7 +263,7 @@ export const InvestorQuestionnaire: React.FC<InvestorQuestionnaireProps> = ({
       </div>
 
       {/* Help text */}
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground text-center text-sm">
         Selecciona la opción que mejor describa tu situación
       </div>
     </div>

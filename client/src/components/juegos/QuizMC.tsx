@@ -51,22 +51,22 @@ export function QuizMC({ juego, onBack, onLevelComplete }: QuizMCProps) {
   };
 
   return (
-    <div className="border p-4 rounded-md shadow-md space-y-4">
-       {/* BOTÓN VOLVER ARRIBA */}
+    <div className="space-y-4 rounded-md border p-4 shadow-md">
+      {/* BOTÓN VOLVER ARRIBA */}
       <Button variant="outline" onClick={onBack}>
         ← Volver
       </Button>
       <h2 className="text-lg font-bold">{juego.title}</h2>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Pregunta {currentQ + 1} de {juego.payload.questions.length}
       </p>
       <p className="font-medium">{pregunta.q}</p>
-      <div className="grid gap-2 mt-2">
+      <div className="mt-2 grid gap-2">
         {pregunta.options.map((opt, i) => (
           <button
             key={i}
             onClick={() => handleAnswer(i)}
-            className={`p-2 border rounded ${
+            className={`rounded border p-2 ${
               selected === i
                 ? i === pregunta.answerIndex
                   ? "bg-green-200"

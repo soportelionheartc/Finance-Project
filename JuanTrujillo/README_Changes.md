@@ -15,8 +15,8 @@ trabajo-app/
 ├── drizzle.config.ts    # Configuración de Drizzle ORM
 ```
 
-
 ## 2. Variables de entorno (.env)
+
 Se creó el archivo `.env` en la raíz del proyecto con el siguiente contenido:
 
 ```env
@@ -28,6 +28,7 @@ SESSION_SECRET=Segura123
 ```
 
 Estas variables son necesarias para:
+
 - Conectar el backend a la base de datos
 - Firmar sesiones de usuarios
 - Ejecutar migraciones con Drizzle ORM
@@ -35,22 +36,26 @@ Estas variables son necesarias para:
 ## 3. Configuración de PostgreSQL en WSL
 
 **Instalar PostgreSQL:**
+
 ```bash
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 ```
 
 **Iniciar el servicio:**
+
 ```bash
 sudo service postgresql start
 ```
 
 **Crear usuario y base de datos:**
+
 ```bash
 sudo -u postgres psql
 ```
 
 Dentro del prompt de PostgreSQL:
+
 ```sql
 CREATE USER lhcuser WITH PASSWORD 'lhcpass';
 CREATE DATABASE lionheartdb OWNER lhcuser;
@@ -60,11 +65,13 @@ CREATE DATABASE lionheartdb OWNER lhcuser;
 ## 4. Migraciones de base de datos con Drizzle
 
 **Instalar dotenv para que Drizzle lea el archivo .env:**
+
 ```bash
 npm install dotenv
 ```
 
 **Ejecutar la migración desde la raíz del proyecto:**
+
 ```bash
 npm run db:push  # Configura la base de datos
 ```
@@ -74,14 +81,17 @@ npm run db:push  # Configura la base de datos
 **En `storage.ts`:**
 
 Se agregó esta línea al inicio:
+
 ```ts
-import 'dotenv/config';
+import "dotenv/config";
 ```
+
 Para asegurar que `process.env.DATABASE_URL` esté disponible.
 
 ## 6. Levantar la app
 
 **Backend:**
+
 ```bash
 cd server
 npm install
@@ -106,10 +116,10 @@ http://localhost:5173
 ~~- Estilo de landing page y services se veian diferente y no se veian bien, se modificaron los estilos para que se vea mejor.~~
 
 ~~- La landing page esteticamente se veria mejor el titulo principal, texto inicial y boton de "Explorar Servicios" como esta en el resto de la app en diferentes secciones.:~~
-~~    - LION HEART CAPITAL~~
-~~    - FINANZAS E INVERSIONES DE ALTO IMPACTO~~
-~~    - Soluciones financieras inteligentes impulsadas por IA para optimizar tus inversiones y estrategias de trading.~~
-~~    - Explorar Servicios~~
+~~ - LION HEART CAPITAL~~
+~~ - FINANZAS E INVERSIONES DE ALTO IMPACTO~~
+~~ - Soluciones financieras inteligentes impulsadas por IA para optimizar tus inversiones y estrategias de trading.~~
+~~ - Explorar Servicios~~
 
 ~~- En la landing page, si el usuario intenta usar la funcionalidad de IA sin haber iniciado sesión, mejorar la alerta para que sea más clara y amigable, sugiriendo iniciar sesión o registrarse e incluso redirigir a la pagina de inicio de sesión.~~
 
@@ -133,7 +143,7 @@ http://localhost:5173
 
 ~~- En el panel admin, crear las paginas de perfil y configuracion.~~
 
-~~-  En el panel de usuario de google o usuario comun, al tope de todo que haya un margen al lado izquierdo para que no se vea tan pegado al borde de la pantalla.~~
+~~- En el panel de usuario de google o usuario comun, al tope de todo que haya un margen al lado izquierdo para que no se vea tan pegado al borde de la pantalla.~~
 
 ~~- En panel de usuario de googel o usuario comun, los titulos iniciales y Bienvenida mejorar la distribucion en la pantalla.~~
 
@@ -198,5 +208,5 @@ git log --oneline
 git stash
 git checkout <hash_commit>
  git checkout main
-git stash pop 
+git stash pop
 ```

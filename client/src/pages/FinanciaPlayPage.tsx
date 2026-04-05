@@ -46,9 +46,11 @@ export default function FinanciaPlayPage() {
     maxScore: number;
   } | null>(null);
 
-  const { data: progress, isLoading: progressLoading } = useQuery<ProgressData>({
-    queryKey: ["/api/financiaplay/progress"],
-  });
+  const { data: progress, isLoading: progressLoading } = useQuery<ProgressData>(
+    {
+      queryKey: ["/api/financiaplay/progress"],
+    },
+  );
 
   const { data: placementData, isLoading: placementLoading } = useQuery<{
     hasPlacement: boolean;
@@ -70,8 +72,12 @@ export default function FinanciaPlayPage() {
 
   const handlePlacementComplete = useCallback(
     (unlockedLevel: number) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/financiaplay/placement"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/financiaplay/progress"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/financiaplay/placement"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/financiaplay/progress"],
+      });
       setScreen("dashboard");
     },
     [queryClient],
@@ -83,36 +89,38 @@ export default function FinanciaPlayPage() {
     setScreen("game");
   }, []);
 
-  const handleSelectTopic = useCallback(
-    (topicId: string, levelId: string) => {
-      const levelKey = `level${levelId.replace("L", "")}` as keyof typeof CURRICULUM;
-      const level = CURRICULUM[levelKey];
-      const topic = level?.topics.find((t) => t.id === topicId);
-      if (topic && level) {
-        setLessonData({
-          topicId: topic.id,
-          topicName: topic.name,
-          topicDesc: topic.desc,
-          levelName: level.name,
-          levelId,
-        });
-        setScreen("lesson");
-      }
-    },
-    [],
-  );
+  const handleSelectTopic = useCallback((topicId: string, levelId: string) => {
+    const levelKey =
+      `level${levelId.replace("L", "")}` as keyof typeof CURRICULUM;
+    const level = CURRICULUM[levelKey];
+    const topic = level?.topics.find((t) => t.id === topicId);
+    if (topic && level) {
+      setLessonData({
+        topicId: topic.id,
+        topicName: topic.name,
+        topicDesc: topic.desc,
+        levelName: level.name,
+        levelId,
+      });
+      setScreen("lesson");
+    }
+  }, []);
 
   const handleGameFinish = useCallback(
     async (score: number, maxScore: number, timeRemainingPct: number) => {
       if (!currentGame) return;
       try {
-        const res = await apiRequest("POST", "/api/financiaplay/game/complete", {
-          gameId: currentGame.id,
-          levelId: currentGame.id.substring(0, 2),
-          score,
-          maxScore,
-          timeRemainingPct,
-        });
+        const res = await apiRequest(
+          "POST",
+          "/api/financiaplay/game/complete",
+          {
+            gameId: currentGame.id,
+            levelId: currentGame.id.substring(0, 2),
+            score,
+            maxScore,
+            timeRemainingPct,
+          },
+        );
         const result = await res.json();
         setLastResult({
           xpGained: result.xpGained,
@@ -120,7 +128,9 @@ export default function FinanciaPlayPage() {
           score,
           maxScore,
         });
-        queryClient.invalidateQueries({ queryKey: ["/api/financiaplay/progress"] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/financiaplay/progress"],
+        });
       } catch {
         setLastResult({ xpGained: 0, newBadges: [], score, maxScore });
       }
@@ -129,16 +139,17 @@ export default function FinanciaPlayPage() {
     [currentGame, queryClient],
   );
 
-  const unlockedLevel = progress?.unlockedLevel ?? placementData?.unlockedLevel ?? 1;
+  const unlockedLevel =
+    progress?.unlockedLevel ?? placementData?.unlockedLevel ?? 1;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="bg-background flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 flex flex-col items-center p-4 md:p-6">
+      <main className="flex flex-1 flex-col items-center p-4 md:p-6">
         <div className="w-full max-w-4xl">
           {screen === "loading" && (
-            <div className="space-y-4 mt-8">
-              <Skeleton className="h-12 w-64 mx-auto" />
+            <div className="mt-8 space-y-4">
+              <Skeleton className="mx-auto h-12 w-64" />
               <Skeleton className="h-48 w-full" />
               <Skeleton className="h-48 w-full" />
             </div>
@@ -150,14 +161,14 @@ export default function FinanciaPlayPage() {
 
           {screen === "dashboard" && (
             <div className="space-y-6">
-              <div className="text-center space-y-2">
+              <div className="space-y-2 text-center">
                 <h1 className="text-3xl font-bold">FinanciaPlay</h1>
                 <p className="text-muted-foreground">
                   Tu camino hacia la educación financiera
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <XpBar currentXp={progress?.totalXp ?? 0} />
                 <Button
                   variant="outline"
@@ -169,15 +180,15 @@ export default function FinanciaPlayPage() {
               </div>
 
               {lastResult && (
-                <div className="bg-[#FFC107]/10 border border-[#FFC107]/30 rounded-lg p-4 text-center space-y-2">
+                <div className="space-y-2 rounded-lg border border-[#FFC107]/30 bg-[#FFC107]/10 p-4 text-center">
                   <p className="text-lg font-semibold">
                     🎮 Resultado: {lastResult.score}/{lastResult.maxScore}
                   </p>
-                  <p className="text-[#FFC107] font-bold">
+                  <p className="font-bold text-[#FFC107]">
                     +{lastResult.xpGained} XP
                   </p>
                   {lastResult.newBadges.length > 0 && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       ¡Nuevas insignias: {lastResult.newBadges.join(", ")}!
                     </p>
                   )}

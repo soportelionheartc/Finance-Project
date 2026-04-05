@@ -39,22 +39,22 @@ export function CategorizeGame({ juego, onBack }: CategorizeGameProps) {
 
   const correctCount = submitted
     ? juego.payload.items.filter(
-        (item) => answers[item.label] === item.categoryKey
+        (item) => answers[item.label] === item.categoryKey,
       ).length
     : 0;
 
   return (
     <div className="p-6">
       {/* BOTÓN VOLVER ARRIBA */}
-            <Button variant="outline" onClick={onBack}>
-              ← Volver
-            </Button>
-      <h2 className="text-xl font-bold mb-4">{juego.title}</h2>
+      <Button variant="outline" onClick={onBack}>
+        ← Volver
+      </Button>
+      <h2 className="mb-4 text-xl font-bold">{juego.title}</h2>
 
       {juego.payload.categories.map((category) => (
         <div key={category.key} className="mb-4">
           <h3 className="font-semibold">{category.label}</h3>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             {juego.payload.items
               .filter((item) => !Object.keys(answers).includes(item.label))
               .map((item) => (
@@ -71,11 +71,12 @@ export function CategorizeGame({ juego, onBack }: CategorizeGameProps) {
         </div>
       ))}
 
-      {Object.keys(answers).length === juego.payload.items.length && !submitted && (
-        <Button className="mt-4" onClick={() => setSubmitted(true)}>
-          Revisar respuestas
-        </Button>
-      )}
+      {Object.keys(answers).length === juego.payload.items.length &&
+        !submitted && (
+          <Button className="mt-4" onClick={() => setSubmitted(true)}>
+            Revisar respuestas
+          </Button>
+        )}
 
       {submitted && (
         <div className="mt-4">

@@ -24,12 +24,18 @@ function shuffle<T>(arr: T[]): T[] {
 
 export default function Match({ game, onFinish, onBack }: MatchProps) {
   const pairs = game.pairs ?? [];
-  const shuffledRight = useMemo(() => shuffle(pairs.map((p) => p.right)), [pairs]);
+  const shuffledRight = useMemo(
+    () => shuffle(pairs.map((p) => p.right)),
+    [pairs],
+  );
 
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matched, setMatched] = useState<Set<number>>(new Set());
-  const [wrongPair, setWrongPair] = useState<{ left: number; right: number } | null>(null);
+  const [wrongPair, setWrongPair] = useState<{
+    left: number;
+    right: number;
+  } | null>(null);
   const [timeLeft, setTimeLeft] = useState(game.timeSec);
   const [finished, setFinished] = useState(false);
   const [score, setScore] = useState(0);
@@ -92,7 +98,16 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
         setSelectedRight(null);
       }, 800);
     }
-  }, [selectedLeft, selectedRight, pairs, shuffledRight, stopTimer, timeLeft, game.timeSec, onFinish]);
+  }, [
+    selectedLeft,
+    selectedRight,
+    pairs,
+    shuffledRight,
+    stopTimer,
+    timeLeft,
+    game.timeSec,
+    onFinish,
+  ]);
 
   const handleLeftClick = (idx: number) => {
     if (matched.has(idx) || wrongPair) return;
@@ -114,8 +129,11 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
 
   if (finished && timeLeft > 0) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-[#FFC107]/30 bg-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-card border-[#FFC107]/30">
           <CardHeader className="text-center">
             <Trophy className="mx-auto mb-2 size-12 text-[#FFC107]" />
             <CardTitle className="text-2xl">¡Parejas completadas!</CardTitle>
@@ -125,7 +143,9 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
               {score} / {pairs.length}
             </p>
             <p className="text-muted-foreground">
-              {score === pairs.length ? "¡Todas correctas! 🎉" : "¡Buen intento! 💪"}
+              {score === pairs.length
+                ? "¡Todas correctas! 🎉"
+                : "¡Buen intento! 💪"}
             </p>
             <Button onClick={onBack} variant="outline" className="mt-4">
               <ArrowLeft className="mr-2 size-4" />
@@ -153,7 +173,7 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
 
       <Progress value={timePct} className="h-2" />
 
-      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center justify-center gap-2 text-sm">
         <Link2 className="size-4" />
         <span>
           Conecta las parejas: {score} / {pairs.length}
@@ -178,7 +198,7 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
                   >
                     <Button
                       variant="outline"
-                      className={`w-full h-auto min-h-12 whitespace-normal text-left py-2 px-3 text-sm ${
+                      className={`h-auto min-h-12 w-full px-3 py-2 text-left text-sm whitespace-normal ${
                         isMatched
                           ? "border-green-500 bg-green-500/20 text-green-300 opacity-70"
                           : isSelected
@@ -214,7 +234,7 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
                   >
                     <Button
                       variant="outline"
-                      className={`w-full h-auto min-h-12 whitespace-normal text-left py-2 px-3 text-sm ${
+                      className={`h-auto min-h-12 w-full px-3 py-2 text-left text-sm whitespace-normal ${
                         isRightMatched
                           ? "border-green-500 bg-green-500/20 text-green-300 opacity-70"
                           : isSelected
@@ -236,7 +256,7 @@ export default function Match({ game, onFinish, onBack }: MatchProps) {
         </CardContent>
       </Card>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         Selecciona un elemento de la izquierda y luego su pareja a la derecha
       </p>
     </div>

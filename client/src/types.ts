@@ -74,23 +74,38 @@ export interface JuegoFinancieroBase<T, L = NivelBase<T>> {
 
 // True/False
 export type NivelTF = NivelBase<TrueFalsePayload>;
-export type JuegoFinancieroTF = JuegoFinancieroBase<TrueFalsePayload, NivelTF> & { type: "true_false" };
+export type JuegoFinancieroTF = JuegoFinancieroBase<
+  TrueFalsePayload,
+  NivelTF
+> & { type: "true_false" };
 
 // QuizMC
 export type NivelQuizMC = NivelBase<QuizMCPayload>;
-export type JuegoFinancieroQuizMC = JuegoFinancieroBase<QuizMCPayload, NivelQuizMC> & { type: "quiz_mc" };
+export type JuegoFinancieroQuizMC = JuegoFinancieroBase<
+  QuizMCPayload,
+  NivelQuizMC
+> & { type: "quiz_mc" };
 
 // Categorize
 export type NivelCategorize = NivelBase<CategorizePayload>;
-export type JuegoFinancieroCategorize = JuegoFinancieroBase<CategorizePayload, NivelCategorize> & { type: "categorize" };
+export type JuegoFinancieroCategorize = JuegoFinancieroBase<
+  CategorizePayload,
+  NivelCategorize
+> & { type: "categorize" };
 
 // Budget
 export type NivelBudget = NivelBase<BudgetPayload>;
-export type JuegoFinancieroBudget = JuegoFinancieroBase<BudgetPayload, NivelBudget> & { type: "budget" };
+export type JuegoFinancieroBudget = JuegoFinancieroBase<
+  BudgetPayload,
+  NivelBudget
+> & { type: "budget" };
 
 // Decision
 export type NivelDecision = NivelBase<DecisionPayload>;
-export type JuegoFinancieroDecision = JuegoFinancieroBase<DecisionPayload, NivelDecision> & { type: "decision" };
+export type JuegoFinancieroDecision = JuegoFinancieroBase<
+  DecisionPayload,
+  NivelDecision
+> & { type: "decision" };
 
 // --- Unión de todos los juegos ---
 export type JuegoFinanciero =

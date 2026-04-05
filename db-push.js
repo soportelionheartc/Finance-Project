@@ -1,7 +1,7 @@
-import { execSync } from 'child_process';
-import pg from 'pg';
-import fs from 'fs';
-import { drizzle } from 'drizzle-orm/pg-core';
+import { execSync } from "child_process";
+import pg from "pg";
+import fs from "fs";
+import { drizzle } from "drizzle-orm/pg-core";
 
 const { Pool } = pg;
 
@@ -11,14 +11,14 @@ const pool = new Pool({
 });
 
 async function main() {
-  console.log('Connecting to database...');
-  
+  console.log("Connecting to database...");
+
   try {
     // Read the schema file directly to avoid interactive mode
-    console.log('Executing direct SQL migration...');
-    
+    console.log("Executing direct SQL migration...");
+
     const connection = await pool.connect();
-    
+
     // Verificar si la columna profile_picture existe en la tabla users
     const checkColumnResult = await connection.query(`
       SELECT column_name 
@@ -26,33 +26,43 @@ async function main() {
       WHERE table_name = 'users' 
       AND column_name = 'profile_picture'
     `);
-    
+
     if (checkColumnResult.rows.length === 0) {
-      console.log('Adding missing column profile_picture to users table...');
+      console.log("Adding missing column profile_picture to users table...");
       await connection.query(`
         ALTER TABLE users 
         ADD COLUMN IF NOT EXISTS profile_picture TEXT
       `);
     } else {
-      console.log('Column profile_picture already exists');
+      console.log("Column profile_picture already exists");
     }
-    
+
     // Verificar si existen otras tablas requeridas
-    const tables = ['auth_providers', 'wallets', 'portfolios', 'assets', 'strategies', 
-                   'chat_history', 'decentralized_messages'];
-    
+    const tables = [
+      "auth_providers",
+      "wallets",
+      "portfolios",
+      "assets",
+      "strategies",
+      "chat_history",
+      "decentralized_messages",
+    ];
+
     for (const table of tables) {
-      const tableCheckResult = await connection.query(`
+      const tableCheckResult = await connection.query(
+        `
         SELECT table_name 
         FROM information_schema.tables 
         WHERE table_name = $1
-      `, [table]);
-      
+      `,
+        [table],
+      );
+
       if (tableCheckResult.rows.length === 0) {
         console.log(`Creating missing table ${table}...`);
-        
+
         // Schema implementation through direct SQL for each table
-        if (table === 'auth_providers') {
+        if (table === "auth_providers") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS auth_providers (
               id SERIAL PRIMARY KEY,
@@ -64,7 +74,7 @@ async function main() {
               updated_at TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'wallets') {
+        } else if (table === "wallets") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS wallets (
               id SERIAL PRIMARY KEY,
@@ -82,7 +92,7 @@ async function main() {
               updated_at TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'portfolios') {
+        } else if (table === "portfolios") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS portfolios (
               id SERIAL PRIMARY KEY,
@@ -93,7 +103,7 @@ async function main() {
               updated_at TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'assets') {
+        } else if (table === "assets") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS assets (
               id SERIAL PRIMARY KEY,
@@ -110,7 +120,7 @@ async function main() {
               updated_at TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'strategies') {
+        } else if (table === "strategies") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS strategies (
               id SERIAL PRIMARY KEY,
@@ -123,7 +133,7 @@ async function main() {
               updated_at TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'chat_history') {
+        } else if (table === "chat_history") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS chat_history (
               id SERIAL PRIMARY KEY,
@@ -133,7 +143,7 @@ async function main() {
               timestamp TIMESTAMP DEFAULT NOW()
             )
           `);
-        } else if (table === 'decentralized_messages') {
+        } else if (table === "decentralized_messages") {
           await connection.query(`
             CREATE TABLE IF NOT EXISTS decentralized_messages (
               id SERIAL PRIMARY KEY,
@@ -152,11 +162,11 @@ async function main() {
         console.log(`Table ${table} already exists`);
       }
     }
-    
-    console.log('Database migration completed successfully!');
+
+    console.log("Database migration completed successfully!");
     connection.release();
   } catch (error) {
-    console.error('Error during migration:', error);
+    console.error("Error during migration:", error);
     process.exit(1);
   } finally {
     await pool.end();

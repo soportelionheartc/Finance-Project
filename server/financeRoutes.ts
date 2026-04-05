@@ -25,7 +25,13 @@ router.get("/markets", async (req, res) => {
       symbols = ["BTC-USD", "ETH-USD", "SOL-USD", "XRP-USD", "BNB-USD"];
     } else if (type === "colombia") {
       // Acciones colombianas en Yahoo Finance (sufijo .CO)
-      symbols = ["ECOPETROL.CO", "PFBCOLOM.CO", "GRUPOSURA.CO", "ISA.CO", "GRUPOARGOS.CO"];
+      symbols = [
+        "ECOPETROL.CO",
+        "PFBCOLOM.CO",
+        "GRUPOSURA.CO",
+        "ISA.CO",
+        "GRUPOARGOS.CO",
+      ];
     } else {
       return res.status(400).json({ message: "Tipo de mercado no válido" });
     }
@@ -68,7 +74,13 @@ export default router;
 // ✅ Endpoint: /api/finance/colombia
 router.get("/colombia", async (req, res) => {
   try {
-    const symbols = ["EC", "CIB", "GRUPOSURA.CL", "GRUPOARGOS.CL", "NUTRESA.CL"];
+    const symbols = [
+      "EC",
+      "CIB",
+      "GRUPOSURA.CL",
+      "GRUPOARGOS.CL",
+      "NUTRESA.CL",
+    ];
 
     const url = `https://${process.env.RAPIDAPI_HOST}/market/v2/get-quotes`;
     const response = await axios.get(url, {
@@ -100,7 +112,14 @@ router.get("/colombia", async (req, res) => {
 
 router.get("/cryptos", async (req, res) => {
   try {
-    const symbols = ["BTC-USD", "ETH-USD", "SOL-USD", "BNB-USD", "XRP-USD", "USDT-USD"];
+    const symbols = [
+      "BTC-USD",
+      "ETH-USD",
+      "SOL-USD",
+      "BNB-USD",
+      "XRP-USD",
+      "USDT-USD",
+    ];
 
     const url = `https://${process.env.RAPIDAPI_HOST}/market/v2/get-quotes`;
     const response = await axios.get(url, {
@@ -131,5 +150,3 @@ router.get("/cryptos", async (req, res) => {
     });
   }
 });
-
-

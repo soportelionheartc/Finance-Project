@@ -1,15 +1,37 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real, json, pgEnum, varchar } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  real,
+  json,
+  pgEnum,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Enum para identificar el proveedor de autenticación
-export const authProviderEnum = pgEnum('auth_provider', ['local', 'google', 'apple', 'phantom', 'metamask', 'walletconnect']);
+export const authProviderEnum = pgEnum("auth_provider", [
+  "local",
+  "google",
+  "apple",
+  "phantom",
+  "metamask",
+  "walletconnect",
+]);
 
 // Enum para el tipo de usuario
-export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
+export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 
 // Enum para perfil de riesgo del inversor
-export const riskProfileEnum = pgEnum('risk_profile', ['conservative', 'moderate', 'aggressive']);
+export const riskProfileEnum = pgEnum("risk_profile", [
+  "conservative",
+  "moderate",
+  "aggressive",
+]);
 
 // User schema
 export const users = pgTable("users", {
@@ -45,7 +67,9 @@ export const session = pgTable("session", {
 // Tabla para autenticación mediante proveedores externos
 export const authProviders = pgTable("auth_providers", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   provider: authProviderEnum("provider").notNull(),
   providerId: text("provider_id").notNull(), // ID único del proveedor (Google ID, Apple ID, etc.)
   providerData: json("provider_data"), // Datos adicionales del proveedor
@@ -60,12 +84,20 @@ export const insertAuthProviderSchema = createInsertSchema(authProviders).omit({
 });
 
 // Enum para los tipos de blockchain
-export const blockchainTypeEnum = pgEnum('blockchain_type', ['ethereum', 'solana', 'bitcoin', 'polygon', 'binance']);
+export const blockchainTypeEnum = pgEnum("blockchain_type", [
+  "ethereum",
+  "solana",
+  "bitcoin",
+  "polygon",
+  "binance",
+]);
 
 // Tabla para wallets de criptomonedas
 export const wallets = pgTable("wallets", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   type: blockchainTypeEnum("type").notNull(), // ethereum, solana, bitcoin, etc.
   address: text("address").notNull(),
   label: text("label"),
@@ -86,16 +118,16 @@ export const insertWalletSchema = createInsertSchema(wallets).omit({
 });
 
 // Portfolio schema
-export const portfolios = pgTable('portfolios', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id')
+export const portfolios = pgTable("portfolios", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
     .notNull()
-    .references(() => users.id, {onDelete: 'cascade'}),
-  name: text('name').notNull(),
-  totalValue: real('total_value').notNull().default(0),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-  initial_value: real('initial_value').default(0),
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  totalValue: real("total_value").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  initial_value: real("initial_value").default(0),
 });
 
 export const insertPortfolioSchema = createInsertSchema(portfolios).omit({
@@ -105,19 +137,21 @@ export const insertPortfolioSchema = createInsertSchema(portfolios).omit({
 });
 
 // Tabla para el historial de valores del portafolio
-export const portfolio_history = pgTable('portfolio_history', {
-  id: serial('id').primaryKey(),
-  portfolio_id: integer('portfolio_id')
+export const portfolio_history = pgTable("portfolio_history", {
+  id: serial("id").primaryKey(),
+  portfolio_id: integer("portfolio_id")
     .notNull()
-    .references(() => portfolios.id, {onDelete: 'cascade'}),
-  value: real('value').notNull(),
-  date: timestamp('date').notNull(),
+    .references(() => portfolios.id, { onDelete: "cascade" }),
+  value: real("value").notNull(),
+  date: timestamp("date").notNull(),
 });
 
 // Asset schema
 export const assets = pgTable("assets", {
   id: serial("id").primaryKey(),
-  portfolioId: integer("portfolio_id").notNull().references(() => portfolios.id, { onDelete: 'cascade' }),
+  portfolioId: integer("portfolio_id")
+    .notNull()
+    .references(() => portfolios.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   symbol: text("symbol").notNull(),
   type: text("type").notNull(), // stock, crypto, etf, etc
@@ -139,7 +173,9 @@ export const insertAssetSchema = createInsertSchema(assets).omit({
 // Trading strategies schema
 export const strategies = pgTable("strategies", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   name: text("name").notNull(),
   description: text("description"),
   parameters: json("parameters"),
@@ -157,7 +193,9 @@ export const insertStrategySchema = createInsertSchema(strategies).omit({
 // Chat history schema para chat IA
 export const chatHistory = pgTable("chat_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
   message: text("message").notNull(),
   response: text("response").notNull(),
   timestamp: timestamp("timestamp").defaultNow(),
@@ -181,7 +219,9 @@ export const decentralizedMessages = pgTable("decentralized_messages", {
   isEncrypted: boolean("is_encrypted").default(false),
 });
 
-export const insertDecentralizedMessageSchema = createInsertSchema(decentralizedMessages).omit({
+export const insertDecentralizedMessageSchema = createInsertSchema(
+  decentralizedMessages,
+).omit({
   id: true,
   timestamp: true,
 });
@@ -198,7 +238,7 @@ export const transactions = pgTable("transactions", {
 
   symbol: text("symbol").notNull(),
 
-  type: text("type").notNull(),  // compra / venta
+  type: text("type").notNull(), // compra / venta
 
   quantity: real("quantity").notNull(),
 
@@ -211,7 +251,6 @@ export const transactions = pgTable("transactions", {
   notes: text("notes"),
 });
 
-
 export const insertTransactionSchema = createInsertSchema(transactions).omit({
   id: true,
 });
@@ -219,7 +258,9 @@ export const insertTransactionSchema = createInsertSchema(transactions).omit({
 // Email verification codes schema
 export const emailVerificationCodes = pgTable("email_verification_codes", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   code: text("code").notNull(), // stores hashed 6-digit code
   verificationToken: text("verification_token").unique(), // unique token for one-click verification (nullable for backwards compatibility)
   expiresAt: timestamp("expires_at").notNull(),
@@ -228,7 +269,9 @@ export const emailVerificationCodes = pgTable("email_verification_codes", {
   isUsed: boolean("is_used").default(false),
 });
 
-export const insertEmailVerificationCodeSchema = createInsertSchema(emailVerificationCodes).omit({
+export const insertEmailVerificationCodeSchema = createInsertSchema(
+  emailVerificationCodes,
+).omit({
   id: true,
   createdAt: true,
 });
@@ -236,7 +279,10 @@ export const insertEmailVerificationCodeSchema = createInsertSchema(emailVerific
 // Investor profiles schema
 export const investorProfiles = pgTable("investor_profiles", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(),
   riskProfile: riskProfileEnum("risk_profile").notNull(),
   totalScore: integer("total_score").notNull(),
   answers: json("answers").notNull(), // JSONB storage for detailed question responses
@@ -258,9 +304,15 @@ export const insertInvestorProfileSchema = createInsertSchema(investorProfiles)
 // Files schema for uploaded documents
 export const files = pgTable("files", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  portfolioId: integer("portfolio_id").references(() => portfolios.id, { onDelete: 'cascade' }),
-  assetId: integer("asset_id").references(() => assets.id, { onDelete: 'cascade' }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  portfolioId: integer("portfolio_id").references(() => portfolios.id, {
+    onDelete: "cascade",
+  }),
+  assetId: integer("asset_id").references(() => assets.id, {
+    onDelete: "cascade",
+  }),
   filename: text("filename").notNull(), // stored filename (unique)
   originalName: text("original_name").notNull(), // original filename
   mimeType: text("mime_type").notNull(),
@@ -277,7 +329,9 @@ export const insertFileSchema = createInsertSchema(files).omit({
 // FinanciaPlay — Progreso por juego
 export const financiaplayProgress = pgTable("financiaplay_progress", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   gameId: text("game_id").notNull(),
   levelId: text("level_id").notNull(),
   score: integer("score").notNull(),
@@ -287,7 +341,9 @@ export const financiaplayProgress = pgTable("financiaplay_progress", {
   completedAt: timestamp("completed_at").defaultNow(),
 });
 
-export const insertFinanciaplayProgressSchema = createInsertSchema(financiaplayProgress).omit({
+export const insertFinanciaplayProgressSchema = createInsertSchema(
+  financiaplayProgress,
+).omit({
   id: true,
   completedAt: true,
 });
@@ -295,13 +351,18 @@ export const insertFinanciaplayProgressSchema = createInsertSchema(financiaplayP
 // FinanciaPlay — Resultado del test diagnóstico
 export const financiaplayPlacement = pgTable("financiaplay_placement", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(),
   unlockedLevel: integer("unlocked_level").notNull(),
   score: json("score").notNull(),
   completedAt: timestamp("completed_at").defaultNow(),
 });
 
-export const insertFinanciaplayPlacementSchema = createInsertSchema(financiaplayPlacement).omit({
+export const insertFinanciaplayPlacementSchema = createInsertSchema(
+  financiaplayPlacement,
+).omit({
   id: true,
   completedAt: true,
 });
@@ -309,12 +370,16 @@ export const insertFinanciaplayPlacementSchema = createInsertSchema(financiaplay
 // FinanciaPlay — Insignias obtenidas
 export const financiaplayBadges = pgTable("financiaplay_badges", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   badgeId: text("badge_id").notNull(),
   awardedAt: timestamp("awarded_at").defaultNow(),
 });
 
-export const insertFinanciaplayBadgeSchema = createInsertSchema(financiaplayBadges).omit({
+export const insertFinanciaplayBadgeSchema = createInsertSchema(
+  financiaplayBadges,
+).omit({
   id: true,
   awardedAt: true,
 });
@@ -322,12 +387,17 @@ export const insertFinanciaplayBadgeSchema = createInsertSchema(financiaplayBadg
 // FinanciaPlay — XP acumulado
 export const financiaplayXp = pgTable("financiaplay_xp", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" })
+    .unique(),
   totalXp: integer("total_xp").notNull().default(0),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertFinanciaplayXpSchema = createInsertSchema(financiaplayXp).omit({
+export const insertFinanciaplayXpSchema = createInsertSchema(
+  financiaplayXp,
+).omit({
   id: true,
   updatedAt: true,
 });
@@ -359,10 +429,14 @@ export type ChatEntry = typeof chatHistory.$inferSelect;
 export type InsertChatEntry = z.infer<typeof insertChatHistorySchema>;
 
 export type DecentralizedMessage = typeof decentralizedMessages.$inferSelect;
-export type InsertDecentralizedMessage = z.infer<typeof insertDecentralizedMessageSchema>;
+export type InsertDecentralizedMessage = z.infer<
+  typeof insertDecentralizedMessageSchema
+>;
 
 export type VerificationCode = typeof emailVerificationCodes.$inferSelect;
-export type InsertVerificationCode = z.infer<typeof insertEmailVerificationCodeSchema>;
+export type InsertVerificationCode = z.infer<
+  typeof insertEmailVerificationCodeSchema
+>;
 
 export type InvestorProfile = typeof investorProfiles.$inferSelect;
 export type InsertInvestorProfile = z.infer<typeof insertInvestorProfileSchema>;
@@ -371,13 +445,19 @@ export type PortfolioFile = typeof files.$inferSelect;
 export type InsertFile = z.infer<typeof insertFileSchema>;
 
 export type FinanciaplayProgress = typeof financiaplayProgress.$inferSelect;
-export type InsertFinanciaplayProgress = z.infer<typeof insertFinanciaplayProgressSchema>;
+export type InsertFinanciaplayProgress = z.infer<
+  typeof insertFinanciaplayProgressSchema
+>;
 
 export type FinanciaplayPlacement = typeof financiaplayPlacement.$inferSelect;
-export type InsertFinanciaplayPlacement = z.infer<typeof insertFinanciaplayPlacementSchema>;
+export type InsertFinanciaplayPlacement = z.infer<
+  typeof insertFinanciaplayPlacementSchema
+>;
 
 export type FinanciaplayBadge = typeof financiaplayBadges.$inferSelect;
-export type InsertFinanciaplayBadge = z.infer<typeof insertFinanciaplayBadgeSchema>;
+export type InsertFinanciaplayBadge = z.infer<
+  typeof insertFinanciaplayBadgeSchema
+>;
 
 export type FinanciaplayXp = typeof financiaplayXp.$inferSelect;
 export type InsertFinanciaplayXp = z.infer<typeof insertFinanciaplayXpSchema>;

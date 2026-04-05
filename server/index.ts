@@ -1,19 +1,17 @@
-import { ensureAdminUser } from './auth';
-import path from 'path';
+import { ensureAdminUser } from "./auth";
+import path from "path";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import 'dotenv/config';
+import "dotenv/config";
 import session from "express-session";
-import 'dotenv/config';
+import "dotenv/config";
 import { storage } from "./storage";
-import passport from 'passport';
-import { randomBytes } from 'crypto';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import fs from 'fs';
-
-
+import passport from "passport";
+import { randomBytes } from "crypto";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import fs from "fs";
 
 // Crear usuario admin si no existe
 ensureAdminUser();
@@ -26,36 +24,39 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Configuración de sesión y passport
-const SESSION_SECRET = process.env.SESSION_SECRET || randomBytes(32).toString('hex');
+const SESSION_SECRET =
+  process.env.SESSION_SECRET || randomBytes(32).toString("hex");
 app.set("trust proxy", 1);
-app.use(session({
-  secret: SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: storage.sessionStore,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 1 día
-  }
-}));
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: storage.sessionStore,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 1 día
+    },
+  }),
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Ensure uploads directory exists and serve static files
-const uploadsDir = path.join(__dirname, '../uploads');
+const uploadsDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use("/uploads", express.static(uploadsDir));
 
 app.use((req, res, next) => {
   // Servir archivos estáticos del frontend
-  const clientBuildPath = path.join(__dirname, '../client/dist');
+  const clientBuildPath = path.join(__dirname, "../client/dist");
   app.use(express.static(clientBuildPath));
 
   // Para SPA: redirige todo lo que no sea API a index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
   });
   const start = Date.now();
   const requestPath = req.path;
@@ -110,11 +111,13 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+    },
+    () => {
+      log(`serving on port ${port}`);
+    },
+  );
 })();

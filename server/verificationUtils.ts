@@ -3,7 +3,7 @@ import { randomInt, randomBytes, createHash, timingSafeEqual } from "crypto";
 /**
  * Generates a cryptographically secure random 6-digit verification code.
  * Leading zeros are preserved (e.g., "012345").
- * 
+ *
  * @returns A 6-digit string verification code
  */
 export function generateVerificationCode(): string {
@@ -16,7 +16,7 @@ export function generateVerificationCode(): string {
 /**
  * Hashes a verification code using SHA256 with a random salt.
  * The salt is appended to the hash for later verification.
- * 
+ *
  * @param code - The plain text verification code to hash
  * @returns A string in format `${hash}.${salt}` for storage
  */
@@ -31,19 +31,22 @@ export function hashVerificationCode(code: string): string {
 /**
  * Verifies if a supplied code matches a stored hash using timing-safe comparison.
  * This prevents timing attacks by ensuring constant-time comparison.
- * 
+ *
  * @param suppliedCode - The plain text code provided by the user
  * @param storedHash - The stored hash in format `${hash}.${salt}`
  * @returns true if the codes match, false otherwise
  */
-export function verifyCodeMatch(suppliedCode: string, storedHash: string): boolean {
+export function verifyCodeMatch(
+  suppliedCode: string,
+  storedHash: string,
+): boolean {
   // Handle edge cases
   if (!suppliedCode || !storedHash || !storedHash.includes(".")) {
     return false;
   }
 
   const [storedHashValue, salt] = storedHash.split(".");
-  
+
   // Validate extracted values
   if (!storedHashValue || !salt) {
     return false;
@@ -68,7 +71,7 @@ export function verifyCodeMatch(suppliedCode: string, storedHash: string): boole
 
 /**
  * Checks if a verification code has expired.
- * 
+ *
  * @param expiresAt - The expiration date of the verification code
  * @returns true if the code is expired, false if still valid
  */
@@ -79,7 +82,7 @@ export function isCodeExpired(expiresAt: Date): boolean {
 /**
  * Generates a cryptographically secure random token for one-click email verification.
  * The token is URL-safe and contains 32 bytes (64 hex characters).
- * 
+ *
  * @returns A 64-character hexadecimal string token
  */
 export function generateVerificationToken(): string {

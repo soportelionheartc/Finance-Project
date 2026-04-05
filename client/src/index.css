@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@plugin '@tailwindcss/typography';
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -215,25 +215,25 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-    button:not(:disabled),
+  button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-    dialog {
+  dialog {
     margin: auto;
   }
-    ::-webkit-scrollbar {
-      width: 7px;
-    }
-  
-    ::-webkit-scrollbar-thumb {
-      background: #ffaa00;
-      border-radius: 8px;
-    }
-  
-    ::-webkit-scrollbar-thumb:hover {
-      background: #ff8c00;
-    }
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ffaa00;
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ff8c00;
+  }
 }
 
 @layer utilities {
@@ -340,7 +340,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-black text-foreground;
+    @apply text-foreground bg-black font-sans antialiased;
   }
 
   h1,
@@ -354,7 +354,7 @@
 
   .card,
   .accordion-item {
-    @apply bg-zinc-950 border-zinc-800;
+    @apply border-zinc-800 bg-zinc-950;
   }
 
   button {
@@ -362,14 +362,14 @@
   }
 
   .button-primary {
-    @apply bg-primary text-black font-bold;
+    @apply bg-primary font-bold text-black;
   }
   .button-primary:hover {
     background-color: hsl(var(--primary) / 0.9);
   }
 
   .logo-text {
-    @apply text-primary uppercase tracking-wider font-bold;
+    @apply text-primary font-bold tracking-wider uppercase;
   }
 
   .section-title {

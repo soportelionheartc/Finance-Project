@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 export const TradingStrategies = () => {
   const { toast } = useToast();
-  
+
   const { data: strategies = [], isLoading } = useQuery<Strategy[]>({
     queryKey: ["/api/strategies"],
   });
@@ -21,15 +21,16 @@ export const TradingStrategies = () => {
       return await res.json();
     },
     onSuccess: (newStrategy) => {
-      queryClient.setQueryData(["/api/strategies"], (oldData: Strategy[] = []) => [
-        ...oldData,
-        newStrategy,
-      ]);
+      queryClient.setQueryData(
+        ["/api/strategies"],
+        (oldData: Strategy[] = []) => [...oldData, newStrategy],
+      );
     },
     onError: (error) => {
       toast({
         title: "Error al crear estrategia",
-        description: error.message || "Ha ocurrido un error. Intenta de nuevo más tarde.",
+        description:
+          error.message || "Ha ocurrido un error. Intenta de nuevo más tarde.",
         variant: "destructive",
       });
     },
@@ -41,27 +42,29 @@ export const TradingStrategies = () => {
       const sampleStrategies = [
         {
           name: "Rebalanceo de Portafolio",
-          description: "Basado en tu perfil de riesgo, sugerimos aumentar exposición a ETFs tecnológicos en un 5%.",
+          description:
+            "Basado en tu perfil de riesgo, sugerimos aumentar exposición a ETFs tecnológicos en un 5%.",
           parameters: {
             riskProfile: "moderate",
             recommendations: [
-              { assetType: "etf", sector: "technology", changePercentage: 5 }
-            ]
+              { assetType: "etf", sector: "technology", changePercentage: 5 },
+            ],
           },
-          active: false
+          active: false,
         },
         {
           name: "Trading Algorítmico",
-          description: "Implementa nuestra estrategia de medias móviles para Bitcoin con un rendimiento histórico del 18% anual.",
+          description:
+            "Implementa nuestra estrategia de medias móviles para Bitcoin con un rendimiento histórico del 18% anual.",
           parameters: {
             asset: "BTC/USD",
             strategy: "movingAverage",
             shortPeriod: 9,
             longPeriod: 21,
-            historicalReturn: 18
+            historicalReturn: 18,
           },
-          active: false
-        }
+          active: false,
+        },
       ];
 
       // Create strategies one by one with a delay
@@ -79,44 +82,57 @@ export const TradingStrategies = () => {
       return await res.json();
     },
     onSuccess: (updatedStrategy) => {
-      queryClient.setQueryData(["/api/strategies"], (oldData: Strategy[] = []) => 
-        oldData.map(strategy => 
-          strategy.id === updatedStrategy.id ? updatedStrategy : strategy
-        )
+      queryClient.setQueryData(
+        ["/api/strategies"],
+        (oldData: Strategy[] = []) =>
+          oldData.map((strategy) =>
+            strategy.id === updatedStrategy.id ? updatedStrategy : strategy,
+          ),
       );
-      
+
       toast({
-        title: updatedStrategy.active ? "Estrategia activada" : "Estrategia desactivada",
+        title: updatedStrategy.active
+          ? "Estrategia activada"
+          : "Estrategia desactivada",
         description: `La estrategia ha sido ${updatedStrategy.active ? "activada" : "desactivada"} correctamente.`,
       });
     },
     onError: (error) => {
       toast({
         title: "Error al actualizar estrategia",
-        description: error.message || "Ha ocurrido un error. Intenta de nuevo más tarde.",
+        description:
+          error.message || "Ha ocurrido un error. Intenta de nuevo más tarde.",
         variant: "destructive",
       });
     },
   });
 
   return (
-    <Card className="bg-primary border-gray-800 mb-6">
+    <Card className="bg-primary mb-6 border-gray-800">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-lg">Estrategias Recomendadas</CardTitle>
-        <Badge variant="outline" className="bg-transparent border-yellow-500 text-yellow-500">
-          <BrainCircuit className="h-3 w-3 mr-1" />
+        <Badge
+          variant="outline"
+          className="border-yellow-500 bg-transparent text-yellow-500"
+        >
+          <BrainCircuit className="mr-1 h-3 w-3" />
           IA Powered
         </Badge>
       </CardHeader>
       <CardContent className="space-y-3">
         {strategies.map((strategy) => (
-          <div key={strategy.id} className="bg-primary-light p-3 rounded-md">
-            <div className="flex justify-between mb-2">
+          <div key={strategy.id} className="bg-primary-light rounded-md p-3">
+            <div className="mb-2 flex justify-between">
               <h4 className="font-medium">{strategy.name}</h4>
-              <Button 
-                variant="link" 
-                className="text-xs text-yellow-500 p-0 h-auto"
-                onClick={() => activateStrategyMutation.mutate({ id: strategy.id, active: !strategy.active })}
+              <Button
+                variant="link"
+                className="h-auto p-0 text-xs text-yellow-500"
+                onClick={() =>
+                  activateStrategyMutation.mutate({
+                    id: strategy.id,
+                    active: !strategy.active,
+                  })
+                }
               >
                 {strategy.active ? "Desactivar" : "Aplicar"}
               </Button>
@@ -124,16 +140,18 @@ export const TradingStrategies = () => {
             <p className="text-sm text-gray-400">{strategy.description}</p>
           </div>
         ))}
-        
+
         {strategies.length === 0 && isLoading && (
-          <div className="bg-primary-light p-3 rounded-md">
+          <div className="bg-primary-light rounded-md p-3">
             <p className="text-sm text-gray-400">Cargando estrategias...</p>
           </div>
         )}
-        
+
         {strategies.length === 0 && !isLoading && (
-          <div className="bg-primary-light p-3 rounded-md">
-            <p className="text-sm text-gray-400">No hay estrategias disponibles.</p>
+          <div className="bg-primary-light rounded-md p-3">
+            <p className="text-sm text-gray-400">
+              No hay estrategias disponibles.
+            </p>
           </div>
         )}
       </CardContent>

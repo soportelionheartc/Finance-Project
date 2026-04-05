@@ -74,10 +74,12 @@ export function TrueFalse({
   };
 
   if (finished) {
-    const minPoints = level?.minPointsToPass ?? questions.length; 
+    const minPoints = level?.minPointsToPass ?? questions.length;
     const passed = score >= minPoints;
 
-      alert(`Puntaje: ${score}/${questions.length} - ${passed ? "Nivel aprobado 🎉" : "No alcanzaste el mínimo ❌"}`);
+    alert(
+      `Puntaje: ${score}/${questions.length} - ${passed ? "Nivel aprobado 🎉" : "No alcanzaste el mínimo ❌"}`,
+    );
 
     return (
       <div className="p-6">
@@ -92,7 +94,7 @@ export function TrueFalse({
             if (onLevelComplete) onLevelComplete(score);
             onBack();
           }}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded"
+          className="bg-primary mt-4 rounded px-4 py-2 text-white"
         >
           Volver
         </button>
@@ -102,33 +104,34 @@ export function TrueFalse({
 
   return (
     <div className="p-6">
-       {/* BOTÓN VOLVER */}
-    <Button variant="outline" onClick={onBack}>
-      ← Volver
-    </Button>
+      {/* BOTÓN VOLVER */}
+      <Button variant="outline" onClick={onBack}>
+        ← Volver
+      </Button>
       <h2 className="text-xl font-bold">
         {juego.title} - Nivel {level?.level ?? 1}
       </h2>
       <p className="mt-4">
-        {currentQuestion ? currentQuestion.question : "No hay preguntas disponibles."}
+        {currentQuestion
+          ? currentQuestion.question
+          : "No hay preguntas disponibles."}
       </p>
       <div className="mt-4 flex gap-4">
         <button
           onClick={() => handleAnswer(true)}
           disabled={!currentQuestion}
-          className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
+          className="rounded bg-green-500 px-4 py-2 text-white disabled:opacity-50"
         >
           Verdadero
         </button>
         <button
           onClick={() => handleAnswer(false)}
           disabled={!currentQuestion}
-          className="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
+          className="rounded bg-red-500 px-4 py-2 text-white disabled:opacity-50"
         >
           Falso
         </button>
       </div>
-      
     </div>
   );
 }

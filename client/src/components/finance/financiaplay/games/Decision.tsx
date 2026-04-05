@@ -85,8 +85,11 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
 
   if (finished) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <Card className="border-[#FFC107]/30 bg-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-card border-[#FFC107]/30">
           <CardHeader className="text-center">
             <Trophy className="mx-auto mb-2 size-12 text-[#FFC107]" />
             <CardTitle className="text-2xl">¡Escenarios completados!</CardTitle>
@@ -128,7 +131,7 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
 
       <Progress value={timePct} className="h-2" />
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Escenario {currentIdx + 1} de {scenarios.length}
       </p>
 
@@ -142,10 +145,10 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
         >
           <Card className="border-border/50">
             <CardHeader>
-              <CardTitle className="text-base font-normal leading-relaxed">
+              <CardTitle className="text-base leading-relaxed font-normal">
                 📋 <span className="font-semibold">Situación:</span>
               </CardTitle>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 {scenario.text}
               </p>
             </CardHeader>
@@ -156,7 +159,8 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
 
                 if (selected !== null) {
                   if (idx === scenario.correct) {
-                    extraClass = "border-green-500 bg-green-500/20 text-green-300 hover:bg-green-500/20";
+                    extraClass =
+                      "border-green-500 bg-green-500/20 text-green-300 hover:bg-green-500/20";
                   } else if (idx === selected && idx !== scenario.correct) {
                     extraClass = "border-red-500 bg-red-500/20 text-red-300";
                   }
@@ -166,7 +170,7 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
                   <Button
                     key={idx}
                     variant="outline"
-                    className={`w-full justify-start whitespace-normal text-left h-auto py-3 px-4 ${extraClass}`}
+                    className={`h-auto w-full justify-start px-4 py-3 text-left whitespace-normal ${extraClass}`}
                     onClick={() => handleSelect(idx)}
                     disabled={selected !== null}
                   >
@@ -188,13 +192,17 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
                   className="mt-4 rounded-lg border border-[#FFC107]/30 bg-[#FFC107]/10 p-4 text-sm"
                 >
                   <p className="font-semibold text-[#FFC107]">Explicación:</p>
-                  <p className="mt-1 text-muted-foreground">{scenario.explain}</p>
+                  <p className="text-muted-foreground mt-1">
+                    {scenario.explain}
+                  </p>
                 </motion.div>
               )}
 
               {selected !== null && (
                 <Button onClick={handleNext} className="mt-4 w-full">
-                  {currentIdx + 1 < scenarios.length ? "Siguiente" : "Ver resultado"}
+                  {currentIdx + 1 < scenarios.length
+                    ? "Siguiente"
+                    : "Ver resultado"}
                 </Button>
               )}
             </CardContent>
@@ -202,7 +210,7 @@ export default function Decision({ game, onFinish, onBack }: DecisionProps) {
         </motion.div>
       </AnimatePresence>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-center text-sm">
         Puntaje: <span className="font-bold text-[#FFC107]">{score}</span> /{" "}
         {scenarios.length}
       </p>

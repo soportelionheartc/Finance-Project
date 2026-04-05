@@ -2,7 +2,15 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Target, Eye, Shield, Lightbulb, Users, TrendingUp } from "lucide-react";
+import {
+  ArrowLeft,
+  Target,
+  Eye,
+  Shield,
+  Lightbulb,
+  Users,
+  TrendingUp,
+} from "lucide-react";
 import { Link } from "wouter";
 import { LionLogo } from "@/assets/lion-logo";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +19,7 @@ export default function AboutPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="bg-background flex h-screen flex-col">
       <Header
         title="Quiénes Somos"
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -22,7 +30,7 @@ export default function AboutPage() {
 
         <main className="flex-1 overflow-y-auto p-4">
           <div className="mb-6">
-            <div className="flex items-center mb-6">
+            <div className="mb-6 flex items-center">
               <Link href="/">
                 <Button variant="ghost" size="icon" className="mr-2">
                   <ArrowLeft className="h-5 w-5" />
@@ -33,16 +41,16 @@ export default function AboutPage() {
           </div>
 
           <div className="mb-8 text-center">
-            <LionLogo className="w-24 h-24 mx-auto mb-4" />
+            <LionLogo className="mx-auto mb-4 h-24 w-24" />
             <h2 className="text-2xl font-bold">Zupi Fintech</h2>
-            <p className="text-gray-400 mb-6">
+            <p className="mb-6 text-gray-400">
               CONSULTORA FINANCIERA Y DE INVERSIÓN
             </p>
           </div>
 
-          <Card className="bg-primary border-gray-800 mb-6">
+          <Card className="bg-primary mb-6 border-gray-800">
             <CardContent className="pt-6">
-              <p className="text-gray-300 mb-4">
+              <p className="mb-4 text-gray-300">
                 Somos una empresa especializada en brindar soluciones
                 estratégicas financieras y de inversión. Nos enfocamos en la
                 gestión de portafolios diversificados, análisis de mercados
@@ -57,8 +65,8 @@ export default function AboutPage() {
           </Card>
 
           <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <Target className="text-yellow-500 text-xl mr-3" />
+            <div className="mb-4 flex items-center">
+              <Target className="mr-3 text-xl text-yellow-500" />
               <h3 className="text-lg font-semibold">Misión</h3>
             </div>
             <Card className="bg-primary border-gray-800">
@@ -78,8 +86,8 @@ export default function AboutPage() {
           </div>
 
           <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <Eye className="text-yellow-500 text-xl mr-3" />
+            <div className="mb-4 flex items-center">
+              <Eye className="mr-3 text-xl text-yellow-500" />
               <h3 className="text-lg font-semibold">Visión</h3>
             </div>
             <Card className="bg-primary border-gray-800">
@@ -99,16 +107,16 @@ export default function AboutPage() {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">Nuestro Equipo</h3>
+            <h3 className="mb-4 text-lg font-semibold">Nuestro Equipo</h3>
             <Card className="bg-primary border-gray-800">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center md:flex-row md:items-start">
-                  <div className="w-24 h-24 bg-gray-700 rounded-full mb-4 md:mb-0 md:mr-4 flex items-center justify-center">
+                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gray-700 md:mr-4 md:mb-0">
                     <Users className="h-10 w-10 text-gray-400" />
                   </div>
                   <div>
                     <h4 className="text-lg font-medium">Juan Pablo Arango</h4>
-                    <p className="text-yellow-500 mb-2">CEO & Founder</p>
+                    <p className="mb-2 text-yellow-500">CEO & Founder</p>
                     <p className="text-sm text-gray-300">
                       Especialista en finanzas corporativas y mercados globales
                       con más de 10 años de experiencia en gestión de
@@ -120,13 +128,13 @@ export default function AboutPage() {
             </Card>
           </div>
 
-          <Card className="bg-primary border-gray-800 mb-6">
+          <Card className="bg-primary mb-6 border-gray-800">
             <CardContent className="pt-6">
-              <h3 className="text-lg font-semibold mb-4">Nuestros Valores</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-primary-light p-4 rounded-md">
-                  <div className="flex items-center mb-2">
-                    <Shield className="text-yellow-500 mr-2 h-4 w-4" />
+              <h3 className="mb-4 text-lg font-semibold">Nuestros Valores</h3>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="bg-primary-light rounded-md p-4">
+                  <div className="mb-2 flex items-center">
+                    <Shield className="mr-2 h-4 w-4 text-yellow-500" />
                     <h4 className="font-medium">Integridad</h4>
                   </div>
                   <p className="text-sm text-gray-400">
@@ -134,9 +142,9 @@ export default function AboutPage() {
                     operaciones y relaciones con clientes.
                   </p>
                 </div>
-                <div className="bg-primary-light p-4 rounded-md">
-                  <div className="flex items-center mb-2">
-                    <Lightbulb className="text-yellow-500 mr-2 h-4 w-4" />
+                <div className="bg-primary-light rounded-md p-4">
+                  <div className="mb-2 flex items-center">
+                    <Lightbulb className="mr-2 h-4 w-4 text-yellow-500" />
                     <h4 className="font-medium">Innovación</h4>
                   </div>
                   <p className="text-sm text-gray-400">
@@ -144,9 +152,9 @@ export default function AboutPage() {
                     mejorar nuestros servicios y resultados.
                   </p>
                 </div>
-                <div className="bg-primary-light p-4 rounded-md">
-                  <div className="flex items-center mb-2">
-                    <Users className="text-yellow-500 mr-2 h-4 w-4" />
+                <div className="bg-primary-light rounded-md p-4">
+                  <div className="mb-2 flex items-center">
+                    <Users className="mr-2 h-4 w-4 text-yellow-500" />
                     <h4 className="font-medium">Enfoque al Cliente</h4>
                   </div>
                   <p className="text-sm text-gray-400">
@@ -154,9 +162,9 @@ export default function AboutPage() {
                     máxima prioridad.
                   </p>
                 </div>
-                <div className="bg-primary-light p-4 rounded-md">
-                  <div className="flex items-center mb-2">
-                    <TrendingUp className="text-yellow-500 mr-2 h-4 w-4" />
+                <div className="bg-primary-light rounded-md p-4">
+                  <div className="mb-2 flex items-center">
+                    <TrendingUp className="mr-2 h-4 w-4 text-yellow-500" />
                     <h4 className="font-medium">Excelencia</h4>
                   </div>
                   <p className="text-sm text-gray-400">

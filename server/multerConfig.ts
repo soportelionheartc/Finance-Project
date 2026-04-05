@@ -1,20 +1,20 @@
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 // Ensure uploads directory exists
-const uploadsDir = 'uploads';
+const uploadsDir = "uploads";
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Allowed MIME types
 const ALLOWED_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'application/pdf'
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "application/pdf",
 ];
 
 // File size limit (5MB)
@@ -29,23 +29,31 @@ const storage = multer.diskStorage({
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const ext = path.extname(file.originalname);
     cb(null, `${uniqueSuffix}${ext}`);
-  }
+  },
 });
 
-const fileFilter = (_req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  _req: Express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback,
+) => {
   if (ALLOWED_TYPES.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error(`Tipo de archivo no permitido. Solo se permiten: ${ALLOWED_TYPES.join(', ')}`));
+    cb(
+      new Error(
+        `Tipo de archivo no permitido. Solo se permiten: ${ALLOWED_TYPES.join(", ")}`,
+      ),
+    );
   }
 };
 
 export const upload = multer({
   storage,
   limits: {
-    fileSize: MAX_FILE_SIZE
+    fileSize: MAX_FILE_SIZE,
   },
-  fileFilter
+  fileFilter,
 });
 
 export const UPLOADS_DIR = uploadsDir;

@@ -38,22 +38,23 @@ export function VerificationBanner() {
   };
 
   return (
-    <Alert className="bg-primary/20 border-primary/50 mb-4 relative">
-      <AlertTriangle className="h-5 w-5 text-primary" />
+    <Alert className="bg-primary/20 border-primary/50 relative mb-4">
+      <AlertTriangle className="text-primary h-5 w-5" />
       <AlertDescription className="flex items-center justify-between">
         <div className="flex-1 pr-8">
-          <p className="text-white font-medium">
+          <p className="font-medium text-white">
             Por favor verifica tu correo electrónico
           </p>
-          <p className="text-gray-300 text-sm mt-1">
-            Revisa tu bandeja de entrada y confirma tu cuenta para acceder a todas las funciones.
+          <p className="mt-1 text-sm text-gray-300">
+            Revisa tu bandeja de entrada y confirma tu cuenta para acceder a
+            todas las funciones.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
             onClick={handleVerify}
             size="sm"
-            className="bg-primary hover:bg-primary/90 text-black font-semibold"
+            className="bg-primary hover:bg-primary/90 font-semibold text-black"
           >
             Verificar ahora
           </Button>
@@ -61,7 +62,7 @@ export function VerificationBanner() {
             onClick={handleDismiss}
             size="icon"
             variant="ghost"
-            className="h-8 w-8 text-gray-400 hover:text-white hover:bg-zinc-800"
+            className="h-8 w-8 text-gray-400 hover:bg-zinc-800 hover:text-white"
           >
             <X className="h-4 w-4" />
           </Button>

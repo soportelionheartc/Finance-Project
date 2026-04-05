@@ -82,7 +82,7 @@ import {
   PieChart,
   Grid3X3,
   Filter,
-  Download
+  Download,
 } from "lucide-react";
 
 import { useEffect } from "react";
@@ -118,22 +118,48 @@ export default function AdminPage() {
     fetchTotalUsers();
   }, []);
   const stats = [
-    { id: 1, title: "Usuarios Totales", value: totalUsers, icon: <Users className="h-5 w-5 text-primary" />, change: "" },
-    { id: 2, title: "Accesos Diarios", value: "38", icon: <Activity className="h-5 w-5 text-primary" />, change: "+8% vs. ayer" },
-    { id: 3, title: "Retención", value: "76%", icon: <UsersRound className="h-5 w-5 text-primary" />, change: "+2% este mes" },
-    { id: 4, title: "Premium", value: "16", icon: <Shield className="h-5 w-5 text-primary" />, change: "+3 nuevos" },
+    {
+      id: 1,
+      title: "Usuarios Totales",
+      value: totalUsers,
+      icon: <Users className="text-primary h-5 w-5" />,
+      change: "",
+    },
+    {
+      id: 2,
+      title: "Accesos Diarios",
+      value: "38",
+      icon: <Activity className="text-primary h-5 w-5" />,
+      change: "+8% vs. ayer",
+    },
+    {
+      id: 3,
+      title: "Retención",
+      value: "76%",
+      icon: <UsersRound className="text-primary h-5 w-5" />,
+      change: "+2% este mes",
+    },
+    {
+      id: 4,
+      title: "Premium",
+      value: "16",
+      icon: <Shield className="text-primary h-5 w-5" />,
+      change: "+3 nuevos",
+    },
   ];
 
   // Usuarios (estado)
-  const [users, setUsers] = useState<Array<{
-    id: number;
-    username: string;
-    name: string;
-    role: "user" | "admin";
-    status: "active" | "inactive";
-    lastLogin: string;
-    email: string;
-  }>>([]);
+  const [users, setUsers] = useState<
+    Array<{
+      id: number;
+      username: string;
+      name: string;
+      role: "user" | "admin";
+      status: "active" | "inactive";
+      lastLogin: string;
+      email: string;
+    }>
+  >([]);
 
   // Cargar usuarios desde la API al montar
   useEffect(() => {
@@ -150,9 +176,11 @@ export default function AdminPage() {
             name: u.name,
             role: u.role || (u.username === "jplhc" ? "admin" : "user"),
             status: "active", // Puedes ajustar según tu modelo
-            lastLogin: u.lastLogin ? new Date(u.lastLogin).toLocaleString() : "-",
+            lastLogin: u.lastLogin
+              ? new Date(u.lastLogin).toLocaleString()
+              : "-",
             email: u.email,
-          }))
+          })),
         );
       } catch (err) {
         // Si hay error, dejar usuarios vacío
@@ -161,7 +189,6 @@ export default function AdminPage() {
     }
     fetchUsers();
   }, []);
-
 
   // Formulario nuevo usuario
   const [isCreating, setIsCreating] = useState(false);
@@ -175,19 +202,22 @@ export default function AdminPage() {
   const [creationSuccess, setCreationSuccess] = useState(false);
 
   // Selección de usuarios (local, no persistente)
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(new Set());
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<number>>(
+    new Set(),
+  );
 
   const toggleUserSelection = (id: number) => {
-    setSelectedUserIds(prev => {
+    setSelectedUserIds((prev) => {
       const copy = new Set(prev);
-      if (copy.has(id)) copy.delete(id); else copy.add(id);
+      if (copy.has(id)) copy.delete(id);
+      else copy.add(id);
       return copy;
     });
   };
 
   const toggleSelectAll = (checked: boolean) => {
     if (checked) {
-      const ids = filteredUsers.map(u => u.id);
+      const ids = filteredUsers.map((u) => u.id);
       setSelectedUserIds(new Set(ids));
     } else {
       setSelectedUserIds(new Set());
@@ -203,12 +233,12 @@ export default function AdminPage() {
           method: "DELETE",
           credentials: "include",
         });
-      })
-  );
-  // Actualizar la lista local
-  setUsers(prev => prev.filter(u => !selectedUserIds.has(u.id)));
-  setSelectedUserIds(new Set());
-};
+      }),
+    );
+    // Actualizar la lista local
+    setUsers((prev) => prev.filter((u) => !selectedUserIds.has(u.id)));
+    setSelectedUserIds(new Set());
+  };
 
   const canSubmitNewUser = newUser.name && newUser.username && newUser.email;
 
@@ -238,7 +268,9 @@ export default function AdminPage() {
             email: user.email,
             role: user.role || (user.username === "jplhc" ? "admin" : "user"),
             status: "active",
-            lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "-",
+            lastLogin: user.lastLogin
+              ? new Date(user.lastLogin).toLocaleString()
+              : "-",
           },
         ]);
         setCreationSuccess(true);
@@ -253,11 +285,11 @@ export default function AdminPage() {
     if (!newUser.name) return;
     const suggestion = newUser.name
       .toLowerCase()
-      .normalize('NFD')
-      .replace(/[^a-z\s]/g, '')
+      .normalize("NFD")
+      .replace(/[^a-z\s]/g, "")
       .trim()
-      .replace(/\s+/g, '_');
-    setNewUser(u => ({ ...u, username: suggestion }));
+      .replace(/\s+/g, "_");
+    setNewUser((u) => ({ ...u, username: suggestion }));
   };
 
   const filteredUsers = users.filter((u) => {
@@ -278,34 +310,73 @@ export default function AdminPage() {
 
   // Alertas del sistema
   const alerts = [
-    { id: 1, type: "error", message: "Error de conexión a API de mercados", time: "10:25 AM" },
-    { id: 2, type: "warning", message: "Uso de CPU alto (85%)", time: "09:15 AM" },
-    { id: 3, type: "info", message: "Actualización de precios completada", time: "08:30 AM" },
-    { id: 4, type: "success", message: "Backup automático completado", time: "04:00 AM" },
+    {
+      id: 1,
+      type: "error",
+      message: "Error de conexión a API de mercados",
+      time: "10:25 AM",
+    },
+    {
+      id: 2,
+      type: "warning",
+      message: "Uso de CPU alto (85%)",
+      time: "09:15 AM",
+    },
+    {
+      id: 3,
+      type: "info",
+      message: "Actualización de precios completada",
+      time: "08:30 AM",
+    },
+    {
+      id: 4,
+      type: "success",
+      message: "Backup automático completado",
+      time: "04:00 AM",
+    },
   ];
 
   // Reportes disponibles
   const reports = [
-    { id: 1, name: "Usuarios Activos - Abril 2025", format: "PDF", date: "01/04/2025" },
-    { id: 2, name: "Métricas de Uso - Q1 2025", format: "Excel", date: "31/03/2025" },
+    {
+      id: 1,
+      name: "Usuarios Activos - Abril 2025",
+      format: "PDF",
+      date: "01/04/2025",
+    },
+    {
+      id: 2,
+      name: "Métricas de Uso - Q1 2025",
+      format: "Excel",
+      date: "31/03/2025",
+    },
     { id: 3, name: "Análisis de Retención", format: "PDF", date: "28/03/2025" },
     { id: 4, name: "Reporte Financiero", format: "Excel", date: "15/03/2025" },
   ];
 
   if (!isAdmin) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="bg-background flex min-h-screen items-center justify-center">
         <Card className="w-[450px]">
           <CardHeader>
-            <CardTitle className="text-xl text-center">Acceso Restringido</CardTitle>
+            <CardTitle className="text-center text-xl">
+              Acceso Restringido
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-3" />
-            <p className="mb-2">No tienes permiso para acceder al panel de administración.</p>
-            <p className="text-sm text-muted-foreground">Este panel es exclusivo para administradores.</p>
+            <AlertCircle className="text-destructive mx-auto mb-3 h-12 w-12" />
+            <p className="mb-2">
+              No tienes permiso para acceder al panel de administración.
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Este panel es exclusivo para administradores.
+            </p>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button variant="outline" onClick={() => window.location.href = "/dashboard"}>
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = "/dashboard")}
+            >
               Volver al Dashboard
             </Button>
           </CardFooter>
@@ -315,12 +386,12 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="bg-background flex min-h-screen flex-col">
       <Header title="Panel de Administración" />
 
-      <main className="flex-1 container mx-auto px-4 py-6">
-        <div className="flex flex-col items-center justify-center space-y-2 mb-6">
-          <h1 className="text-4xl font-bold text-primary text-center bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent tracking-tight">
+      <main className="container mx-auto flex-1 px-4 py-6">
+        <div className="mb-6 flex flex-col items-center justify-center space-y-2">
+          <h1 className="text-primary bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-center text-4xl font-bold tracking-tight text-transparent">
             Panel de Administración
           </h1>
           <p className="text-muted-foreground text-center">
@@ -343,9 +414,9 @@ export default function AdminPage() {
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {stats.map((stat) => (
-                <Card key={stat.id} className="bg-zinc-900 border-zinc-800">
+                <Card key={stat.id} className="border-zinc-800 bg-zinc-900">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">
                       {stat.title}
@@ -353,10 +424,10 @@ export default function AdminPage() {
                     {stat.icon}
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-primary">
+                    <div className="text-primary text-2xl font-bold">
                       {stat.value}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-muted-foreground mt-1 text-xs">
                       {stat.change}
                     </p>
                   </CardContent>
@@ -364,51 +435,51 @@ export default function AdminPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-zinc-950 border-zinc-800">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Card className="border-zinc-800 bg-zinc-950">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-medium">
                       Actividad de Usuarios
                     </CardTitle>
-                    <AreaChart className="h-4 w-4 text-primary" />
+                    <AreaChart className="text-primary h-4 w-4" />
                   </div>
                   <CardDescription>
                     Actividad diaria en la plataforma
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="h-[220px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
+                <CardContent className="flex h-[220px] items-center justify-center">
+                  <p className="text-muted-foreground text-sm">
                     [Gráfica de actividad - Datos en tiempo real]
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-zinc-950 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-950">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-medium">
                       Distribución de Usuarios
                     </CardTitle>
-                    <PieChart className="h-4 w-4 text-primary" />
+                    <PieChart className="text-primary h-4 w-4" />
                   </div>
                   <CardDescription>Por tipo de cuenta y estado</CardDescription>
                 </CardHeader>
-                <CardContent className="h-[220px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
+                <CardContent className="flex h-[220px] items-center justify-center">
+                  <p className="text-muted-foreground text-sm">
                     [Gráfica de distribución - Actualizada 01/04/2025]
                   </p>
                 </CardContent>
               </Card>
             </div>
 
-            <Card className="bg-zinc-950 border-zinc-800">
+            <Card className="border-zinc-800 bg-zinc-950">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base font-medium">
                     Alertas del Sistema
                   </CardTitle>
-                  <Bell className="h-4 w-4 text-primary" />
+                  <Bell className="text-primary h-4 w-4" />
                 </div>
                 <CardDescription>
                   Últimas notificaciones de la plataforma
@@ -419,7 +490,7 @@ export default function AdminPage() {
                   {alerts.map((alert) => (
                     <div
                       key={alert.id}
-                      className="flex items-start justify-between p-3 rounded-md bg-zinc-900"
+                      className="flex items-start justify-between rounded-md bg-zinc-900 p-3"
                     >
                       <div className="flex items-start gap-3">
                         <div
@@ -437,7 +508,7 @@ export default function AdminPage() {
                         </div>
                         <div>
                           <p className="text-sm font-medium">{alert.message}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             {alert.time}
                           </p>
                         </div>
@@ -470,18 +541,18 @@ export default function AdminPage() {
 
           {/* Users Tab */}
           <TabsContent value="users" className="space-y-6">
-            <div className="w-full flex flex-col items-center justify-center mb-8">
-              <div className="w-full max-w-4xl flex flex-col items-center justify-center gap-4 px-6 py-4 bg-zinc-900 rounded-xl border border-yellow-600/30 shadow-[0_2px_16px_0_rgba(255,215,0,0.10)]">
-                <div className="w-full flex flex-col lg:flex-row items-center justify-between">
-                  <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                    <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+            <div className="mb-8 flex w-full flex-col items-center justify-center">
+              <div className="flex w-full max-w-4xl flex-col items-center justify-center gap-4 rounded-xl border border-yellow-600/30 bg-zinc-900 px-6 py-4 shadow-[0_2px_16px_0_rgba(255,215,0,0.10)]">
+                <div className="flex w-full flex-col items-center justify-between lg:flex-row">
+                  <div className="flex flex-col items-center justify-center text-center lg:items-start lg:text-left">
+                    <h2 className="text-gradient mb-0 bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-xl font-bold text-transparent">
                       Gestión de Usuarios
                     </h2>
-                    <p className="text-sm text-gray-300 mb-4">
+                    <p className="mb-4 text-sm text-gray-300">
                       Administra los usuarios de la plataforma
                     </p>
                   </div>
-                  <div className="flex gap-2 mt-0 lg:mt-0">
+                  <div className="mt-0 flex gap-2 lg:mt-0">
                     <Dialog
                       open={isCreating}
                       onOpenChange={(open) => {
@@ -500,7 +571,7 @@ export default function AdminPage() {
                       }}
                     >
                       <DialogTrigger asChild>
-                        <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-2 px-3 py-0.5 text-sm">
+                        <Button className="flex items-center gap-2 bg-yellow-600 px-3 py-0.5 text-sm font-semibold text-black hover:bg-yellow-500">
                           <span className="mr-1">
                             <svg
                               width="16"
@@ -636,13 +707,13 @@ export default function AdminPage() {
                           </>
                         )}
                         {creationSuccess && (
-                          <div className="py-6 flex flex-col items-center text-center gap-4">
+                          <div className="flex flex-col items-center gap-4 py-6 text-center">
                             <CheckCircle2 className="h-12 w-12 text-green-500" />
                             <div>
-                              <h3 className="text-lg font-semibold mb-1">
+                              <h3 className="mb-1 text-lg font-semibold">
                                 Usuario creado correctamente
                               </h3>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-muted-foreground text-sm">
                                 El usuario se añadió a la lista (datos no
                                 persistentes aún).
                               </p>
@@ -688,7 +759,7 @@ export default function AdminPage() {
                       <AlertDialogTrigger asChild>
                         <Button
                           disabled={selectedUserIds.size === 0}
-                          className="bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold flex items-center gap-2 px-3 py-0.5 text-sm"
+                          className="flex items-center gap-2 bg-red-600 px-3 py-0.5 text-sm font-semibold text-white hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <span className="mr-1">
                             <svg
@@ -731,12 +802,12 @@ export default function AdminPage() {
                     </AlertDialog>
                   </div>
                 </div>
-                <div className="w-full flex justify-center mt-0">
+                <div className="mt-0 flex w-full justify-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
-                        className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-2 px-3 py-0.5 text-sm"
+                        className="flex items-center gap-2 border-yellow-600 px-3 py-0.5 text-sm font-medium text-yellow-600"
                       >
                         <span className="mr-1">
                           <svg
@@ -757,7 +828,7 @@ export default function AdminPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-72 p-2">
                       <div className="px-2 py-1.5">
-                        <p className="text-xs text-muted-foreground mb-1">
+                        <p className="text-muted-foreground mb-1 text-xs">
                           Búsqueda
                         </p>
                         <Input
@@ -815,7 +886,7 @@ export default function AdminPage() {
 
                       <DropdownMenuSeparator />
                       <div className="flex items-center justify-between px-2 py-1.5">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           Resultados: {filteredUsers.length}
                         </span>
                         <Button
@@ -874,7 +945,7 @@ export default function AdminPage() {
                       <TableCell className="font-medium">
                         <div className="flex flex-col">
                           <span>{user.name}</span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             @{user.username}
                           </span>
                         </div>
@@ -892,7 +963,9 @@ export default function AdminPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            user.status === "active" ? "outline-solid" : "destructive"
+                            user.status === "active"
+                              ? "outline-solid"
+                              : "destructive"
                           }
                         >
                           {user.status === "active" ? "Activo" : "Inactivo"}
@@ -906,7 +979,7 @@ export default function AdminPage() {
                           </Button>
                           <Button variant="ghost" size="icon">
                             {user.status === "active" ? (
-                              <EyeOff className="h-4 w-4 text-destructive" />
+                              <EyeOff className="text-destructive h-4 w-4" />
                             ) : (
                               <Eye className="h-4 w-4 text-green-500" />
                             )}
@@ -928,44 +1001,44 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-4 bg-muted/20 p-3 rounded-md">
-                    <div className="bg-primary/20 p-2 rounded-full">
-                      <UsersRound className="h-4 w-4 text-primary" />
+                  <div className="bg-muted/20 flex items-start gap-4 rounded-md p-3">
+                    <div className="bg-primary/20 rounded-full p-2">
+                      <UsersRound className="text-primary h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-sm">
                         <span className="font-medium">María Gómez</span> ha
                         iniciado sesión en la plataforma
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Hace 1 hora
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 bg-muted/20 p-3 rounded-md">
-                    <div className="bg-primary/20 p-2 rounded-full">
-                      <Settings className="h-4 w-4 text-primary" />
+                  <div className="bg-muted/20 flex items-start gap-4 rounded-md p-3">
+                    <div className="bg-primary/20 rounded-full p-2">
+                      <Settings className="text-primary h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-sm">
                         <span className="font-medium">Carlos Rodríguez</span> ha
                         actualizado su perfil
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Hace 3 horas
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 bg-muted/20 p-3 rounded-md">
-                    <div className="bg-primary/20 p-2 rounded-full">
-                      <Shield className="h-4 w-4 text-primary" />
+                  <div className="bg-muted/20 flex items-start gap-4 rounded-md p-3">
+                    <div className="bg-primary/20 rounded-full p-2">
+                      <Shield className="text-primary h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-sm">
                         <span className="font-medium">Juan Pablo López</span> ha
                         realizado cambios en los permisos
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Hace 5 horas
                       </p>
                     </div>
@@ -982,58 +1055,58 @@ export default function AdminPage() {
 
           {/* System Tab */}
           <TabsContent value="system" className="space-y-6">
-            <div className="w-full flex flex-col items-center justify-center mb-8">
-              <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
-                <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                  <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+            <div className="mb-8 flex w-full flex-col items-center justify-center">
+              <div className="flex w-full max-w-3xl flex-col items-center justify-between gap-4 rounded-lg border border-yellow-600/30 bg-zinc-900 px-4 py-3 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)] lg:flex-row">
+                <div className="flex flex-col items-center justify-center text-center lg:items-start lg:text-left">
+                  <h2 className="text-gradient mb-0 bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-xl font-bold text-transparent">
                     Gestión del Sistema
                   </h2>
-                  <p className="text-sm text-gray-300 mb-0">
+                  <p className="mb-0 text-sm text-gray-300">
                     Administra la configuración y el estado del sistema
                   </p>
                 </div>
-                <div className="flex mt-0 lg:mt-0">
+                <div className="mt-0 flex lg:mt-0">
                   <Button
                     variant="outline"
-                    className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-1 px-3 py-0.5 text-sm"
+                    className="flex items-center gap-1 border-yellow-600 px-3 py-0.5 text-sm font-medium text-yellow-600"
                   >
-                    <Settings className="h-4 w-4 mr-2" />
+                    <Settings className="mr-2 h-4 w-4" />
                     Configuración
                   </Button>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card className="bg-zinc-900 border-zinc-800">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">CPU</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary">32%</div>
-                  <p className="text-xs text-muted-foreground mt-1">Normal</p>
+                  <div className="text-primary text-2xl font-bold">32%</div>
+                  <p className="text-muted-foreground mt-1 text-xs">Normal</p>
                 </CardContent>
               </Card>
-              <Card className="bg-zinc-900 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">Memoria</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary">64%</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-primary text-2xl font-bold">64%</div>
+                  <p className="text-muted-foreground mt-1 text-xs">
                     4.2GB/8GB
                   </p>
                 </CardContent>
               </Card>
-              <Card className="bg-zinc-900 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-900">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">
                     Almacenamiento
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-primary">45%</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-primary text-2xl font-bold">45%</div>
+                  <p className="text-muted-foreground mt-1 text-xs">
                     112GB/250GB
                   </p>
                 </CardContent>
@@ -1049,39 +1122,39 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div className="flex items-center gap-3">
                       <div className="h-2 w-2 rounded-full bg-green-500"></div>
                       <span className="font-medium">Yahoo Finance</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       Última sincronización: 12:30 PM
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div className="flex items-center gap-3">
                       <div className="h-2 w-2 rounded-full bg-green-500"></div>
                       <span className="font-medium">CoinMarket</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       Última sincronización: 12:35 PM
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div className="flex items-center gap-3">
                       <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
                       <span className="font-medium">CNBC</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       Última sincronización: 11:45 AM
                     </div>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div className="flex items-center gap-3">
                       <div className="h-2 w-2 rounded-full bg-red-500"></div>
                       <span className="font-medium">Investing.com</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       Error de conexión
                     </div>
                   </div>
@@ -1103,37 +1176,37 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div>
                       <p className="font-medium">Backup automático</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Diario a las 4:00 AM
                       </p>
                     </div>
                     <Badge variant="outline">Activo</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div>
                       <p className="font-medium">Actualización de precios</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Cada 15 minutos
                       </p>
                     </div>
                     <Badge variant="outline">Activo</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div>
                       <p className="font-medium">Limpieza de caché</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Cada 48 horas
                       </p>
                     </div>
                     <Badge variant="outline">Activo</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-muted/20 rounded-md">
+                  <div className="bg-muted/20 flex items-center justify-between rounded-md p-3">
                     <div>
                       <p className="font-medium">Envío de reportes</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Semanal - Lunes 8:00 AM
                       </p>
                     </div>
@@ -1146,20 +1219,20 @@ export default function AdminPage() {
 
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
-            <div className="w-full flex flex-col items-center justify-center mb-8">
-              <div className="w-full max-w-3xl flex flex-col lg:flex-row items-center justify-between gap-4 px-4 py-3 bg-zinc-900 rounded-lg border border-yellow-600/30 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)]">
-                <div className="flex flex-col items-center lg:items-start text-center lg:text-left justify-center">
-                  <h2 className="text-xl font-bold text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent mb-0">
+            <div className="mb-8 flex w-full flex-col items-center justify-center">
+              <div className="flex w-full max-w-3xl flex-col items-center justify-between gap-4 rounded-lg border border-yellow-600/30 bg-zinc-900 px-4 py-3 shadow-[0_2px_12px_0_rgba(255,215,0,0.08)] lg:flex-row">
+                <div className="flex flex-col items-center justify-center text-center lg:items-start lg:text-left">
+                  <h2 className="text-gradient mb-0 bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-xl font-bold text-transparent">
                     Reportes y Análisis
                   </h2>
-                  <p className="text-sm text-gray-300 mb-0">
+                  <p className="mb-0 text-sm text-gray-300">
                     Informes y métricas de la plataforma
                   </p>
                 </div>
-                <div className="flex gap-2 mt-0 lg:mt-0">
+                <div className="mt-0 flex gap-2 lg:mt-0">
                   <Button
                     variant="outline"
-                    className="border-yellow-600 text-yellow-600 font-medium flex items-center gap-1 px-3 py-0.5 text-sm"
+                    className="flex items-center gap-1 border-yellow-600 px-3 py-0.5 text-sm font-medium text-yellow-600"
                   >
                     <span className="mr-1">
                       <svg
@@ -1177,7 +1250,7 @@ export default function AdminPage() {
                     </span>
                     Todos los reportes
                   </Button>
-                  <Button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold flex items-center gap-1 px-3 py-0.5 text-sm">
+                  <Button className="flex items-center gap-1 bg-yellow-600 px-3 py-0.5 text-sm font-semibold text-black hover:bg-yellow-500">
                     <span className="mr-1">
                       <svg
                         width="14"
@@ -1198,36 +1271,36 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-zinc-950 border-zinc-800">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Card className="border-zinc-800 bg-zinc-950">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-medium">
                       Usuarios Activos
                     </CardTitle>
-                    <LineChart className="h-4 w-4 text-primary" />
+                    <LineChart className="text-primary h-4 w-4" />
                   </div>
                   <CardDescription>Últimos 30 días</CardDescription>
                 </CardHeader>
-                <CardContent className="h-[250px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
+                <CardContent className="flex h-[250px] items-center justify-center">
+                  <p className="text-muted-foreground text-sm">
                     [Gráfica de tendencia - Actualizada hoy]
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-zinc-950 border-zinc-800">
+              <Card className="border-zinc-800 bg-zinc-950">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base font-medium">
                       Distribución por Funcionalidad
                     </CardTitle>
-                    <BarChart3 className="h-4 w-4 text-primary" />
+                    <BarChart3 className="text-primary h-4 w-4" />
                   </div>
                   <CardDescription>Uso de características</CardDescription>
                 </CardHeader>
-                <CardContent className="h-[250px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
+                <CardContent className="flex h-[250px] items-center justify-center">
+                  <p className="text-muted-foreground text-sm">
                     [Gráfica de barras - Actualizada hoy]
                   </p>
                 </CardContent>
@@ -1246,13 +1319,13 @@ export default function AdminPage() {
                   {reports.map((report) => (
                     <div
                       key={report.id}
-                      className="flex items-center justify-between p-3 bg-muted/20 rounded-md"
+                      className="bg-muted/20 flex items-center justify-between rounded-md p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <FileText className="h-4 w-4 text-primary" />
+                        <FileText className="text-primary h-4 w-4" />
                         <div>
                           <p className="font-medium">{report.name}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             Generado: {report.date}
                           </p>
                         </div>
@@ -1282,30 +1355,30 @@ export default function AdminPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-muted/20 p-4 rounded-md">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="bg-muted/20 rounded-md p-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Enviados</p>
-                      <Mail className="h-4 w-4 text-primary" />
+                      <Mail className="text-primary h-4 w-4" />
                     </div>
-                    <p className="text-2xl font-bold mt-2">124</p>
-                    <p className="text-xs text-muted-foreground">Este mes</p>
+                    <p className="mt-2 text-2xl font-bold">124</p>
+                    <p className="text-muted-foreground text-xs">Este mes</p>
                   </div>
-                  <div className="bg-muted/20 p-4 rounded-md">
+                  <div className="bg-muted/20 rounded-md p-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Abiertos</p>
-                      <Eye className="h-4 w-4 text-primary" />
+                      <Eye className="text-primary h-4 w-4" />
                     </div>
-                    <p className="text-2xl font-bold mt-2">87</p>
-                    <p className="text-xs text-muted-foreground">Tasa: 70.2%</p>
+                    <p className="mt-2 text-2xl font-bold">87</p>
+                    <p className="text-muted-foreground text-xs">Tasa: 70.2%</p>
                   </div>
-                  <div className="bg-muted/20 p-4 rounded-md">
+                  <div className="bg-muted/20 rounded-md p-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Clicks</p>
-                      <Activity className="h-4 w-4 text-primary" />
+                      <Activity className="text-primary h-4 w-4" />
                     </div>
-                    <p className="text-2xl font-bold mt-2">42</p>
-                    <p className="text-xs text-muted-foreground">Tasa: 33.9%</p>
+                    <p className="mt-2 text-2xl font-bold">42</p>
+                    <p className="text-muted-foreground text-xs">Tasa: 33.9%</p>
                   </div>
                 </div>
               </CardContent>
@@ -1314,7 +1387,7 @@ export default function AdminPage() {
         </Tabs>
       </main>
 
-      <footer className="border-t py-6 text-sm text-muted-foreground">
+      <footer className="text-muted-foreground border-t py-6 text-sm">
         <div className="container mx-auto text-center">
           <p>
             © {new Date().getFullYear()} Zupi Fintech - Panel de Administración

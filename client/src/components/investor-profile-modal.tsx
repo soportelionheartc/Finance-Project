@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { InvestorQuestionnaire } from "@/components/finance/investor-questionnaire";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -10,11 +16,14 @@ interface InvestorProfileModalProps {
   onClose: () => void;
 }
 
-export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProps) {
+export function InvestorProfileModal({
+  open,
+  onClose,
+}: InvestorProfileModalProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isCompleted, setIsCompleted] = useState(false);
-  
+
   const submitMutation = useMutation({
     mutationFn: async (answers: Record<number, number>) => {
       return apiRequest("POST", "/api/investor-profile", { answers });
@@ -34,13 +43,13 @@ export function InvestorProfileModal({ open, onClose }: InvestorProfileModalProp
         description: error.message || "No se pudo guardar tu perfil",
         variant: "destructive",
       });
-    }
+    },
   });
-  
+
   const handleClose = () => {
     onClose();
   };
-  
+
   return (
     <Dialog
       open={open}

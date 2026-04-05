@@ -28,7 +28,8 @@ router.get("/placement", ensureAuthenticated, async (req, res) => {
     }
     res.json({ hasPlacement: true, ...placement });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({ error: message });
   }
 });
@@ -40,12 +41,17 @@ router.post("/placement", ensureAuthenticated, async (req, res) => {
     const { unlockedLevel, score } = req.body;
 
     if (!unlockedLevel || !score) {
-      return res.status(400).json({ error: "Se requiere unlockedLevel y score" });
+      return res
+        .status(400)
+        .json({ error: "Se requiere unlockedLevel y score" });
     }
 
     const existing = await storage.getFinanciaplayPlacement(userId);
     if (existing) {
-      const updated = await storage.updateFinanciaplayPlacement(userId, { unlockedLevel, score });
+      const updated = await storage.updateFinanciaplayPlacement(userId, {
+        unlockedLevel,
+        score,
+      });
       return res.json(updated);
     }
 
@@ -56,7 +62,8 @@ router.post("/placement", ensureAuthenticated, async (req, res) => {
     });
     res.json(placement);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({ error: message });
   }
 });
@@ -79,7 +86,8 @@ router.get("/progress", ensureAuthenticated, async (req, res) => {
       unlockedLevel: placement?.unlockedLevel ?? null,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({ error: message });
   }
 });
@@ -97,7 +105,8 @@ router.post("/game/complete", ensureAuthenticated, async (req, res) => {
     // Calculate XP
     let xpGained = Math.round((score / maxScore) * maxScore);
     if (score === maxScore) xpGained = Math.round(xpGained * 1.2);
-    else if (timeRemainingPct && timeRemainingPct > 0.5) xpGained = Math.round(xpGained * 1.1);
+    else if (timeRemainingPct && timeRemainingPct > 0.5)
+      xpGained = Math.round(xpGained * 1.1);
 
     // Save progress
     const progress = await storage.createFinanciaplayProgress({
@@ -124,7 +133,10 @@ router.post("/game/complete", ensureAuthenticated, async (req, res) => {
     }
 
     // ⚡ Rayo — completed with >50% time remaining
-    if (timeRemainingPct > 0.5 && !(await storage.hasFinanciaplayBadge(userId, "speed_demon"))) {
+    if (
+      timeRemainingPct > 0.5 &&
+      !(await storage.hasFinanciaplayBadge(userId, "speed_demon"))
+    ) {
       await storage.createFinanciaplayBadge({ userId, badgeId: "speed_demon" });
       newBadges.push("speed_demon");
     }
@@ -132,7 +144,10 @@ router.post("/game/complete", ensureAuthenticated, async (req, res) => {
     // 🧠 Maestro del Quiz — 100% in 3 different quizzes
     const perfectQuizzes = allProgress.filter((p) => p.score === p.maxScore);
     const uniquePerfectGames = new Set(perfectQuizzes.map((p) => p.gameId));
-    if (uniquePerfectGames.size >= 3 && !(await storage.hasFinanciaplayBadge(userId, "quiz_master"))) {
+    if (
+      uniquePerfectGames.size >= 3 &&
+      !(await storage.hasFinanciaplayBadge(userId, "quiz_master"))
+    ) {
       await storage.createFinanciaplayBadge({ userId, badgeId: "quiz_master" });
       newBadges.push("quiz_master");
     }
@@ -144,28 +159,44 @@ router.post("/game/complete", ensureAuthenticated, async (req, res) => {
 
     const completedGameIds = new Set(allProgress.map((p) => p.gameId));
 
-    if (l1Games.every((g) => completedGameIds.has(g)) && !(await storage.hasFinanciaplayBadge(userId, "saver"))) {
+    if (
+      l1Games.every((g) => completedGameIds.has(g)) &&
+      !(await storage.hasFinanciaplayBadge(userId, "saver"))
+    ) {
       await storage.createFinanciaplayBadge({ userId, badgeId: "saver" });
       newBadges.push("saver");
     }
-    if (l2Games.every((g) => completedGameIds.has(g)) && !(await storage.hasFinanciaplayBadge(userId, "investor"))) {
+    if (
+      l2Games.every((g) => completedGameIds.has(g)) &&
+      !(await storage.hasFinanciaplayBadge(userId, "investor"))
+    ) {
       await storage.createFinanciaplayBadge({ userId, badgeId: "investor" });
       newBadges.push("investor");
     }
-    if (l3Games.every((g) => completedGameIds.has(g)) && !(await storage.hasFinanciaplayBadge(userId, "expert"))) {
+    if (
+      l3Games.every((g) => completedGameIds.has(g)) &&
+      !(await storage.hasFinanciaplayBadge(userId, "expert"))
+    ) {
       await storage.createFinanciaplayBadge({ userId, badgeId: "expert" });
       newBadges.push("expert");
     }
 
     // ✨ Perfeccionista — perfect score in all games of any level
     const checkPerfectLevel = (gameIds: string[]) =>
-      gameIds.every((g) => allProgress.some((p) => p.gameId === g && p.score === p.maxScore));
+      gameIds.every((g) =>
+        allProgress.some((p) => p.gameId === g && p.score === p.maxScore),
+      );
 
     if (
-      (checkPerfectLevel(l1Games) || checkPerfectLevel(l2Games) || checkPerfectLevel(l3Games)) &&
+      (checkPerfectLevel(l1Games) ||
+        checkPerfectLevel(l2Games) ||
+        checkPerfectLevel(l3Games)) &&
       !(await storage.hasFinanciaplayBadge(userId, "perfectionist"))
     ) {
-      await storage.createFinanciaplayBadge({ userId, badgeId: "perfectionist" });
+      await storage.createFinanciaplayBadge({
+        userId,
+        badgeId: "perfectionist",
+      });
       newBadges.push("perfectionist");
     }
 
@@ -176,7 +207,8 @@ router.post("/game/complete", ensureAuthenticated, async (req, res) => {
       newBadges,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({ error: message });
   }
 });
@@ -188,7 +220,8 @@ router.get("/leaderboard", ensureAuthenticated, async (req, res) => {
     const leaderboard = await storage.getFinanciaplayLeaderboard(limit);
     res.json(leaderboard);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({ error: message });
   }
 });
@@ -222,13 +255,14 @@ router.post("/lesson", ensureAuthenticated, async (req, res) => {
     }
     const message = await ai.chat([
       { role: "system", content: systemPrompt },
-      { role: "user", content: prompt }
+      { role: "user", content: prompt },
     ]);
 
     const parsed = JSON.parse(message);
     res.json(parsed);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Error desconocido";
+    const message =
+      error instanceof Error ? error.message : "Error desconocido";
     res.status(500).json({
       error: message,
       emoji: "❌",

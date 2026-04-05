@@ -74,11 +74,13 @@ export function DecisionGame({
     if (currentIndex < payload.scenarios.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-        // Al terminar todas las preguntas, evalúa el resultado
-       const minPoints = level?.minPointsToPass ?? payload.scenarios.length;
+      // Al terminar todas las preguntas, evalúa el resultado
+      const minPoints = level?.minPointsToPass ?? payload.scenarios.length;
       const passed = score >= minPoints;
 
-      alert(`Puntaje: ${score}/${payload.scenarios.length} - ${passed ? "Nivel aprobado 🎉" : "No alcanzaste el mínimo ❌"}`);
+      alert(
+        `Puntaje: ${score}/${payload.scenarios.length} - ${passed ? "Nivel aprobado 🎉" : "No alcanzaste el mínimo ❌"}`,
+      );
 
       if (onLevelComplete) onLevelComplete(score);
       onBack();
@@ -86,12 +88,12 @@ export function DecisionGame({
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-       {/* BOTÓN VOLVER ARRIBA */}
+    <div className="mx-auto max-w-xl p-6">
+      {/* BOTÓN VOLVER ARRIBA */}
       <Button variant="outline" onClick={onBack}>
         ← Volver
       </Button>
-      <h2 className="text-xl font-bold mb-4">
+      <h2 className="mb-4 text-xl font-bold">
         {juego.title} - Nivel {level?.level ?? 1}
       </h2>
       <p className="mb-4">{scenario.text}</p>
@@ -101,10 +103,12 @@ export function DecisionGame({
           <button
             key={idx}
             disabled={selectedOption !== null}
-            className={`w-full py-2 px-4 border rounded ${
+            className={`w-full rounded border px-4 py-2 ${
               showExplain && idx === scenario.correctIndex ? "bg-green-200" : ""
             } ${
-              showExplain && selectedOption === idx && idx !== scenario.correctIndex
+              showExplain &&
+              selectedOption === idx &&
+              idx !== scenario.correctIndex
                 ? "bg-red-200"
                 : ""
             }`}
@@ -116,20 +120,21 @@ export function DecisionGame({
       </div>
 
       {showExplain && scenario.explain && (
-        <div className="mt-4 p-2 border-l-4 border-primary bg-primary/10">
+        <div className="border-primary bg-primary/10 mt-4 border-l-4 p-2">
           <p>{scenario.explain}</p>
         </div>
       )}
 
       {selectedOption !== null && (
         <button
-          className="mt-4 py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           onClick={handleNext}
         >
-          {currentIndex < payload.scenarios.length - 1 ? "Siguiente" : "Terminar"}
+          {currentIndex < payload.scenarios.length - 1
+            ? "Siguiente"
+            : "Terminar"}
         </button>
       )}
-
     </div>
   );
 }

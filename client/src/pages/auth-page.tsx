@@ -19,7 +19,8 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { user, loginMutation, registerMutation, socialLoginMutation } = useAuth();
+  const { user, loginMutation, registerMutation, socialLoginMutation } =
+    useAuth();
   const [activeTab, setActiveTab] = useState<string>("login");
   // Estado para sugerencias de username
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
@@ -64,7 +65,7 @@ export default function AuthPage() {
     const segundoNombre = partes[1] || "";
     const primerApellido = apellidos[0] || "";
     const segundoApellido = apellidos[1] || "";
-    const iniciales = partes.map(p => p[0]).join("");
+    const iniciales = partes.map((p) => p[0]).join("");
     // Números aleatorios para combinaciones
     const nums = [
       Math.floor(Math.random() * 100),
@@ -79,10 +80,10 @@ export default function AuthPage() {
       `${primerNombre}${segundoNombre}${primerApellido}`,
       `${primerNombre}${segundoNombre}`,
       `${primerNombre}${segundoNombre}${primerApellido}${segundoApellido}`,
-      `${primerNombre[0] || ''}${primerApellido}`,
-      `${primerNombre}${primerApellido[0] || ''}`,
+      `${primerNombre[0] || ""}${primerApellido}`,
+      `${primerNombre}${primerApellido[0] || ""}`,
       `${iniciales}`,
-      `${primerNombre}${segundoNombre[0] || ''}${primerApellido}`,
+      `${primerNombre}${segundoNombre[0] || ""}${primerApellido}`,
       `${primerNombre}${primerApellido}${segundoApellido}`,
       // combinaciones con números
       `${primerNombre}${primerApellido}${nums[0]}`,
@@ -93,7 +94,9 @@ export default function AuthPage() {
       `${iniciales}${nums[2]}`,
       `${primerNombre}${segundoNombre}${primerApellido}${nums[0]}`,
     ];
-    setUsernameSuggestions(combinaciones.map(s => s.toLowerCase()).filter(Boolean));
+    setUsernameSuggestions(
+      combinaciones.map((s) => s.toLowerCase()).filter(Boolean),
+    );
   };
 
   // Autocompletar username al hacer clic en sugerencia
@@ -103,16 +106,16 @@ export default function AuthPage() {
 
   // Función para cerrar sesión manualmente
   const handleLogout = () => {
-    fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include'
+    fetch("/api/logout", {
+      method: "POST",
+      credentials: "include",
     })
       .then(() => {
         // Recargar la página después de cerrar sesión
         window.location.reload();
       })
-      .catch(err => {
-        console.error('Error al cerrar sesión:', err);
+      .catch((err) => {
+        console.error("Error al cerrar sesión:", err);
       });
   };
 
@@ -132,27 +135,28 @@ export default function AuthPage() {
   // Si el usuario ya está autenticado, ofrecemos la opción de cerrar sesión
   if (user) {
     return (
-      <div className="flex min-h-screen bg-black items-center justify-center">
-        <div className="w-full max-w-md p-8 rounded-lg border border-zinc-800 bg-zinc-900 shadow-lg">
-          <div className="text-center mb-6">
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-8 shadow-lg">
+          <div className="mb-6 text-center">
             <LionLogo withText size="lg" />
             <h2 className="mt-6 text-xl font-bold text-white">
               Ya has iniciado sesión
             </h2>
             <p className="mt-2 text-gray-400">
-              Has iniciado sesión como <span className="text-primary font-medium">{user.username}</span>
+              Has iniciado sesión como{" "}
+              <span className="text-primary font-medium">{user.username}</span>
             </p>
           </div>
           <div className="space-y-4">
             <Button
-              className="w-full bg-primary hover:bg-primary/90 text-black"
-              onClick={() => window.location.href = "/dashboard"}
+              className="bg-primary hover:bg-primary/90 w-full text-black"
+              onClick={() => (window.location.href = "/dashboard")}
             >
               Ir a la página de inicio
             </Button>
             <Button
               variant="outline"
-              className="w-full border-primary text-primary"
+              className="border-primary text-primary w-full"
               onClick={handleLogout}
             >
               Cerrar sesión
@@ -167,65 +171,65 @@ export default function AuthPage() {
     <div className="min-h-screen bg-black">
       {/* Header fuera del container para ocupar todo el ancho */}
       <div className="w-full">
-        <div className="flex items-center gap-3 border-b border-border/40 bg-linear-to-r from-primary/20 to-black p-4">
+        <div className="border-border/40 from-primary/20 flex items-center gap-3 border-b bg-linear-to-r to-black p-4">
           <LionLogo className="h-10 w-10" />
           <div>
-            <h1 className="font-bold text-lg text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+            <h1 className="text-gradient bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-lg font-bold text-transparent">
               FINANCE 360°
             </h1>
             <p>Zupi Fintech</p>
           </div>
         </div>
       </div>
-      <div className="container mx-auto p-4 flex flex-col items-center">
+      <div className="container mx-auto flex flex-col items-center p-4">
         <div className="w-full max-w-md">
           <div className="mb-6">
-            <div className="flex justify-start mb-4">
+            <div className="mb-4 flex justify-start">
               <Link href="/">
                 <Button
                   variant="ghost"
-                  className="hover:bg-primary/20 flex items-center text-primary px-0"
+                  className="hover:bg-primary/20 text-primary flex items-center px-0"
                 >
-                  <ArrowLeft className="h-5 w-5 mr-1" />
+                  <ArrowLeft className="mr-1 h-5 w-5" />
                   Regresar
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="max-w-2xl mx-auto text-center mb-8">
+          <div className="mx-auto mb-8 max-w-2xl text-center">
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
               <span className="block">Zupi Fintech</span>
-              <span className="block text-primary mt-2">
+              <span className="text-primary mt-2 block">
                 Tu éxito financiero
               </span>
             </h1>
-            <p className="mt-4 text-md text-gray-300">
+            <p className="text-md mt-4 text-gray-300">
               Accede a nuestra plataforma para obtener análisis financieros
               avanzados, gestionar tus activos de forma inteligente y maximizar
               tus inversiones con ayuda de la inteligencia artificial.
             </p>
-            <div className="mt-8 grid grid-cols-3 gap-3 max-w-md mx-auto">
+            <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-3">
               <div className="text-center">
-                <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
                   <h3 className="text-primary text-lg font-bold">IA</h3>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="mt-1 text-xs text-gray-400">
                     Análisis inteligente de datos
                   </p>
                 </div>
               </div>
               <div className="text-center">
-                <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
                   <h3 className="text-primary text-lg font-bold">Blockchain</h3>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="mt-1 text-xs text-gray-400">
                     Integración con wallets
                   </p>
                 </div>
               </div>
               <div className="text-center">
-                <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
                   <h3 className="text-primary text-lg font-bold">Mercados</h3>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="mt-1 text-xs text-gray-400">
                     Acceso a datos globales
                   </p>
                 </div>
@@ -240,7 +244,7 @@ export default function AuthPage() {
               value={activeTab}
               onValueChange={setActiveTab}
             >
-              <TabsList className="grid w-full grid-cols-2 mb-8 bg-black border border-primary/30">
+              <TabsList className="border-primary/30 mb-8 grid w-full grid-cols-2 border bg-black">
                 <TabsTrigger
                   value="login"
                   className="data-[state=active]:bg-primary data-[state=active]:text-black"
@@ -256,30 +260,37 @@ export default function AuthPage() {
               </TabsList>
 
               <TabsContent value="login">
-                <Card className="bg-black border-zinc-800">
+                <Card className="border-zinc-800 bg-black">
                   <CardContent className="pt-6">
                     {loginMutation.error && (
-                      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
-                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-md w-full text-center animate-fade-in">
-                          <h4 className="text-lg font-bold text-yellow-500 mb-2">
-                            {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' 
-                              ? '📧 Verifica tu correo electrónico' 
-                              : 'Acceso denegado'}
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <div className="animate-fade-in w-full max-w-md rounded-xl border border-yellow-600 bg-zinc-900 p-6 text-center shadow-lg">
+                          <h4 className="mb-2 text-lg font-bold text-yellow-500">
+                            {(loginMutation.error as any)?.errorCode ===
+                            "EMAIL_NOT_VERIFIED"
+                              ? "📧 Verifica tu correo electrónico"
+                              : "Acceso denegado"}
                           </h4>
-                          <p className="text-gray-300 mb-4">
-                            {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' 
-                              ? 'Debes verificar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y carpeta de spam.' 
-                              : 'Credenciales incorrectas. Por favor verifica tu usuario y contraseña. Si no tienes cuenta, regístrate.'}
+                          <p className="mb-4 text-gray-300">
+                            {(loginMutation.error as any)?.errorCode ===
+                            "EMAIL_NOT_VERIFIED"
+                              ? "Debes verificar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y carpeta de spam."
+                              : "Credenciales incorrectas. Por favor verifica tu usuario y contraseña. Si no tienes cuenta, regístrate."}
                           </p>
-                          {(loginMutation.error as any)?.errorCode === 'EMAIL_NOT_VERIFIED' && (
+                          {(loginMutation.error as any)?.errorCode ===
+                            "EMAIL_NOT_VERIFIED" && (
                             <Button
                               variant="outline"
                               className="border-primary text-primary hover:bg-primary/20 mb-2 w-full"
                               onClick={() => {
-                                const email = (loginMutation.error as any)?.email;
+                                const email = (loginMutation.error as any)
+                                  ?.email;
                                 if (email) {
-                                  localStorage.setItem('pendingVerificationEmail', email);
-                                  setLocation('/verify-email');
+                                  localStorage.setItem(
+                                    "pendingVerificationEmail",
+                                    email,
+                                  );
+                                  setLocation("/verify-email");
                                 }
                               }}
                             >
@@ -287,7 +298,7 @@ export default function AuthPage() {
                             </Button>
                           )}
                           <Button
-                            className="bg-yellow-500 text-black font-semibold px-6 w-full"
+                            className="w-full bg-yellow-500 px-6 font-semibold text-black"
                             onClick={() => loginMutation.reset()}
                           >
                             Cerrar
@@ -306,7 +317,7 @@ export default function AuthPage() {
                         <Input
                           id="username"
                           placeholder="Usuario"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...loginForm.register("username")}
                         />
                       </div>
@@ -319,14 +330,14 @@ export default function AuthPage() {
                           id="password"
                           placeholder="**********"
                           type="password"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...loginForm.register("password")}
                         />
                       </div>
 
                       <Button
                         type="submit"
-                        className="w-full bg-primary hover:bg-primary/90 text-black font-bold"
+                        className="bg-primary hover:bg-primary/90 w-full font-bold text-black"
                         disabled={loginMutation.isPending}
                       >
                         {loginMutation.isPending
@@ -336,7 +347,7 @@ export default function AuthPage() {
                     </form>
 
                     <div className="mt-6">
-                      <p className="text-center text-sm text-gray-400 mb-3">
+                      <p className="mb-3 text-center text-sm text-gray-400">
                         O continuar con
                       </p>
                       <SocialAuthButtons />
@@ -346,21 +357,21 @@ export default function AuthPage() {
               </TabsContent>
 
               <TabsContent value="register">
-                <Card className="bg-black border-zinc-800">
+                <Card className="border-zinc-800 bg-black">
                   <CardContent className="pt-6">
                     {/* Modal personalizado para error de registro */}
                     {registerMutation.error && (
-                      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
-                        <div className="bg-zinc-900 border border-yellow-600 rounded-xl p-6 shadow-lg max-w-sm w-full text-center animate-fade-in">
-                          <h4 className="text-lg font-bold text-yellow-500 mb-2">
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <div className="animate-fade-in w-full max-w-sm rounded-xl border border-yellow-600 bg-zinc-900 p-6 text-center shadow-lg">
+                          <h4 className="mb-2 text-lg font-bold text-yellow-500">
                             Registro fallido
                           </h4>
-                          <p className="text-gray-300 mb-4">
+                          <p className="mb-4 text-gray-300">
                             Error al registrarse. Por favor verifica los datos e
                             intenta de nuevo.
                           </p>
                           <Button
-                            className="bg-yellow-500 text-black font-semibold px-6 mt-2"
+                            className="mt-2 bg-yellow-500 px-6 font-semibold text-black"
                             onClick={() => registerMutation.reset()}
                           >
                             Cerrar
@@ -382,12 +393,12 @@ export default function AuthPage() {
                         <Input
                           id="register-name"
                           placeholder="Nombre y apellido"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...registerForm.register("name")}
                           onChange={handleNameChange}
                         />
                         {registerForm.formState.errors.name && (
-                          <p className="text-sm font-medium text-destructive">
+                          <p className="text-destructive text-sm font-medium">
                             {registerForm.formState.errors.name.message}
                           </p>
                         )}
@@ -403,17 +414,17 @@ export default function AuthPage() {
                         <Input
                           id="register-username"
                           placeholder="usuario"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...registerForm.register("username")}
                         />
                         {/* Sugerencias de username */}
                         {usernameSuggestions.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-2">
+                          <div className="mt-2 flex flex-wrap gap-2">
                             {usernameSuggestions.map((s, i) => (
                               <button
                                 type="button"
                                 key={s + i}
-                                className="px-2 py-1 bg-zinc-800 border border-primary text-primary rounded text-xs hover:bg-primary hover:text-black transition"
+                                className="border-primary text-primary hover:bg-primary rounded border bg-zinc-800 px-2 py-1 text-xs transition hover:text-black"
                                 onClick={() => handleSuggestionClick(s)}
                               >
                                 {s}
@@ -422,7 +433,7 @@ export default function AuthPage() {
                           </div>
                         )}
                         {registerForm.formState.errors.username && (
-                          <p className="text-sm font-medium text-destructive">
+                          <p className="text-destructive text-sm font-medium">
                             {registerForm.formState.errors.username.message}
                           </p>
                         )}
@@ -439,11 +450,11 @@ export default function AuthPage() {
                           id="register-email"
                           type="email"
                           placeholder="correo@ejemplo.com"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...registerForm.register("email")}
                         />
                         {registerForm.formState.errors.email && (
-                          <p className="text-sm font-medium text-destructive">
+                          <p className="text-destructive text-sm font-medium">
                             {registerForm.formState.errors.email.message}
                           </p>
                         )}
@@ -460,11 +471,11 @@ export default function AuthPage() {
                           id="register-password"
                           type="password"
                           placeholder="**********"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...registerForm.register("password")}
                         />
                         {registerForm.formState.errors.password && (
-                          <p className="text-sm font-medium text-destructive">
+                          <p className="text-destructive text-sm font-medium">
                             {registerForm.formState.errors.password.message}
                           </p>
                         )}
@@ -481,11 +492,11 @@ export default function AuthPage() {
                           id="register-confirm-password"
                           type="password"
                           placeholder="**********"
-                          className="bg-black border-zinc-700 focus:border-primary"
+                          className="focus:border-primary border-zinc-700 bg-black"
                           {...registerForm.register("passwordConfirm")}
                         />
                         {registerForm.formState.errors.passwordConfirm && (
-                          <p className="text-sm font-medium text-destructive">
+                          <p className="text-destructive text-sm font-medium">
                             {
                               registerForm.formState.errors.passwordConfirm
                                 .message
@@ -496,7 +507,7 @@ export default function AuthPage() {
 
                       <Button
                         type="submit"
-                        className="w-full bg-primary hover:bg-primary/90 text-black font-bold"
+                        className="bg-primary hover:bg-primary/90 w-full font-bold text-black"
                         disabled={registerMutation.isPending}
                       >
                         {registerMutation.isPending
@@ -506,7 +517,7 @@ export default function AuthPage() {
                     </form>
 
                     <div className="mt-6">
-                      <p className="text-center text-sm text-gray-400 mb-3">
+                      <p className="mb-3 text-center text-sm text-gray-400">
                         O continuar con
                       </p>
                       <SocialAuthButtons />

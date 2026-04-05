@@ -13,9 +13,9 @@ export const MARKET_SOURCES = {
     ethereum: "https://coinmarketcap.com/es/currencies/ethereum/",
     bnb: "https://coinmarketcap.com/es/currencies/bnb/",
     solana: "https://coinmarketcap.com/es/currencies/solana/",
-    xrp: "https://coinmarketcap.com/es/currencies/xrp/"
+    xrp: "https://coinmarketcap.com/es/currencies/xrp/",
   },
-  
+
   // Fuente para acciones de Colombia (BVC)
   COLOMBIA: {
     name: "Investing.com Colombia",
@@ -25,9 +25,9 @@ export const MARKET_SOURCES = {
     bancolombia: "https://es.investing.com/equities/pfbcolom",
     grupoSura: "https://es.investing.com/equities/gruposura",
     isa: "https://es.investing.com/equities/isa",
-    grupoArgos: "https://es.investing.com/equities/grupoargos"
+    grupoArgos: "https://es.investing.com/equities/grupoargos",
   },
-  
+
   // Fuente para acciones de Estados Unidos (NYSE/NASDAQ)
   USA: {
     name: "Yahoo Finance",
@@ -37,8 +37,8 @@ export const MARKET_SOURCES = {
     microsoft: "https://finance.yahoo.com/quote/MSFT?p=MSFT",
     amazon: "https://finance.yahoo.com/quote/AMZN?p=AMZN",
     tesla: "https://finance.yahoo.com/quote/TSLA?p=TSLA",
-    nvidia: "https://finance.yahoo.com/quote/NVDA?p=NVDA"
-  }
+    nvidia: "https://finance.yahoo.com/quote/NVDA?p=NVDA",
+  },
 };
 
 // Interfaz para datos de acciones en general
@@ -96,17 +96,20 @@ export async function getColombianStocks(): Promise<Stock[]> {
       };
     });
   } catch (error) {
-    console.error("❌ Error al obtener datos reales del mercado colombiano:", error);
+    console.error(
+      "❌ Error al obtener datos reales del mercado colombiano:",
+      error,
+    );
     return [];
   }
 }
 
-
-
 // ✅ Obtener acciones de EE.UU. desde tu backend Express (datos reales)
 export async function getUSStocks(): Promise<Stock[]> {
   try {
-    const response = await fetch("/api/finance/markets?symbols=AAPL,MSFT,GOOG,AMZN,TSLA,NVDA");
+    const response = await fetch(
+      "/api/finance/markets?symbols=AAPL,MSFT,GOOG,AMZN,TSLA,NVDA",
+    );
     const data = await response.json();
 
     // Transformar los datos para ajustarse al formato del front
@@ -123,15 +126,17 @@ export async function getUSStocks(): Promise<Stock[]> {
         changePercent,
         volume: "N/A",
         isPositive: changePercent >= 0,
-        url: `https://finance.yahoo.com/quote/${item.symbol}`
+        url: `https://finance.yahoo.com/quote/${item.symbol}`,
       };
     });
   } catch (error) {
-    console.error("❌ Error al obtener datos reales del mercado de EE.UU.:", error);
+    console.error(
+      "❌ Error al obtener datos reales del mercado de EE.UU.:",
+      error,
+    );
     return [];
   }
 }
-
 
 // Función para obtener las principales criptomonedas
 // Los datos son de muestra, pero cada registro incluye la URL real a la fuente de datos
@@ -146,7 +151,7 @@ export async function getCryptos(): Promise<Crypto[]> {
 
       return {
         ticker: item.symbol, // Ej: BTC-USD
-        name: item.name,     // Ej: Bitcoin
+        name: item.name, // Ej: Bitcoin
         price,
         priceFormatted: `$${price.toLocaleString("en-US")}`,
         change: changePercent,

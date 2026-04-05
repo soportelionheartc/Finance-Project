@@ -30,7 +30,6 @@ import EducacionFinancieraPage from "@/pages/educacion-financiera-page";
 import VerifyEmailPage from "@/pages/verify-email-page";
 import InvestorQuestionnairePage from "@/pages/investor-questionnaire-page";
 
-
 function RouterContent() {
   const [location, setLocation] = useLocation();
   const [showButton, setShowButton] = useState(false);
@@ -41,8 +40,9 @@ function RouterContent() {
     // 1. El usuario está autenticado y es uno de los usuarios especiales (juanpablo13 o jplhc)
     // 2. No estamos en la página de blockchain
 
-    const isBlockchainPage = location.includes('blockchain-portfolio');
-    const isSpecialUser = user && (user.username === 'juanpablo13' || user.username === 'jplhc');
+    const isBlockchainPage = location.includes("blockchain-portfolio");
+    const isSpecialUser =
+      user && (user.username === "juanpablo13" || user.username === "jplhc");
 
     setShowButton(isSpecialUser ? !isBlockchainPage : false);
   }, [location, user]);
@@ -59,18 +59,33 @@ function RouterContent() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/verify-email" component={VerifyEmailPage} />
         <ProtectedRoute path="/dashboard" component={HomePage} />
-        <ProtectedRoute path="/asistente-financiero" component={FinancialAssistantPage} />
-        <ProtectedRoute path="/finanzas-personales" component={FinanzasPersonalesPage} />
+        <ProtectedRoute
+          path="/asistente-financiero"
+          component={FinancialAssistantPage}
+        />
+        <ProtectedRoute
+          path="/finanzas-personales"
+          component={FinanzasPersonalesPage}
+        />
         <ProtectedRoute path="/financiaplay" component={FinanciaPlayPage} />
         <ProtectedRoute path="/portafolio" component={PortfolioPage} />
         <ProtectedRoute path="/trading-bot" component={TradingBotPage} />
         <ProtectedRoute path="/wallet" component={WalletPage} />
-        <ProtectedRoute path="/chat-descentralizado" component={ChatDescentralizadoPage} />
-        <ProtectedRoute path="/blockchain-portfolio" component={BlockchainPortfolioPage} />
+        <ProtectedRoute
+          path="/chat-descentralizado"
+          component={ChatDescentralizadoPage}
+        />
+        <ProtectedRoute
+          path="/blockchain-portfolio"
+          component={BlockchainPortfolioPage}
+        />
         <AdminRoute path="/admin" component={AdminPage} />
         <ProtectedRoute path="/perfil" component={PerfilPage} />
         <ProtectedRoute path="/configuracion" component={ConfiguracionPage} />
-        <ProtectedRoute path="/investor-questionnaire" component={InvestorQuestionnairePage} />
+        <ProtectedRoute
+          path="/investor-questionnaire"
+          component={InvestorQuestionnairePage}
+        />
         <Route path="/servicios" component={ServicesPage} />
         <Route path="/noticias" component={NoticiasPage} />
         <Route path="/nosotros" component={AboutPage} />
