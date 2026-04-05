@@ -1,21 +1,19 @@
-import type { Express, Request, Response, NextFunction } from "express";
-import { createServer, type Server } from "http";
-import { setupAuth, isAdmin } from "./auth";
-import { storage } from "./storage";
-import OpenAI from "openai";
-import { sendContactEmail } from "./emailService";
-import financeRoutes from "./financeRoutes";
 import dotenv from "dotenv";
-import forumRoutes from "./forumRoutes";
-import fileRoutes from "./fileRoutes";
-import financiaplayRoutes from "./financiaplayRoutes";
+import type { Express, NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
+import { createServer, type Server } from "http";
+import { ai, type AIMessage } from "../ai";
+import { setupAuth } from "../auth";
+import { sendContactEmail } from "../emailService";
+import fileRoutes from "../fileRoutes";
+import forumRoutes from "../forumRoutes";
+import financeRoutes from "./financeRoutes";
+import financiaplayRoutes from "./financiaplayRoutes";
+import { storage } from "../storage";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
 
 dotenv.config(); // asegura cargar .env
-
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
 
 // Rate limiter for contact form
 const contactRateLimiter = rateLimit({
@@ -62,6 +60,19 @@ function calculateInvestorProfile(answers: Record<number, number>): {
   return { riskProfile, totalScore };
 }
 
+const loadFinancialAdvisorPrompt = () => {
+  const promptPath = fileURLToPath(
+    new URL("../ai/aiPrompts/financialAdvisorPrompt.md", import.meta.url),
+  );
+  try {
+    const promptContent = readFileSync(promptPath, "utf-8");
+    return promptContent;
+  } catch (err) {
+    console.error("Error leyendo el prompt del asesor financiero:", err);
+    // Fallback a un mensaje básico si hay un error leyendo el archivo
+    return "Eres un asesor financiero profesional, claro y responsable. No prometas rendimientos, da consejos realistas.";
+  }
+};
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
@@ -115,38 +126,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ available: !!secretValue });
   });
 
-  // AI financial advice
+  // AI financial advice (supports conversation history)
   app.post("/api/ai/financial-advice", async (req, res) => {
     try {
-      const { message } = req.body;
-      if (!message)
-        return res.status(400).json({ error: "Se requiere un mensaje" });
+      const {
+        message,
+        messages: conversationHistory,
+      }: { message?: string; messages?: AIMessage[] } = req.body;
 
-      if (!openai) {
-        console.error("❌ OpenAI no está inicializado");
-        return res.status(503).json({
-          error: "Servicio de IA no disponible",
-          response: "El servicio de IA no está disponible actualmente.",
-        });
+      // Build the messages array for the AI provider
+      const systemMessage: AIMessage = {
+        role: "system",
+        content: loadFinancialAdvisorPrompt(),
+      };
+
+      let chatMessages: AIMessage[];
+
+      if (
+        Array.isArray(conversationHistory) &&
+        conversationHistory.length > 0
+      ) {
+        // Conversation history mode: validate and use provided messages
+        chatMessages = [
+          systemMessage,
+          ...conversationHistory
+            .filter(
+              (m: AIMessage) =>
+                (m.role === "user" || m.role === "assistant") &&
+                typeof m.content === "string" &&
+                m.content.trim(),
+            )
+            .map((m: AIMessage) => ({
+              role: m.role as "user" | "assistant",
+              content: m.content,
+            })),
+        ];
+      } else if (message && typeof message === "string") {
+        // Single message mode (backward compatible)
+        chatMessages = [systemMessage, { role: "user", content: message }];
+      } else {
+        return res.status(400).json({ error: "Se requiere un mensaje" });
       }
 
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Eres un asesor financiero profesional, claro y responsable. No prometas rendimientos, da consejos realistas.",
-          },
-          { role: "user", content: message },
-        ],
+      const aiResponse = await ai.chat(chatMessages, {
+        temperature: 0.7,
+        maxTokens: 1000,
       });
 
-      const aiResponse =
-        completion.choices[0]?.message?.content ||
-        "No se recibió respuesta del modelo.";
-      console.log("💬 Respuesta de OpenAI:", aiResponse);
-
+      console.log("💬 Respuesta de IA:", aiResponse);
       res.json({ response: aiResponse });
     } catch (error: any) {
       console.error(

@@ -7,7 +7,7 @@ export class GroqProvider implements AIProvider {
     baseURL: "https://api.groq.com/openai/v1",
   });
 
-  async chat(messages: AIMessage[], options?: AIOptions): Promise<string> {
+  async chat(messages: AIMessage[], _?: AIOptions): Promise<string> {
     console.log("Sending messages to Groq:", messages);
     const res = await this.client.responses.create({
       model: "openai/gpt-oss-20b",

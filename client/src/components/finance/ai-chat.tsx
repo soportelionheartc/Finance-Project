@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,20 +7,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Send, Bot, User, Brain } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getFinancialAdvice } from "@/lib/openai";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  sendChatMessages,
+  type ChatMessage as APIChatMessage,
+} from "@/lib/openai";
 import { apiRequest } from "@/lib/queryClient";
+import { Brain, Send, Trash2 } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 // Función para verificar si la clave de OpenAI está disponible
 async function checkSecret(secretKey: string): Promise<boolean> {
@@ -36,53 +40,56 @@ async function checkSecret(secretKey: string): Promise<boolean> {
   }
 }
 
-interface ChatMessage {
-  id: number;
-  userId: number;
-  message: string;
-  response: string;
+interface DisplayMessage {
+  role: "user" | "assistant";
+  content: string;
   timestamp: string;
+}
+
+const STORAGE_KEY_PREFIX = "ai-chat-history";
+
+function getStorageKey(userId: number | undefined): string {
+  return `${STORAGE_KEY_PREFIX}-${userId ?? "anon"}`;
+}
+
+function loadMessages(userId: number | undefined): DisplayMessage[] {
+  try {
+    const raw = localStorage.getItem(getStorageKey(userId));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMessages(
+  userId: number | undefined,
+  msgs: DisplayMessage[],
+): void {
+  localStorage.setItem(getStorageKey(userId), JSON.stringify(msgs));
 }
 
 export const AiChat = () => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [openAiAvailable, setOpenAiAvailable] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Comprueba si la API Key de OpenAI está disponible
+  // Check API key and load persisted messages
   useEffect(() => {
-    const checkOpenAiKey = async () => {
-      const isAvailable = await checkSecret("OPENAI_API_KEY");
-      setOpenAiAvailable(isAvailable);
-    };
+    checkSecret("OPENAI_API_KEY").then(setOpenAiAvailable);
+    setMessages(loadMessages(user?.id));
+  }, [user?.id]);
 
-    checkOpenAiKey();
-
-    // Cargar mensajes de historial (ejemplo para ahora)
-    setMessages([
-      {
-        id: 1,
-        userId: user?.id || 1,
-        message:
-          "¿Cómo puedo diversificar mi portafolio para reducir el riesgo?",
-        response:
-          "La diversificación es una estrategia clave para gestionar el riesgo. Te recomendaría distribuir tus inversiones entre diferentes clases de activos (acciones, bonos, efectivo, bienes raíces), diferentes sectores industriales, y diferentes regiones geográficas. Para tu perfil específico, consideraría una asignación de 60% en acciones, 30% en bonos, y 10% en otros activos como materias primas o bienes raíces. ¿Te gustaría que profundice en alguna categoría específica?",
-        timestamp: "2025-03-31T14:30:00.000Z",
-      },
-      {
-        id: 2,
-        userId: user?.id || 1,
-        message:
-          "¿Cuál es la diferencia entre invertir en ETFs y acciones individuales?",
-        response:
-          "Los ETFs (Fondos Cotizados en Bolsa) y las acciones individuales tienen diferencias importantes:\n\n1. Diversificación: Los ETFs contienen múltiples activos, ofreciendo diversificación instantánea, mientras que las acciones individuales representan una única empresa.\n\n2. Riesgo: Las acciones individuales generalmente conllevan mayor riesgo, pero también mayor potencial de retorno.\n\n3. Gestión: Los ETFs son gestionados profesionalmente y requieren menos investigación que seleccionar acciones individuales.\n\n4. Costos: Los ETFs tienen comisiones de gestión, pero suelen ser más bajas que los fondos mutuos tradicionales.\n\nPara inversores nuevos o con menos tiempo para análisis, los ETFs suelen ser una opción más segura y conveniente.",
-        timestamp: "2025-04-01T09:15:00.000Z",
-      },
-    ]);
-  }, [user]);
+  // Persist messages on change
+  useEffect(() => {
+    if (messages.length > 0) {
+      saveMessages(user?.id, messages);
+    }
+  }, [messages, user?.id]);
 
   // Scroll al final cuando se añaden nuevos mensajes
   useEffect(() => {
@@ -102,65 +109,65 @@ export const AiChat = () => {
     }
   };
 
+  const handleClearHistory = useCallback(() => {
+    setMessages([]);
+    localStorage.removeItem(getStorageKey(user?.id));
+  }, [user?.id]);
+
   const handleSendMessage = async () => {
     if (inputValue.trim() === "" || isLoading) return;
 
-    setIsLoading(true);
-
-    const newMessage: ChatMessage = {
-      id: messages.length + 1,
-      userId: user?.id || 1,
-      message: inputValue,
-      response: "...",
+    const userMsg: DisplayMessage = {
+      role: "user",
+      content: inputValue.trim(),
       timestamp: new Date().toISOString(),
     };
 
-    setMessages([...messages, newMessage]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInputValue("");
+    setIsLoading(true);
 
     // Si OpenAI no está disponible, usamos respuestas predefinidas
     if (!openAiAvailable) {
       setTimeout(() => {
-        const updatedMessages = [
-          ...messages,
-          {
-            ...newMessage,
-            response:
-              "La funcionalidad completa de IA estará disponible próximamente. Por favor, intenta con otra pregunta o contacta a nuestro equipo de soporte para obtener ayuda sobre temas financieros específicos.",
-          },
-        ];
-        setMessages(updatedMessages);
+        const fallbackReply: DisplayMessage = {
+          role: "assistant",
+          content:
+            "La funcionalidad completa de IA estará disponible próximamente. Por favor, intenta con otra pregunta o contacta a nuestro equipo de soporte.",
+          timestamp: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, fallbackReply]);
         setIsLoading(false);
       }, 1500);
       return;
     }
 
     try {
-      // Si OpenAI está disponible, usamos la API
-      const aiResponse = await getFinancialAdvice(inputValue);
+      // Build conversation history for the API
+      const apiMessages: APIChatMessage[] = updatedMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
 
-      const updatedMessages = [
-        ...messages,
-        {
-          ...newMessage,
-          response: aiResponse,
-        },
-      ];
+      const aiResponse = await sendChatMessages(apiMessages);
 
-      setMessages(updatedMessages);
+      const assistantMsg: DisplayMessage = {
+        role: "assistant",
+        content: aiResponse,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, assistantMsg]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
 
-      const updatedMessages = [
-        ...messages,
-        {
-          ...newMessage,
-          response:
-            "Lo siento, ha ocurrido un error al procesar tu pregunta. Por favor, intenta nuevamente más tarde.",
-        },
-      ];
-
-      setMessages(updatedMessages);
+      const errorMsg: DisplayMessage = {
+        role: "assistant",
+        content:
+          "Lo siento, ha ocurrido un error al procesar tu pregunta. Por favor, intenta nuevamente más tarde.",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -185,18 +192,39 @@ export const AiChat = () => {
             </CardTitle>
             <CardDescription>Tu consultor IA personalizado</CardDescription>
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge className="bg-yellow-500 hover:bg-yellow-600">
-                  AI Powered
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Potenciado por IA especializada en finanzas</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center gap-2">
+            {messages.length > 0 && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-400 hover:text-red-400"
+                      onClick={handleClearHistory}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Borrar historial</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge className="bg-yellow-500 hover:bg-yellow-600">
+                    AI Powered
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Potenciado por IA especializada en finanzas</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col p-0">
@@ -206,30 +234,28 @@ export const AiChat = () => {
         >
           <div className="space-y-4">
             <div className="chat-container">
-              {messages.map((msg) => (
-                <div key={msg.id} className="chat-message">
+              {messages.length === 0 && !isLoading && (
+                <div className="flex flex-col items-center justify-center py-8 text-center text-gray-500">
+                  <Brain className="mb-3 h-10 w-10 text-gray-600" />
+                  <p className="text-sm">
+                    Pregunta sobre finanzas, inversiones o estrategias de
+                    portafolio.
+                  </p>
+                </div>
+              )}
+              {messages.map((msg, index) => (
+                <div key={index} className="chat-message">
                   <div className="clearfix">
-                    <div className="message-user">
+                    <div
+                      className={
+                        msg.role === "user" ? "message-user" : "message-bot"
+                      }
+                    >
                       <span className="wrap-break-word whitespace-pre-line">
-                        {msg.message}
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
                       </span>
                       <div className="message-time">
                         {formatDate(msg.timestamp)}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="clearfix mt-8">
-                    <div className="message-bot">
-                      <div className="wrap-break-word whitespace-pre-line">
-                        {msg.response}
-                      </div>
-                      <div className="message-time">
-                        {formatDate(
-                          new Date(
-                            new Date(msg.timestamp).getTime() + 1000,
-                          ).toISOString(),
-                        )}
                       </div>
                     </div>
                   </div>

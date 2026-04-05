@@ -1,7 +1,7 @@
 import { ensureAdminUser } from "./auth";
 import path from "path";
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { registerRoutes } from "./routes/routes";
 import { setupVite, serveStatic, log } from "./vite";
 import "dotenv/config";
 import session from "express-session";

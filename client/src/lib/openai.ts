@@ -8,11 +8,18 @@ export const OPENAI_MODEL = "gpt-4o";
 // En el cliente no usamos una instancia directa de OpenAI
 export const openai = { apiKey: "cliente-no-accede-directamente" };
 
-// Función para obtener consejos financieros desde el servidor
-export async function getFinancialAdvice(message: string): Promise<string> {
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+// Función para enviar conversación con historial al servidor
+export async function sendChatMessages(
+  messages: ChatMessage[],
+): Promise<string> {
   try {
     const response = await apiRequest("POST", "/api/ai/financial-advice", {
-      message,
+      messages,
     });
 
     if (!response.ok) {
@@ -25,6 +32,14 @@ export async function getFinancialAdvice(message: string): Promise<string> {
     console.error("Error al obtener el consejo financiero:", error);
     throw error;
   }
+}
+
+/**
+ * Función para obtener consejos financieros desde el servidor (legacy)
+ * @deprecated Esta función es obsoleta. Usa sendChatMessages con formato de mensajes para mantener el contexto de la conversación.
+ */
+export async function getFinancialAdvice(message: string): Promise<string> {
+  return sendChatMessages([{ role: "user", content: message }]);
 }
 
 // Función para analizar el riesgo del portafolio
