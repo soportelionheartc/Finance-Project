@@ -117,6 +117,24 @@ export default function HomePage() {
       )}
 
       <main className="container mx-auto flex-1 px-4 py-6">
+        <div className="mb-6 flex flex-col items-center justify-center space-y-2">
+          <h1 className="bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-center text-4xl font-bold tracking-tight text-transparent">
+            Hola, {user?.name || user?.username || "Inversionista"}
+          </h1>
+          <p className="text-muted-foreground text-center">
+            Bienvenido a tu dashboard financiero con IA de Zupi Fintech
+          </p>
+        </div>
+
+         <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
+            <Button
+              className="w-full rounded-xl border border-yellow-500 bg-black font-semibold text-yellow-500 shadow-md transition-all duration-200 hover:bg-yellow-600 hover:text-black"
+              onClick={() => setLocation("/servicios")}
+              >
+              Explorar Servicios
+              </Button>
+          </div>
+
         <div className="mt-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-3">
           <Button
             className="w-full rounded-xl border border-yellow-500 bg-black font-semibold text-yellow-500 shadow-md transition-all duration-200 hover:bg-yellow-600 hover:text-black"
@@ -136,18 +154,10 @@ export default function HomePage() {
             className="w-full rounded-xl border border-yellow-500 bg-black font-semibold text-yellow-500 shadow-md transition-all duration-200 hover:bg-yellow-600 hover:text-black"
             onClick={() => setLocation("/financiaplay")}
           >
-            🎮 FinanciaPlay
+            🎮 Educacion Financiera
           </Button>
         </div>
 
-        <div className="mb-6 flex flex-col items-center justify-center space-y-2">
-          <h1 className="bg-linear-to-r from-yellow-400 to-yellow-600 bg-clip-text text-center text-4xl font-bold tracking-tight text-transparent">
-            Hola, {user?.name || user?.username || "Inversionista"}
-          </h1>
-          <p className="text-muted-foreground text-center">
-            Bienvenido a tu dashboard financiero con IA de Zupi Fintech
-          </p>
-        </div>
         <CarruselConsejos />
 
         <div>
